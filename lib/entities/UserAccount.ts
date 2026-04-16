@@ -2,10 +2,10 @@ import { createServerClient } from '@/lib/supabase/server';
 import { deleteSession, getSession } from '@/lib/auth';
 
 /**
- * BCE Entity: UserAccount (User Story #49, #50)
+ * BCE Entity: UserAccount (User Story #6, #49, #50)
  *
  * Represents a user account in the system.
- * Provides data-access methods and session management.
+ * Provides data-access methods, persistence, and session management.
  */
 export class UserAccount {
   id: string;
@@ -48,6 +48,25 @@ export class UserAccount {
     }
 
     return new UserAccount(data);
+  }
+
+  /**
+   * Persist a new user account to the database.
+   * Signature matches BCE diagram: save(account: UserAccount): boolean
+   */
+  static async save(account: UserAccount): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase.from('user_profiles').insert({
+      username: account.username,
+      password_hash: account.password_hash,
+      email: account.email,
+      role: account.role,
+      status: account.status,
+      full_name: account.full_name,
+    });
+
+    return !error;
   }
 
   /**
