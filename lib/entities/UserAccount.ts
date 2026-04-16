@@ -2,7 +2,7 @@ import { createServerClient } from '@/lib/supabase/server';
 import { deleteSession, getSession } from '@/lib/auth';
 
 /**
- * BCE Entity: UserAccount (User Story #6, #49, #50)
+ * BCE Entity: UserAccount (User Story #6, #7, #49, #50)
  *
  * Represents a user account in the system.
  * Provides data-access methods, persistence, and session management.
@@ -41,6 +41,45 @@ export class UserAccount {
       .from('user_profiles')
       .select('*')
       .eq('email', email)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return new UserAccount(data);
+  }
+
+  /**
+   * Retrieve all user accounts.
+   * Signature matches BCE diagram: getAll(): list
+   */
+  static async getAll(): Promise<UserAccount[]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data.map((d) => new UserAccount(d));
+  }
+
+  /**
+   * Retrieve a user account by ID.
+   * Signature matches BCE diagram: getById(userId: String): UserAccount
+   */
+  static async getById(userId: string): Promise<UserAccount | null> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userId)
       .single();
 
     if (error || !data) {

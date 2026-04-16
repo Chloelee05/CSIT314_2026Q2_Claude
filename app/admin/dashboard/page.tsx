@@ -61,6 +61,17 @@ export default async function AdminDashboard() {
               Register a new user account
             </p>
           </Link>
+          <Link
+            href="/admin/accounts"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:border-indigo-300 hover:shadow-md transition group"
+          >
+            <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition">
+              View Accounts
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Browse and inspect user accounts
+            </p>
+          </Link>
         </div>
       </main>
     </div>
