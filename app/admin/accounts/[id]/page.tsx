@@ -75,6 +75,15 @@ export default async function AccountDetailPage({
           </Link>
         </div>
 
+        <div className="mb-4">
+          <Link
+            href={`/admin/accounts/update?id=${account.id}`}
+            className="inline-block bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium px-4 py-2 rounded-lg transition"
+          >
+            Update User Account
+          </Link>
+        </div>
+
         {/* displayAccountDetails(account) */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-6">
