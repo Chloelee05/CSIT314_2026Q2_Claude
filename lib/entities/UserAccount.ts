@@ -110,6 +110,37 @@ export class UserAccount {
   }
 
   /**
+   * Search user accounts by keyword and field.
+   * Signature matches BCE diagram: SearchUserAccount(Keyword: str, search_by: str = "UserName"): list
+   */
+  static async SearchUserAccount(
+    Keyword: string,
+    search_by: string = 'UserName',
+  ): Promise<UserAccount[]> {
+    const supabase = createServerClient();
+
+    let query = supabase.from('user_profiles').select('*');
+
+    if (Keyword.trim()) {
+      if (search_by === 'UserName') {
+        query = query.ilike('username', `%${Keyword.trim()}%`);
+      } else if (search_by === 'Email') {
+        query = query.ilike('email', `%${Keyword.trim()}%`);
+      } else if (search_by === 'FullName') {
+        query = query.ilike('full_name', `%${Keyword.trim()}%`);
+      }
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data.map((d) => new UserAccount(d));
+  }
+
+  /**
    * Suspend a user account by setting status to 'suspended'.
    * Signature matches BCE diagram: SuspendUserAccount(UserAccount_id): bool
    */

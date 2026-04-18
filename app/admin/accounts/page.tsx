@@ -73,6 +73,12 @@ export default async function AccountListPage({
               Back to Dashboard
             </Link>
             <Link
+              href="/admin/accounts/search"
+              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 transition"
+            >
+              Search Accounts
+            </Link>
+            <Link
               href="/admin/accounts/create"
               className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition font-medium"
             >
