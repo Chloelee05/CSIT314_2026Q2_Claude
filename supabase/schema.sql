@@ -32,6 +32,28 @@ CREATE POLICY "Allow all operations for anon"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: UserProfile (#11) — extended profile details
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS user_profile_details (
+  id           UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  account_id   UUID NOT NULL UNIQUE REFERENCES user_profiles(id) ON DELETE CASCADE,
+  dob          TEXT,
+  address      TEXT,
+  phone_number TEXT,
+  role         TEXT,
+  created_at   TIMESTAMPTZ DEFAULT NOW(),
+  updated_at   TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE user_profile_details ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on user_profile_details"
+  ON user_profile_details
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- Seed data (5 test accounts)
 -- ──────────────────────────────────────────────
 INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES

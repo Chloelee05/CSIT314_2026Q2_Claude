@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { ViewAccountController } from '@/lib/controllers/ViewAccountController';
 import { UserAccount } from '@/lib/entities/UserAccount';
+import { suspendUserAccountAction } from '@/app/admin/accounts/suspend/actions';
 import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -18,11 +19,17 @@ const ROLE_LABELS: Record<string, string> = {
  * Displays the list of all user accounts.
  * Sequence: navigateToUsers() → getAccountDetails(null) → getAll() → displayAccountList()
  */
-export default async function AccountListPage() {
+export default async function AccountListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ message?: string }>;
+}) {
   const session = await getSession();
   if (!session || session.role !== 'admin') {
     redirect('/login');
   }
+
+  const { message } = await searchParams;
 
   // ViewAccountUI → ViewAccountController: getAccountDetails(null)
   const accounts = (await ViewAccountController.getAccountDetails(
@@ -66,6 +73,12 @@ export default async function AccountListPage() {
               Back to Dashboard
             </Link>
             <Link
+              href="/admin/accounts/search"
+              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 transition"
+            >
+              Search Accounts
+            </Link>
+            <Link
               href="/admin/accounts/create"
               className="text-sm bg-indigo-600 text-white px-3 py-1.5 rounded-lg hover:bg-indigo-700 transition font-medium"
             >
@@ -73,6 +86,13 @@ export default async function AccountListPage() {
             </Link>
           </div>
         </div>
+
+        {/* SuspendUserProfileBoundary: flash message */}
+        {message && (
+          <div className="mb-4 rounded-lg px-4 py-3 text-sm font-medium bg-green-50 text-green-700 border border-green-200">
+            {message}
+          </div>
+        )}
 
         {/* ALT: No user accounts exist */}
         {accounts.length === 0 ? (
@@ -127,13 +147,27 @@ export default async function AccountListPage() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right">
-                      {/* selectUser(userId) */}
-                      <Link
-                        href={`/admin/accounts/${account.id}`}
-                        className="text-indigo-600 hover:text-indigo-800 font-medium transition"
-                      >
-                        View Details
-                      </Link>
+                      <div className="flex items-center justify-end gap-3">
+                        {/* selectUser(userId) */}
+                        <Link
+                          href={`/admin/accounts/${account.id}`}
+                          className="text-indigo-600 hover:text-indigo-800 font-medium transition"
+                        >
+                          View Details
+                        </Link>
+                        {/* SuspendUserProfileBoundary: SuspendUserAccount(UserAccount_id) */}
+                        {account.status === 'active' && (
+                          <form action={suspendUserAccountAction}>
+                            <input type="hidden" name="userAccountId" value={account.id} />
+                            <button
+                              type="submit"
+                              className="text-red-600 hover:text-red-800 font-medium transition cursor-pointer"
+                            >
+                              Suspend
+                            </button>
+                          </form>
+                        )}
+                      </div>
                     </td>
                   </tr>
                 ))}

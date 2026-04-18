@@ -1,5 +1,6 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { deleteSession, getSession } from '@/lib/auth';
+import bcrypt from 'bcryptjs';
 
 /**
  * BCE Entity: UserAccount (User Story #6, #7, #49, #50)
@@ -106,6 +107,115 @@ export class UserAccount {
     });
 
     return !error;
+  }
+
+  /**
+   * Search user accounts by keyword and field.
+   * Signature matches BCE diagram: SearchUserAccount(Keyword: str, search_by: str = "UserName"): list
+   */
+  static async SearchUserAccount(
+    Keyword: string,
+    search_by: string = 'UserName',
+  ): Promise<UserAccount[]> {
+    const supabase = createServerClient();
+
+    let query = supabase.from('user_profiles').select('*');
+
+    if (Keyword.trim()) {
+      if (search_by === 'UserName') {
+        query = query.ilike('username', `%${Keyword.trim()}%`);
+      } else if (search_by === 'Email') {
+        query = query.ilike('email', `%${Keyword.trim()}%`);
+      } else if (search_by === 'FullName') {
+        query = query.ilike('full_name', `%${Keyword.trim()}%`);
+      }
+    }
+
+    const { data, error } = await query.order('created_at', { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+
+    return data.map((d) => new UserAccount(d));
+  }
+
+  /**
+   * Suspend a user account by setting status to 'suspended'.
+   * Signature matches BCE diagram: SuspendUserAccount(UserAccount_id): bool
+   */
+  static async SuspendUserAccount(UserAccount_id: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({ status: 'suspended', updated_at: new Date().toISOString() })
+      .eq('id', UserAccount_id);
+
+    return !error;
+  }
+
+  /**
+   * Update an existing user account.
+   * Signature matches BCE diagram: UpdatedUserAccount(UserAccount_id, NewUserName, NewPassword, NewRole, User_Profile_id): bool
+   */
+  static async UpdatedUserAccount(
+    UserAccount_id: string,
+    NewUserName: string,
+    NewPassword: string,
+    NewRole: string,
+    User_Profile_id: string,
+  ): Promise<boolean> {
+    const supabase = createServerClient();
+
+    // Check username uniqueness, excluding the current user
+    const { data: existing } = await supabase
+      .from('user_profiles')
+      .select('id')
+      .eq('username', NewUserName)
+      .neq('id', UserAccount_id)
+      .maybeSingle();
+
+    if (existing) {
+      return false;
+    }
+
+    const updateData: Record<string, string> = {
+      username: NewUserName,
+      role: NewRole,
+      updated_at: new Date().toISOString(),
+    };
+
+    if (NewPassword) {
+      updateData.password_hash = await bcrypt.hash(NewPassword, 10);
+    }
+
+    const { error } = await supabase
+      .from('user_profiles')
+      .update(updateData)
+      .eq('id', User_Profile_id);
+
+    return !error;
+  }
+
+  /**
+   * Fetch the freshly updated user account record.
+   * Signature matches BCE diagram: Get_Updated(userAccount_id): UserAccount
+   */
+  static async Get_Updated(userAccount_id: string): Promise<UserAccount | null> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('id', userAccount_id)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+
+    return new UserAccount(data);
   }
 
   /**

@@ -31,6 +31,63 @@ export class UserProfile {
   }
 
   /**
+   * Create a new user profile with personal details.
+   * Signature matches BCE diagram: CreateUserProfile(UserProfile_id, Account_id, Account_Password, DOB, Address, PhoneNumber, Role): bool
+   *
+   * @returns false if the profile already exists or on DB error
+   */
+  static async CreateUserProfile(
+    UserProfile_id: string,
+    Account_id: string,
+    Account_Password: string,
+    DOB: string,
+    Address: string,
+    PhoneNumber: string,
+    Role: string,
+  ): Promise<boolean> {
+    const supabase = createServerClient();
+
+    // Alternate flow: check if profile already exists for this account
+    const { data: existing } = await supabase
+      .from('user_profile_details')
+      .select('id')
+      .eq('account_id', Account_id)
+      .maybeSingle();
+
+    if (existing) {
+      return false;
+    }
+
+    const insertData: Record<string, string> = {
+      account_id: Account_id,
+      dob: DOB,
+      address: Address,
+      phone_number: PhoneNumber,
+      role: Role,
+    };
+
+    if (UserProfile_id) {
+      insertData.id = UserProfile_id;
+    }
+
+    const { error } = await supabase.from('user_profile_details').insert(insertData);
+
+    if (error) {
+      return false;
+    }
+
+    if (Account_Password) {
+      const passwordHash = await bcrypt.hash(Account_Password, 10);
+      await supabase
+        .from('user_profiles')
+        .update({ password_hash: passwordHash, updated_at: new Date().toISOString() })
+        .eq('id', Account_id);
+    }
+
+    return true;
+  }
+
+  /**
    * Verify user credentials against the database.
    * Signature matches BCE diagram: verify_credentials(username, password, role): tuple
    *
