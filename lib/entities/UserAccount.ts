@@ -110,6 +110,21 @@ export class UserAccount {
   }
 
   /**
+   * Suspend a user account by setting status to 'suspended'.
+   * Signature matches BCE diagram: SuspendUserAccount(UserAccount_id): bool
+   */
+  static async SuspendUserAccount(UserAccount_id: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('user_profiles')
+      .update({ status: 'suspended', updated_at: new Date().toISOString() })
+      .eq('id', UserAccount_id);
+
+    return !error;
+  }
+
+  /**
    * Update an existing user account.
    * Signature matches BCE diagram: UpdatedUserAccount(UserAccount_id, NewUserName, NewPassword, NewRole, User_Profile_id): bool
    */
