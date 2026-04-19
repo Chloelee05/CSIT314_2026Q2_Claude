@@ -47,14 +47,17 @@ export class UserProfile {
   ): Promise<boolean> {
     const supabase = createServerClient();
 
-    // Alternate flow: check if profile already exists for this account
-    const { data: existing } = await supabase
+    console.log("1. Checking if profile exists for:", Account_id);
+    const { data: existing, error: existError } = await supabase
       .from('user_profile_details')
       .select('id')
       .eq('account_id', Account_id)
       .maybeSingle();
 
+    if (existError) console.error("DB Check Error:", existError);
+
     if (existing) {
+      console.log("2. FAILED: Profile actually already exists in DB!", existing);
       return false;
     }
 
@@ -70,11 +73,15 @@ export class UserProfile {
       insertData.id = UserProfile_id;
     }
 
+    console.log("3. Attempting to insert:", insertData);
     const { error } = await supabase.from('user_profile_details').insert(insertData);
 
     if (error) {
+      console.error("4. FATAL DB INSERT ERROR:", error); // THIS WILL REVEAL THE BUG
       return false;
     }
+
+    console.log("5. DB Insert Successful!");
 
     if (Account_Password) {
       const passwordHash = await bcrypt.hash(Account_Password, 10);
@@ -86,7 +93,6 @@ export class UserProfile {
 
     return true;
   }
-
   /**
    * Verify user credentials against the database.
    * Signature matches BCE diagram: verify_credentials(username, password, role): tuple
@@ -125,5 +131,45 @@ export class UserProfile {
     }
 
     return [true, 'Credentials verified.', new UserProfile(data)];
+  }
+
+  /**
+   * Fetch all profile credentials for the list view.
+   */
+  static async fetchAllProfiles() {
+    const supabase = createServerClient();
+    
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('id, username')
+      .order('username');
+
+    if (error) {
+      console.error("Supabase Fetch Error:", error);
+      return [];
+    }
+    return data;
+  }
+
+
+  /**
+   * Fetch profile personal particulars.
+   * Matches View User Profile BCE sequence: fetchProfile(userId: str): dict
+   */
+  static async fetchProfile(accountId: string): Promise<Record<string, any> | null> {
+    const supabase = createServerClient();
+    
+    // Fetching the personal particulars based on the system sketch
+    const { data, error } = await supabase
+      .from('user_profile_details')
+      .select('account_id, dob, address, phone_number')
+      .eq('account_id', accountId)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+    
+    return data;
   }
 }
