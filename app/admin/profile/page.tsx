@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { ProfileViewController } from '@/lib/controllers/ProfileViewController';
+import SuspendUserProfileBoundary from './suspend/SuspendUserProfileBoundary';
 import Link from 'next/link';
 
 export default async function ProfileListPage() {
@@ -82,7 +83,7 @@ export default async function ProfileListPage() {
                       {profile.username}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex justify-end gap-4">
+                      <div className="flex items-center justify-end gap-4">
                         <Link 
                           href={`/admin/profile/${profile.id}`} 
                           className="text-indigo-600 hover:text-indigo-900"
@@ -95,6 +96,15 @@ export default async function ProfileListPage() {
                         >
                           Update profile
                         </Link>
+                        
+                        {/* Added a vertical divider for clean UI */}
+                        <span className="text-gray-300">|</span>
+                        
+                        {/* The Suspend Button is now in the same action row! */}
+                        <SuspendUserProfileBoundary 
+                          userprofile_id={profile.id} 
+                          currentStatus={profile.status || 'active'} 
+                        />
                       </div>
                     </td>
                   </tr>

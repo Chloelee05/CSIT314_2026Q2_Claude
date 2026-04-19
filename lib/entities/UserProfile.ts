@@ -141,7 +141,7 @@ export class UserProfile {
     
     const { data, error } = await supabase
       .from('user_profiles')
-      .select('id, username')
+      .select('id, username, status')
       .order('username');
 
     if (error) {
@@ -261,4 +261,32 @@ export class UserProfile {
     return data;
   }
 
+  /**
+   * BCE Method: SuspendUserProfile
+   * Updates the user's status to 'suspended' in the database.
+   */
+  static async SuspendUserProfile(userprofile_id: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    try {
+      const { error } = await supabase
+        .from('user_profiles')
+        .update({ 
+          status: 'suspended', 
+          updated_at: new Date().toISOString() 
+        })
+        .eq('id', userprofile_id);
+
+      if (error) {
+        console.error("Failed to suspend user profile:", error);
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error("Exception during suspension:", error);
+      return false;
+    }
+  }
+  
 }
