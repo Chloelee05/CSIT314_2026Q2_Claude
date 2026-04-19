@@ -39,7 +39,7 @@ export default async function ProfileListPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">
-            System Profiles (Credentials)
+            System Profiles
           </h2>
           <div className="flex gap-3">
             <Link
@@ -81,14 +81,21 @@ export default async function ProfileListPage() {
                     <td className="px-4 py-3 text-gray-900 font-medium">
                       {profile.username}
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      {/* This links directly to the [id] page you built earlier! */}
-                      <Link
-                        href={`/admin/profile/${profile.id}`}
-                        className="text-indigo-600 hover:text-indigo-800 font-medium transition"
-                      >
-                        View profile
-                      </Link>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end gap-4">
+                        <Link 
+                          href={`/admin/profile/${profile.id}`} 
+                          className="text-indigo-600 hover:text-indigo-900"
+                        >
+                          View profile
+                        </Link>
+                        <Link 
+                          href={`/admin/profile/update?id=${profile.id}`} 
+                          className="text-blue-600 hover:text-blue-900"
+                        >
+                          Update profile
+                        </Link>
+                      </div>
                     </td>
                   </tr>
                 ))}
