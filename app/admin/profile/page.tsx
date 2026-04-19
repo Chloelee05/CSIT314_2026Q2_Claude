@@ -2,17 +2,36 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { ProfileViewController } from '@/lib/controllers/ProfileViewController';
+import { SearchUserProfileController } from '@/lib/controllers/SearchUserProfileController';
 import SuspendUserProfileBoundary from './suspend/SuspendUserProfileBoundary';
+import SearchUserProfileBoundary from './search/SearchUserProfileBoundary';
 import Link from 'next/link';
 
-export default async function ProfileListPage() {
+// Update the function to accept searchParams (Keywords and Filters)
+export default async function ProfileListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ keyword?: string; search_by?: string }>;
+}) {
   const session = await getSession();
   if (!session || session.role !== 'admin') {
     redirect('/login');
   }
 
-  // Retrieve the list of profiles
-  const profiles = await ProfileViewController.getProfileList();
+  // 1. Extract search queries from the URL
+  const resolvedParams = await searchParams;
+  const keyword = resolvedParams.keyword || '';
+  const searchBy = resolvedParams.search_by || 'FullName';
+
+  // 2. BCE Logic: Determine which controller method to call
+  let profiles;
+  if (keyword) {
+    // Call the Search Controller if a keyword exists
+    profiles = await SearchUserProfileController.SearchUserProfile(keyword, searchBy);
+  } else {
+    // Otherwise, retrieve the full list as usual
+    profiles = await ProfileViewController.getProfileList();
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -52,9 +71,17 @@ export default async function ProfileListPage() {
           </div>
         </div>
 
+        {/* 3. Insert Search Bar (Passes current values to keep form filled) */}
+        <SearchUserProfileBoundary 
+            currentKeyword={keyword} 
+            currentSearchBy={searchBy} 
+        />
+
         {profiles.length === 0 ? (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
-            <p className="text-gray-500">No system profiles found.</p>
+            <p className="text-gray-500">
+                {keyword ? 'No system profiles match your search.' : 'No system profiles found.'}
+            </p>
           </div>
         ) : (
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -97,10 +124,8 @@ export default async function ProfileListPage() {
                           Update profile
                         </Link>
                         
-                        {/* Added a vertical divider for clean UI */}
                         <span className="text-gray-300">|</span>
                         
-                        {/* The Suspend Button is now in the same action row! */}
                         <SuspendUserProfileBoundary 
                           userprofile_id={profile.id} 
                           currentStatus={profile.status || 'active'} 

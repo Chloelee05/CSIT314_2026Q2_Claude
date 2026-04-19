@@ -289,4 +289,40 @@ export class UserProfile {
     }
   }
   
+  /**
+   * BCE Method: SearchUserProfile
+   * Searches user profiles based on a keyword and a specific column.
+   */
+  static async SearchUserProfile(Keyword: string, search_by: string = "FullName"): Promise<any[]> {
+    const supabase = createServerClient();
+    
+    // Map the BCE diagram's "search_by" strings to actual database columns
+    let dbColumn = "full_name";
+    if (search_by === "FullName") dbColumn = "full_name";
+    if (search_by === "ID") dbColumn = "id";
+    if (search_by === "Role") dbColumn = "role";
+    if (search_by === "Username") dbColumn = "username";
+
+    let query = supabase.from('user_profiles').select('id, username, status');
+
+    if (Keyword && Keyword.trim() !== '') {
+      if (dbColumn === 'id') {
+        // UUIDs require exact match
+        query = query.eq('id', Keyword.trim());
+      } else {
+        // Text columns can use partial matching (ilike is case-insensitive)
+        query = query.ilike(dbColumn, `%${Keyword.trim()}%`);
+      }
+    }
+
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error("Failed to search user profiles:", error);
+      return [];
+    }
+
+    return data || [];
+  }
+
 }
