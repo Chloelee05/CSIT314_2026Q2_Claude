@@ -83,6 +83,17 @@ export default async function AdminDashboard() {
               Add personal details to a user account
             </p>
           </Link>
+          <Link
+            href="/admin/profile"
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:border-indigo-300 hover:shadow-md transition group"
+          >
+            <h3 className="font-semibold text-gray-900 group-hover:text-indigo-600 transition">
+              View Profiles
+            </h3>
+            <p className="text-sm text-gray-500 mt-1">
+              Browse and inspect user profiles
+            </p>
+          </Link>
         </div>
       </main>
     </div>
