@@ -5,8 +5,9 @@ import { redirect } from 'next/navigation';
 import { ViewFRAStatisticsBoundary } from './ViewFRAStatisticsBoundary';
 
 /**
- * BCE Boundary: statistics page — User Story #32
- * Sequence: clickViewStatistics → getViewCount(fraId) → fetchViewCount(fraId) → displayViewCount
+ * BCE Boundary: statistics page — User Story #32, #33
+ * #32: getViewCount → FRAData.fetchViewCount → displayViewCount
+ * #33: getShortlistCount → SavedFRAData.countShortlists → displayShortlistCount
  */
 export default async function ActivityStatisticsPage({
   params,
@@ -30,19 +31,27 @@ export default async function ActivityStatisticsPage({
     redirect('/dashboard/activities');
   }
 
-  const [ok, count, errorMessage] = await ViewStatisticsController.getViewCount(
+  const [viewOk, viewCount, viewError] = await ViewStatisticsController.getViewCount(
     activityId,
     session.userId,
   );
+  const [slOk, shortlistCount, shortlistError] =
+    await ViewStatisticsController.getShortlistCount(
+      activityId,
+      session.userId,
+    );
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
       <ViewFRAStatisticsBoundary
         activityId={activityId}
         activityTitle={activity.title}
-        success={ok}
-        viewCount={count}
-        errorMessage={ok ? null : errorMessage}
+        viewSuccess={viewOk}
+        viewCount={viewCount}
+        viewErrorMessage={viewOk ? null : viewError}
+        shortlistSuccess={slOk}
+        shortlistCount={shortlistCount}
+        shortlistErrorMessage={slOk ? null : shortlistError}
       />
     </div>
   );
