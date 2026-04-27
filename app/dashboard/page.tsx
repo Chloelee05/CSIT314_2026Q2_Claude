@@ -54,6 +54,16 @@ export default async function UserDashboard() {
             You are logged in as{' '}
             <span className="font-medium text-indigo-600">{roleLabel}</span>.
           </p>
+          {session.role === 'fund_raiser' && (
+            <p className="mt-4">
+              <a
+                href="/dashboard/activities/create"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                Create fundraising activity →
+              </a>
+            </p>
+          )}
         </div>
       </main>
     </div>

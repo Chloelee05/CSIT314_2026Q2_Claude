@@ -54,6 +54,28 @@ CREATE POLICY "Allow all operations for anon on user_profile_details"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: FundraisingActivity (User Story #18)
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS fundraising_activities (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  title          TEXT NOT NULL,
+  description    TEXT NOT NULL,
+  goal_amount    NUMERIC(14, 2) NOT NULL CHECK (goal_amount > 0),
+  category       TEXT NOT NULL,
+  created_at     TIMESTAMPTZ DEFAULT NOW(),
+  updated_at     TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE fundraising_activities ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on fundraising_activities"
+  ON fundraising_activities
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- Seed data (5 test accounts)
 -- ──────────────────────────────────────────────
 INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES
