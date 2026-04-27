@@ -14,8 +14,9 @@ export interface LoginState {
  * BCE Boundary action: process_login()
  *
  * Routes to the correct controller method based on login mode:
- * - Admin (#16): LoginController.Login(username, password, role)
- * - User  (#49): LoginController.authenticateUser(email, pw)
+ * - Username mode (#16 / #23): LoginController.Login(username, password, role)
+ *   → role selected from dropdown (admin, fund_raiser, donee, platform_management)
+ * - Email mode (#49): LoginController.authenticateUser(email, pw)
  */
 export async function loginAction(
   _prevState: LoginState,
@@ -29,24 +30,28 @@ export async function loginAction(
   }
 
   if (loginMode === 'admin') {
-    // User Story #16: Admin login flow (username + role)
+    // User Story #16 / #23: Username + role login flow
     const username = formData.get('username') as string;
-    if (!username) {
+    const role = formData.get('role') as string;
+    if (!username || !role) {
       return { success: false, message: 'All fields are required.' };
     }
 
     const [success, message] = await LoginController.Login(
       username,
       password,
-      'admin',
+      role,
     );
 
     if (!success) {
       return { success: false, message };
     }
 
-    // show_dashboard(): redirect to Admin Homepage
-    redirect('/admin/dashboard');
+    // show_dashboard(): redirect based on role
+    if (role === 'admin') {
+      redirect('/admin/dashboard');
+    }
+    redirect('/dashboard');
   } else {
     // User Story #49: User login flow (email + password)
     const email = formData.get('email') as string;

@@ -13,13 +13,14 @@ interface LoginFormProps {
 }
 
 /**
- * BCE Boundary: LoginBoundary (#16) / LoginUI (#49)
+ * BCE Boundary: LoginBoundary (#16, #23) / LoginUI (#49)
  *
- * Admin mode (#16):
+ * Username mode (#16 / #23):
  *   - process_login() via LoginController.Login(username, password, role)
- *   - show_dashboard() → redirect to /admin/dashboard
+ *   - show_dashboard() → redirect based on role
+ *   - Role selected from dropdown (#23: FR selects "Fundraiser" role)
  *
- * User mode (#49):
+ * Email mode (#49):
  *   - submitCredentials(email, password) via LoginController.authenticateUser(email, pw)
  *   - displayDashboard() → redirect to /dashboard
  *   - displayError(msg) → error banner
@@ -43,7 +44,7 @@ export default function LoginForm({ logoutMessage }: LoginFormProps) {
             </p>
           </div>
 
-          {/* Mode tabs: Admin (#16) / User (#49) */}
+          {/* Mode tabs: Username login (#16/#23) / Email login (#49) */}
           <div className="flex rounded-lg bg-gray-100 p-1 mb-6">
             <button
               type="button"
@@ -54,7 +55,7 @@ export default function LoginForm({ logoutMessage }: LoginFormProps) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Admin
+              Username
             </button>
             <button
               type="button"
@@ -65,7 +66,7 @@ export default function LoginForm({ logoutMessage }: LoginFormProps) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              User
+              Email
             </button>
           </div>
 
@@ -92,24 +93,45 @@ export default function LoginForm({ logoutMessage }: LoginFormProps) {
             />
 
             {isAdmin ? (
-              /* #16 Admin: Username field */
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block text-sm font-medium text-gray-700 mb-1"
-                >
-                  Username
-                </label>
-                <input
-                  id="username"
-                  name="username"
-                  type="text"
-                  required
-                  autoComplete="username"
-                  placeholder="Enter your username"
-                  className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-                />
-              </div>
+              /* #16 / #23: Username + Role login */
+              <>
+                <div>
+                  <label
+                    htmlFor="role"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Role
+                  </label>
+                  <select
+                    id="role"
+                    name="role"
+                    required
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  >
+                    <option value="admin">Admin</option>
+                    <option value="fund_raiser">Fundraiser</option>
+                    <option value="donee">Donee</option>
+                    <option value="platform_management">Platform Management</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    htmlFor="username"
+                    className="block text-sm font-medium text-gray-700 mb-1"
+                  >
+                    Username
+                  </label>
+                  <input
+                    id="username"
+                    name="username"
+                    type="text"
+                    required
+                    autoComplete="username"
+                    placeholder="Enter your username"
+                    className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+                  />
+                </div>
+              </>
             ) : (
               /* #49 User: Email field */
               <div>
