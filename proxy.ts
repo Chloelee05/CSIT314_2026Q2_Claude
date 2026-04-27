@@ -17,9 +17,9 @@ async function getSessionFromRequest(request: NextRequest) {
 }
 
 function dashboardUrl(role: string, baseUrl: string) {
-  return role === 'admin'
-    ? new URL('/admin/dashboard', baseUrl)
-    : new URL('/dashboard', baseUrl);
+  if (role === 'admin') return new URL('/admin/dashboard', baseUrl);
+  if (role === 'donee') return new URL('/donee/activity/search', baseUrl);
+  return new URL('/dashboard', baseUrl);
 }
 
 export async function proxy(request: NextRequest) {
