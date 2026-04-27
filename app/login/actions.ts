@@ -2,7 +2,6 @@
 
 import { LoginController } from '@/lib/controllers/LoginController';
 import { LogoutBoundary } from '@/lib/boundaries/LogoutBoundary';
-import { deleteSession } from '@/lib/auth';
 import { LogoutController } from '@/lib/controllers/LogoutController';
 import { deleteSession, getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
@@ -32,7 +31,6 @@ export async function loginAction(
   }
 
   if (loginMode === 'admin') {
-    // User Story #16 / #23: Username + role login flow
     const username = formData.get('username') as string;
     const role = formData.get('role') as string;
     if (!username || !role) {
@@ -49,13 +47,11 @@ export async function loginAction(
       return { success: false, message };
     }
 
-    // show_dashboard(): redirect based on role
     if (role === 'admin') {
       redirect('/admin/dashboard');
     }
     redirect('/dashboard');
   } else {
-    // User Story #49: User login flow (email + password)
     const email = formData.get('email') as string;
     if (!email) {
       return { success: false, message: 'All fields are required.' };
@@ -70,7 +66,6 @@ export async function loginAction(
       return { success: false, message };
     }
 
-    // displayDashboard(): redirect to User dashboard
     redirect('/dashboard');
   }
 }
@@ -82,10 +77,8 @@ export async function loginAction(
  *   Logout() → DisplayMessage(msg) → redirectToLoginPage()
  */
 export async function adminLogoutAction(): Promise<void> {
-  // Logout(): remove all session data
   await deleteSession();
 
-  // DisplayMessage + redirectToLoginPage
   redirect(
     '/login?message=' +
       encodeURIComponent('You have been logout successfully'),
@@ -94,18 +87,23 @@ export async function adminLogoutAction(): Promise<void> {
 
 /**
  * User Story #24 — FR (and all non–admin) user logout from /dashboard
- * (BCE: LogoutBoundary only — process_logout() → show_login_page())
+ * User Story #50 — LogoutController for donee-specific logout
  *
- * User Story #50 (LogoutController/Entity) is superseded here for this route;
- * session is cleared via deleteSession() and the user is sent to the login page
- * with a success message. Exception 2a: expired session still lands on /login.
+ * Checks the current role: donees are sent to /donee/account/login,
+ * all other roles get the standard /login page with a success message.
  */
 export async function userLogoutAction(): Promise<void> {
-  return LogoutBoundary.process_logout();
   const session = await getSession();
   const role = session?.role;
 
   await LogoutController.logout();
 
-  redirect(role === 'donee' ? '/donee/account/login' : '/login');
+  if (role === 'donee') {
+    redirect('/donee/account/login');
+  }
+
+  redirect(
+    '/login?message=' +
+      encodeURIComponent('Logged out successfully.'),
+  );
 }

@@ -1,9 +1,9 @@
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 
 /**
- * BCE Controller: ViewActivityController (User Story #19)
+ * BCE Controller: ViewActivityController (User Story #19 + donee view)
  *
- * Mediates read access to fundraising activities for a Fund Raiser.
+ * Mediates read access to fundraising activities.
  */
 export class ViewActivityController {
   /**
@@ -34,5 +34,15 @@ export class ViewActivityController {
       return null;
     }
     return activity;
+  }
+
+  /**
+   * Load a single activity by ID (for donee viewing).
+   * BCE diagram: ViewActivity(activityId) — returns [success, message, activity | null]
+   */
+  static async ViewActivity(
+    activityId: string,
+  ): Promise<[boolean, string, FundraisingActivity | null]> {
+    return FundraisingActivity.get_activities_details(activityId);
   }
 }

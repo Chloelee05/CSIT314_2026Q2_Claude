@@ -1,16 +1,27 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: SavedFRAData (User Story #33)
+ * BCE Entity: SavedFRAData (User Story #33 + Donee save/favourite features)
  *
- * Persists and queries which Donees have shortlisted (saved) a fundraising activity.
+ * - countShortlists: FR statistics — counts rows in `saved_fra` (User Story #33)
+ * - save / fetchSavedFRAs / delete: Donee save/favourite — uses `saved_fundraising_activities`
  */
 export class SavedFRAData {
+  id: string;
+  donee_id: string;
+  fra_id: string;
+  saved_at: string;
+
+  constructor(data: Record<string, unknown>) {
+    this.id = data.id as string;
+    this.donee_id = data.donee_id as string;
+    this.fra_id = data.fra_id as string;
+    this.saved_at = data.saved_at as string;
+  }
+
   /**
-   * Count how many Donees have shortlisted this activity.
-   * BCE diagram: countShortlists(fraId) — return tuple
-   *
-   * @returns [success, count | null, errorMessage]
+   * Count how many Donees have shortlisted this activity (via saved_fra table).
+   * BCE diagram: countShortlists(fraId) — User Story #33
    */
   static async countShortlists(
     fraId: string,
@@ -32,25 +43,9 @@ export class SavedFRAData {
 
     return [true, count ?? 0, ''];
   }
- * BCE Entity: SavedFRAData
- * Handles persistence of a Donee's saved fundraising activities.
- */
-export class SavedFRAData {
-  id: string;
-  donee_id: string;
-  fra_id: string;
-  saved_at: string;
-
-  constructor(data: Record<string, unknown>) {
-    this.id = data.id as string;
-    this.donee_id = data.donee_id as string;
-    this.fra_id = data.fra_id as string;
-    this.saved_at = data.saved_at as string;
-  }
 
   /**
-   * BCE Method: save
-   * Inserts a saved activity record for the donee.
+   * Donee saves a fundraising activity as a favourite.
    * Returns [success, message] — handles duplicate gracefully.
    */
   static async save(doneeId: string, fraId: string): Promise<[boolean, string]> {
@@ -79,7 +74,6 @@ export class SavedFRAData {
   }
 
   /**
-   * BCE Method: fetchSavedFRAs
    * Retrieves all fundraising activities saved by the donee, with campaign details.
    * Returns [success, message, savedList]
    */
@@ -121,7 +115,6 @@ export class SavedFRAData {
   }
 
   /**
-   * BCE Method: delete
    * Removes a saved activity record for the donee.
    * Returns [success, message]
    */

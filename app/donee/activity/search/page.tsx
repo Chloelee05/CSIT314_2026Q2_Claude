@@ -22,7 +22,7 @@ export default async function SearchActivityPage({
   const resolvedParams = await searchParams;
   const keyword = resolvedParams.keyword ?? '';
 
-  const [success, , activities] = await SearchActivityController.SearchActivity(keyword);
+  const [success, , activities] = await SearchActivityController.searchActiveActivities(keyword);
 
   return (
     <div className="min-h-screen bg-gray-50">

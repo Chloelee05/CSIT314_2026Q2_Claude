@@ -4,11 +4,11 @@ import { ViewCompletedActivityController } from '@/lib/controllers/ViewCompleted
 /**
  * BCE Controller: SearchActivityController (User Story #22, #34)
  *
- * Coordinates search over a Fund Raiser's own fundraising activities.
+ * Coordinates search over fundraising activities.
  */
 export class SearchActivityController {
   /**
-   * Run a keyword search over the FR's activities.
+   * Run a keyword search over the FR's own activities.
    * Signature matches BCE diagram: SearchActivity(keyword: str): tuple
    *
    * @returns [activities, noResultsMessage] where noResultsMessage is
@@ -31,11 +31,8 @@ export class SearchActivityController {
   }
 
   /**
-   * Search among **completed** (ended) activities only. Delegates to
-   * `FundraisingActivity.getCompletedByKeyword` (BCE: searchCompletedActivities → getCompletedByKeyword).
-   *
-   * @returns [completedActivities, noResultsMessage] where noResultsMessage is
-   *          "No completed fundraising activities found." when the list is empty (alt. 3a).
+   * Search among completed (ended) activities only. Delegates to
+   * ViewCompletedActivityController (BCE: searchCompletedActivities → getCompletedByKeyword).
    */
   static async searchCompletedActivities(
     keyword: string,
@@ -45,18 +42,15 @@ export class SearchActivityController {
       userId,
       keyword,
     );
+  }
 
-/**
- * BCE Controller: SearchActivityController
- */
-export class SearchActivityController {
   /**
-   * Delegates the search request to the FundraisingActivity entity.
-   * Returns a tuple: [success, message, activities]
+   * Global search for active fundraising activities (for donee browsing).
+   * Delegates to FundraisingActivity.find_active_activities(keyword).
    */
-  static async SearchActivity(
+  static async searchActiveActivities(
     keyword: string,
   ): Promise<[boolean, string, FundraisingActivity[]]> {
-    return FundraisingActivity.find_activities(keyword);
+    return FundraisingActivity.find_active_activities(keyword);
   }
 }

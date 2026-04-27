@@ -21,8 +21,6 @@ CREATE TABLE IF NOT EXISTS user_profiles (
   updated_at  TIMESTAMPTZ DEFAULT NOW()
 );
 
--- For development: allow the anon key full access to this table.
--- In production, replace with proper RLS policies.
 ALTER TABLE user_profiles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Allow all operations for anon"
@@ -54,38 +52,23 @@ CREATE POLICY "Allow all operations for anon on user_profile_details"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
--- BCE Entity: FundraisingActivity (User Story #18, #19, #20)
+-- BCE Entity: FundraisingActivity (#18, #19, #20, #25)
+-- Merged: FR-side columns (user_id, category, view_count)
+--       + donee-side columns (raised_amount, status)
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS fundraising_activities (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id        UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  user_id        UUID REFERENCES user_profiles(id) ON DELETE CASCADE,
   title          TEXT NOT NULL,
-  description    TEXT NOT NULL,
-  goal_amount    NUMERIC(14, 2) NOT NULL CHECK (goal_amount > 0),
-  category       TEXT NOT NULL,
+  description    TEXT NOT NULL DEFAULT '',
+  goal_amount    NUMERIC(14, 2) NOT NULL DEFAULT 0 CHECK (goal_amount >= 0),
+  raised_amount  NUMERIC(12, 2) NOT NULL DEFAULT 0,
+  category       TEXT NOT NULL DEFAULT 'General',
+  status         TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'completed')),
   end_date       DATE,
   view_count     INTEGER NOT NULL DEFAULT 0 CHECK (view_count >= 0),
   created_at     TIMESTAMPTZ DEFAULT NOW(),
   updated_at     TIMESTAMPTZ DEFAULT NOW()
-);
-
--- If upgrading an existing database, run:
--- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS end_date DATE;
--- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0;
-
--- BCE Entity: FundraisingActivity (#25)
--- ──────────────────────────────────────────────
-CREATE TABLE IF NOT EXISTS fundraising_activities (
-  id            UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  title         TEXT NOT NULL,
-  description   TEXT,
-  goal_amount   NUMERIC(12, 2) NOT NULL DEFAULT 0,
-  raised_amount NUMERIC(12, 2) NOT NULL DEFAULT 0,
-  status        TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'completed')),
-  organizer_id  UUID REFERENCES user_profiles(id) ON DELETE SET NULL,
-  end_date      DATE,
-  created_at    TIMESTAMPTZ DEFAULT NOW(),
-  updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
 
 ALTER TABLE fundraising_activities ENABLE ROW LEVEL SECURITY;
@@ -98,7 +81,7 @@ CREATE POLICY "Allow all operations for anon on fundraising_activities"
 
 -- ──────────────────────────────────────────────
 -- BCE Entity: SavedFRAData (User Story #33)
--- Donees “shortlist” (save/favorite) fundraising activities; one row per (donee, activity).
+-- FR statistics: shortlist count per activity
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS saved_fra (
   id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -108,14 +91,17 @@ CREATE TABLE IF NOT EXISTS saved_fra (
   CONSTRAINT saved_fra_user_activity_unique UNIQUE (user_id, fundraising_activity_id)
 );
 
--- If upgrading an existing database:
--- (run the CREATE TABLE above, or) ensure foreign keys and unique constraint match.
-
 ALTER TABLE saved_fra ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Allow all operations for anon on saved_fra"
   ON saved_fra
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- BCE Entity: SavedFRAData (#27)
+-- Donee favourites / saved activities
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS saved_fundraising_activities (
   id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -132,16 +118,6 @@ CREATE POLICY "Allow all operations for anon on saved_fundraising_activities"
   FOR ALL
   USING (true)
   WITH CHECK (true);
-
--- ──────────────────────────────────────────────
--- Seed data (5 test accounts)
--- ──────────────────────────────────────────────
-INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES
-  ('admin',        crypt('admin123',    gen_salt('bf', 10)), 'admin',               'active',    'System Administrator', 'admin@fundraise.com'),
-  ('fundraiser1',  crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'active',    'Alice Johnson',        'alice@fundraise.com'),
-  ('donee1',       crypt('password123', gen_salt('bf', 10)), 'donee',               'active',    'Bob Smith',            'bob@fundraise.com'),
-  ('platformmgr',  crypt('password123', gen_salt('bf', 10)), 'platform_management', 'active',    'Charlie Brown',        'charlie@fundraise.com'),
-  ('suspended1',   crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'suspended', 'Suspended Account',    'suspended@fundraise.com');
 
 -- ──────────────────────────────────────────────
 -- BCE Entity: Donation (#36)
@@ -163,15 +139,25 @@ CREATE POLICY "Allow all operations for anon on donations"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- Seed data (5 test accounts)
+-- ──────────────────────────────────────────────
+INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES
+  ('admin',        crypt('admin123',    gen_salt('bf', 10)), 'admin',               'active',    'System Administrator', 'admin@fundraise.com'),
+  ('fundraiser1',  crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'active',    'Alice Johnson',        'alice@fundraise.com'),
+  ('donee1',       crypt('password123', gen_salt('bf', 10)), 'donee',               'active',    'Bob Smith',            'bob@fundraise.com'),
+  ('platformmgr',  crypt('password123', gen_salt('bf', 10)), 'platform_management', 'active',    'Charlie Brown',        'charlie@fundraise.com'),
+  ('suspended1',   crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'suspended', 'Suspended Account',    'suspended@fundraise.com');
+
+-- ──────────────────────────────────────────────
 -- Seed data: fundraising_activities
 -- ──────────────────────────────────────────────
-INSERT INTO fundraising_activities (title, description, goal_amount, raised_amount, status, end_date) VALUES
-  ('Help Children Get Education',   'Raising funds to provide school supplies and scholarships for underprivileged children.', 10000.00, 6500.00,  'active',    '2026-08-31'),
-  ('Clean Water for Villages',      'Building wells and water purification systems in rural communities.',                       25000.00, 12000.00, 'active',    '2026-09-15'),
-  ('Animal Shelter Support',        'Funding food, medical care, and housing for rescued animals at the local shelter.',         5000.00,  3200.00,  'active',    '2026-07-01'),
-  ('Medical Aid for Seniors',       'Providing free medical check-ups and medicine for elderly residents in need.',             15000.00, 9800.00,  'active',    '2026-10-01'),
-  ('Disaster Relief Fund',          'Emergency supplies and rebuilding support for families affected by recent floods.',        50000.00, 31000.00, 'active',    '2026-06-30'),
-  ('Completed Campaign Example',    'This campaign has ended.',                                                                  1000.00,  1000.00,  'completed', '2026-01-01');
+INSERT INTO fundraising_activities (title, description, goal_amount, raised_amount, status, category, end_date) VALUES
+  ('Help Children Get Education',   'Raising funds to provide school supplies and scholarships for underprivileged children.', 10000.00, 6500.00,  'active',    'Education',   '2026-08-31'),
+  ('Clean Water for Villages',      'Building wells and water purification systems in rural communities.',                       25000.00, 12000.00, 'active',    'Environment', '2026-09-15'),
+  ('Animal Shelter Support',        'Funding food, medical care, and housing for rescued animals at the local shelter.',         5000.00,  3200.00,  'active',    'Animals',     '2026-07-01'),
+  ('Medical Aid for Seniors',       'Providing free medical check-ups and medicine for elderly residents in need.',             15000.00, 9800.00,  'active',    'Health',      '2026-10-01'),
+  ('Disaster Relief Fund',          'Emergency supplies and rebuilding support for families affected by recent floods.',        50000.00, 31000.00, 'active',    'Emergency',   '2026-06-30'),
+  ('Completed Campaign Example',    'This campaign has ended.',                                                                  1000.00,  1000.00,  'completed', 'General',     '2026-01-01');
 
 -- ──────────────────────────────────────────────
 -- Seed data: donations (for donee1 / Bob Smith)
