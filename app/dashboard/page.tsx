@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { userLogoutAction } from '@/app/login/actions';
+import { doneeLogoutAction } from '@/app/donee/account/logout/actions';
 import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -39,7 +40,7 @@ export default async function UserDashboard() {
               Logged in as{' '}
               <span className="font-medium">{session.username}</span>
             </span>
-            <form action={userLogoutAction}>
+            <form action={session.role === 'donee' ? doneeLogoutAction : userLogoutAction}>
               <button
                 type="submit"
                 className="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer"
