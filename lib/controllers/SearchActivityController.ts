@@ -1,7 +1,7 @@
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 
 /**
- * BCE Controller: SearchActivityController (User Story #22)
+ * BCE Controller: SearchActivityController (User Story #22, #34)
  *
  * Coordinates search over a Fund Raiser's own fundraising activities.
  */
@@ -25,6 +25,30 @@ export class SearchActivityController {
     const trimmed = keyword.trim();
     if (trimmed && activities.length === 0) {
       return [activities, 'No activities found.'];
+    }
+    return [activities, null];
+  }
+
+  /**
+   * Search among **completed** (ended) activities only. Delegates to
+   * `FundraisingActivity.getCompletedByKeyword` (BCE: searchCompletedActivities → getCompletedByKeyword).
+   *
+   * @returns [completedActivities, noResultsMessage] where noResultsMessage is
+   *          "No completed fundraising activities found." when the list is empty (alt. 3a).
+   */
+  static async searchCompletedActivities(
+    keyword: string,
+    userId: string,
+  ): Promise<[FundraisingActivity[], string | null]> {
+    const activities = await FundraisingActivity.getCompletedByKeyword(
+      keyword,
+      userId,
+    );
+    if (activities.length === 0) {
+      return [
+        activities,
+        'No completed fundraising activities found.',
+      ];
     }
     return [activities, null];
   }

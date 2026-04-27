@@ -60,12 +60,20 @@ export default function ViewActivityUI({
             Search, view, edit, or remove your campaigns.
           </p>
         </div>
-        <a
-          href="/dashboard/activities/create"
-          className="inline-flex justify-center text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg"
-        >
-          Create activity
-        </a>
+        <div className="flex flex-wrap gap-2">
+          <a
+            href="/dashboard/activities/completed"
+            className="inline-flex justify-center text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-4 py-2 rounded-lg"
+          >
+            Search completed
+          </a>
+          <a
+            href="/dashboard/activities/create"
+            className="inline-flex justify-center text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg"
+          >
+            Create activity
+          </a>
+        </div>
       </div>
 
       <SearchActivityBoundary initialQuery={initialQuery}>

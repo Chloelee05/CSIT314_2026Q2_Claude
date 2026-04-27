@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22, #32)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22, #32, #34)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -114,6 +114,42 @@ export class FundraisingActivity {
     }
     const lower = kw.toLowerCase();
     return all.filter(
+      (a) =>
+        a.title.toLowerCase().includes(lower) ||
+        a.description.toLowerCase().includes(lower) ||
+        a.category.toLowerCase().includes(lower),
+    );
+  }
+
+  /**
+   * True when the campaign has an end date on or before today (UTC calendar day).
+   * User Story #34: “completed” = past/ended activities.
+   */
+  static isCompletedActivity(a: FundraisingActivity): boolean {
+    if (!a.end_date) return false;
+    const end = a.end_date.slice(0, 10);
+    const today = new Date().toISOString().slice(0, 10);
+    return end <= today;
+  }
+
+  /**
+   * Completed activities for a user (by end date) that match the keyword in title, description, or category.
+   * BCE diagram: getCompletedByKeyword(keyword) — scoping to the FR uses `userId` (from session in the app).
+   */
+  static async getCompletedByKeyword(
+    keyword: string,
+    userId: string,
+  ): Promise<FundraisingActivity[]> {
+    const all = await FundraisingActivity.getByUserId(userId);
+    const completed = all.filter((a) =>
+      FundraisingActivity.isCompletedActivity(a),
+    );
+    const kw = keyword.trim();
+    if (!kw) {
+      return completed;
+    }
+    const lower = kw.toLowerCase();
+    return completed.filter(
       (a) =>
         a.title.toLowerCase().includes(lower) ||
         a.description.toLowerCase().includes(lower) ||

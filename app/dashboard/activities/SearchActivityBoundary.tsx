@@ -5,28 +5,36 @@
  *
  * - process_search() — GET form submit to /dashboard/activities?q=…
  * - show_results() — parent passes list + messages as children
+ * User Story #34: `formAction` targets `/dashboard/activities/completed`
  */
 export function SearchActivityBoundary({
   initialQuery,
   children,
+  formAction = '/dashboard/activities',
+  searchAriaLabel = 'Search fundraising activities',
+  searchPlaceholder = 'Search by title, description, or category…',
 }: {
   initialQuery: string;
   children: React.ReactNode;
+  formAction?: string;
+  searchAriaLabel?: string;
+  searchPlaceholder?: string;
 }) {
+  const clearHref = formAction;
   return (
     <div>
       <form
         method="get"
-        action="/dashboard/activities"
+        action={formAction}
         className="mb-6 flex flex-col sm:flex-row gap-2 sm:items-center"
         role="search"
-        aria-label="Search fundraising activities"
+        aria-label={searchAriaLabel}
       >
         <input
           type="search"
           name="q"
           defaultValue={initialQuery}
-          placeholder="Search by title, description, or category…"
+          placeholder={searchPlaceholder}
           className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
         />
         <div className="flex gap-2">
@@ -38,7 +46,7 @@ export function SearchActivityBoundary({
           </button>
           {initialQuery ? (
             <a
-              href="/dashboard/activities"
+              href={clearHref}
               className="px-4 py-2 rounded-lg text-sm font-medium text-gray-700 border border-gray-300 bg-white hover:bg-gray-50 inline-flex items-center"
             >
               Clear

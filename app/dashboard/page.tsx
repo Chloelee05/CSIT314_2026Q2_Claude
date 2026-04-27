@@ -69,6 +69,12 @@ export default async function UserDashboard() {
               >
                 Create fundraising activity →
               </a>
+              <a
+                href="/dashboard/activities/completed"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                Search completed activities →
+              </a>
             </p>
           )}
         </div>
