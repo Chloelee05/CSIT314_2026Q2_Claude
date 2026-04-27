@@ -11,6 +11,7 @@ const ROLE_LABELS: Record<string, string> = {
 /**
  * User Dashboard — shown after successful non-admin login.
  * BCE Boundary: show_dashboard() target for non-admin roles.
+ * Logout (User Story #24): form action `userLogoutAction` → LogoutBoundary.process_logout()
  */
 export default async function UserDashboard() {
   const session = await getSession();

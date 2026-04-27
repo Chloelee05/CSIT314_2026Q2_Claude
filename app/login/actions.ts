@@ -1,7 +1,7 @@
 'use server';
 
 import { LoginController } from '@/lib/controllers/LoginController';
-import { LogoutController } from '@/lib/controllers/LogoutController';
+import { LogoutBoundary } from '@/lib/boundaries/LogoutBoundary';
 import { deleteSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -91,19 +91,13 @@ export async function adminLogoutAction(): Promise<void> {
 }
 
 /**
- * User Story #50 — User Logout (BCE: LogoutUI → LogoutController → UserAccount)
+ * User Story #24 — FR (and all non–admin) user logout from /dashboard
+ * (BCE: LogoutBoundary only — process_logout() → show_login_page())
  *
- * Sequence:
- *   clickLogout() → LogoutController.logout() → UserAccount.clearSession()
- *   → displayLoginPage()
- *
- * ALT: session already expired → still redirects to login page
+ * User Story #50 (LogoutController/Entity) is superseded here for this route;
+ * session is cleared via deleteSession() and the user is sent to the login page
+ * with a success message. Exception 2a: expired session still lands on /login.
  */
 export async function userLogoutAction(): Promise<void> {
-  // LogoutUI → LogoutController: logout()
-  // LogoutController → UserAccount: clearSession()
-  await LogoutController.logout();
-
-  // displayLoginPage(): redirect to login regardless of result
-  redirect('/login');
+  return LogoutBoundary.process_logout();
 }
