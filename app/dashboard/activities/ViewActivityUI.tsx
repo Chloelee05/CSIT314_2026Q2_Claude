@@ -20,13 +20,14 @@ const initialDeleteState: DeleteActivityState = {
 };
 
 /**
- * BCE Boundary: DeleteActivityBoundary (User Story #21)
+ * BCE Boundary: ViewActivityUI (User Story #19)
  *
- * - process_delete() — submit to DeleteActivityController via server action
- * - flash success message / flash failure message — from action state
- * - ALT 4a: Cancel on confirmation — no server call (handled before submit)
+ * - displayActivityList(activities) — render the list (or empty state)
+ * - navigateToActivities / selectActivity — links to detail route
+ *
+ * Delete flow (User Story #21) remains on the same page for convenience.
  */
-export default function ActivitiesListClient({
+export default function ViewActivityUI({
   activities,
 }: {
   activities: ActivityRow[];
@@ -50,7 +51,7 @@ export default function ActivitiesListClient({
             My fundraising activities
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            Select an activity and remove it to stop a campaign.
+            View campaign details or remove an activity you no longer need.
           </p>
         </div>
         <a
@@ -74,9 +75,10 @@ export default function ActivitiesListClient({
         </div>
       )}
 
+      {/* displayActivityList — ALT 2a: no activities */}
       {activities.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-600">
-          <p>No activities yet.</p>
+        <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-700">
+          <p>No fundraising activities found.</p>
           <a
             href="/dashboard/activities/create"
             className="inline-block mt-4 text-sm font-medium text-indigo-600 hover:text-indigo-800"
@@ -97,11 +99,19 @@ export default function ActivitiesListClient({
                   {a.category} · Goal ${Number(a.goal_amount).toFixed(2)}
                 </p>
               </div>
-              <DeleteRowForm
-                activityId={a.id}
-                formAction={deleteFormAction}
-                isPending={isDeletePending}
-              />
+              <div className="flex flex-wrap items-center gap-2 shrink-0">
+                <a
+                  href={`/dashboard/activities/${a.id}`}
+                  className="text-sm font-medium text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50"
+                >
+                  View details
+                </a>
+                <DeleteRowForm
+                  activityId={a.id}
+                  formAction={deleteFormAction}
+                  isPending={isDeletePending}
+                />
+              </div>
             </li>
           ))}
         </ul>
@@ -122,7 +132,7 @@ function DeleteRowForm({
   const formRef = useRef<HTMLFormElement>(null);
 
   return (
-    <form ref={formRef} action={formAction} className="shrink-0">
+    <form ref={formRef} action={formAction} className="inline">
       <input type="hidden" name="activityId" value={activityId} />
       <button
         type="button"

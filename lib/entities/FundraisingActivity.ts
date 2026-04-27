@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #21)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #21)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -49,6 +49,7 @@ export class FundraisingActivity {
 
   /**
    * Load a single activity by id.
+   * Signature matches BCE diagram: getById(activityId: String): FundraisingActivity
    */
   static async getById(id: string): Promise<FundraisingActivity | null> {
     const supabase = createServerClient();
@@ -66,9 +67,10 @@ export class FundraisingActivity {
   }
 
   /**
-   * List all activities created by a user (for FR activity list, User Story #21).
+   * List all activities created by a user.
+   * Signature matches BCE diagram: getByUserId(userId: String): list
    */
-  static async listByUserId(userId: string): Promise<FundraisingActivity[]> {
+  static async getByUserId(userId: string): Promise<FundraisingActivity[]> {
     const supabase = createServerClient();
 
     const { data, error } = await supabase

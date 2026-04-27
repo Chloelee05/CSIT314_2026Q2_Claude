@@ -54,7 +54,7 @@ CREATE POLICY "Allow all operations for anon on user_profile_details"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
--- BCE Entity: FundraisingActivity (User Story #18)
+-- BCE Entity: FundraisingActivity (User Story #18, #19)
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS fundraising_activities (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),

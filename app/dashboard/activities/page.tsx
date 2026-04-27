@@ -1,11 +1,11 @@
 import { getSession } from '@/lib/auth';
-import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
+import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
 import { redirect } from 'next/navigation';
-import ActivitiesListClient from './ActivitiesListClient';
+import ViewActivityUI from './ViewActivityUI';
 
 /**
- * BCE Boundary: list view — use case step 1 (navigate to activity list)
- * Precondition: FR is logged in and has session (at least one activity optional)
+ * BCE Boundary: navigateToActivities / my activities page (User Story #19)
+ * Precondition: Fund Raiser is logged in with an active session.
  */
 export default async function ActivitiesListPage() {
   const session = await getSession();
@@ -16,7 +16,7 @@ export default async function ActivitiesListPage() {
     redirect('/dashboard');
   }
 
-  const activities = await FundraisingActivity.listByUserId(session.userId);
+  const activities = await ViewActivityController.getActivities(session.userId);
 
   const rows = activities.map((a) => ({
     id: a.id,
@@ -28,7 +28,7 @@ export default async function ActivitiesListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ActivitiesListClient activities={rows} />
+      <ViewActivityUI activities={rows} />
     </div>
   );
 }
