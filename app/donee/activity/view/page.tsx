@@ -130,6 +130,18 @@ export default async function ViewActivityPage({
               <p className="text-xs text-gray-400 font-mono mt-0.5">{activity.id}</p>
             </div>
           </div>
+
+          {/* Save button — links to SaveFRABoundary (US#27) */}
+          {success && (
+            <div className="border-t border-gray-100 pt-4">
+              <Link
+                href={`/donee/activity/save?id=${activity.id}`}
+                className="inline-block w-full text-center bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2.5 px-6 rounded-lg text-sm transition"
+              >
+                Save this Campaign
+              </Link>
+            </div>
+          )}
         </div>
       </main>
     </div>

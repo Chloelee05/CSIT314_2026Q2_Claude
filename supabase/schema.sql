@@ -78,6 +78,25 @@ CREATE POLICY "Allow all operations for anon on fundraising_activities"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: SavedFRAData (#27)
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS saved_fundraising_activities (
+  id        UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  donee_id  UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  fra_id    UUID NOT NULL REFERENCES fundraising_activities(id) ON DELETE CASCADE,
+  saved_at  TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE (donee_id, fra_id)
+);
+
+ALTER TABLE saved_fundraising_activities ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on saved_fundraising_activities"
+  ON saved_fundraising_activities
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- Seed data (5 test accounts)
 -- ──────────────────────────────────────────────
 INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES
