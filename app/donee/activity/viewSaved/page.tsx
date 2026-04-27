@@ -8,11 +8,18 @@ import Link from 'next/link';
  * clickViewFavourites() → Donee navigates here from the dashboard.
  * displayFavouriteList(favList) → Rendered below.
  */
-export default async function ViewSavedPage() {
+export default async function ViewSavedPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ removed?: string }>;
+}) {
   const session = await getSession();
   if (!session || session.role !== 'donee') {
     redirect('/login');
   }
+
+  const resolvedParams = await searchParams;
+  const justRemoved = resolvedParams.removed === '1';
 
   const [success, message, favList] = await ViewFavouriteListController.getFavouriteList(
     session.userId,
@@ -32,6 +39,12 @@ export default async function ViewSavedPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {justRemoved && (
+          <div className="mb-6 bg-green-50 border border-green-200 rounded-xl px-5 py-3 text-green-800 text-sm font-medium">
+            Activity removed from your favourites.
+          </div>
+        )}
+
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">My Favourites</h2>
           <Link
@@ -63,10 +76,9 @@ export default async function ViewSavedPage() {
                   : 0;
 
               return (
-                <Link
+                <div
                   key={item.savedId}
-                  href={`/donee/activity/view?id=${item.id}`}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md hover:border-indigo-200 transition"
+                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md transition"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <h3 className="font-semibold text-gray-900 text-base">{item.title}</h3>
@@ -100,10 +112,26 @@ export default async function ViewSavedPage() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-gray-400">
-                    Saved on {new Date(item.savedAt).toLocaleDateString()}
-                  </p>
-                </Link>
+                  <div className="flex items-center justify-between">
+                    <p className="text-xs text-gray-400">
+                      Saved on {new Date(item.savedAt).toLocaleDateString()}
+                    </p>
+                    <div className="flex gap-3">
+                      <Link
+                        href={`/donee/activity/view?id=${item.id}`}
+                        className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition"
+                      >
+                        View
+                      </Link>
+                      <Link
+                        href={`/donee/activity/removeSaved?fraId=${item.id}`}
+                        className="text-xs text-red-500 hover:text-red-700 font-medium transition"
+                      >
+                        Remove
+                      </Link>
+                    </div>
+                  </div>
+                </div>
               );
             })}
           </div>

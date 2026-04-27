@@ -88,6 +88,27 @@ export class SavedFRAData {
 
     return [true, 'Favourites retrieved.', saved];
   }
+
+  /**
+   * BCE Method: delete
+   * Removes a saved activity record for the donee.
+   * Returns [success, message]
+   */
+  static async delete(doneeId: string, fraId: string): Promise<[boolean, string]> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('saved_fundraising_activities')
+      .delete()
+      .eq('donee_id', doneeId)
+      .eq('fra_id', fraId);
+
+    if (error) {
+      return [false, 'Failed to remove activity. Please try again.'];
+    }
+
+    return [true, 'Activity removed from favourites.'];
+  }
 }
 
 export interface SavedFRAWithDetails {
