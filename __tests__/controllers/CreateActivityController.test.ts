@@ -57,6 +57,7 @@ describe('CreateActivityController', () => {
       expect(saved.category).toBe('Education');
       expect(saved.user_id).toBe('user-1');
       expect(saved.end_date).toBeNull();
+      expect(saved.view_count).toBe(0);
     });
 
     it('returns false when required title is missing (ALT 4a — validation fails)', async () => {

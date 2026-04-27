@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22, #32)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -13,6 +13,7 @@ export class FundraisingActivity {
   goal_amount: number;
   category: string;
   end_date: string | null;
+  view_count: number;
   created_at: string;
   updated_at: string;
 
@@ -30,6 +31,10 @@ export class FundraisingActivity {
       data.end_date === undefined || data.end_date === null
         ? null
         : String(data.end_date);
+    this.view_count =
+      typeof data.view_count === 'number'
+        ? data.view_count
+        : parseInt(String(data.view_count ?? 0), 10) || 0;
     this.created_at = data.created_at as string;
     this.updated_at = data.updated_at as string;
   }
@@ -48,6 +53,7 @@ export class FundraisingActivity {
       goal_amount: activity.goal_amount,
       category: activity.category,
       end_date: activity.end_date,
+      view_count: activity.view_count ?? 0,
     });
 
     return !error;

@@ -64,12 +64,14 @@ CREATE TABLE IF NOT EXISTS fundraising_activities (
   goal_amount    NUMERIC(14, 2) NOT NULL CHECK (goal_amount > 0),
   category       TEXT NOT NULL,
   end_date       DATE,
+  view_count     INTEGER NOT NULL DEFAULT 0 CHECK (view_count >= 0),
   created_at     TIMESTAMPTZ DEFAULT NOW(),
   updated_at     TIMESTAMPTZ DEFAULT NOW()
 );
 
 -- If upgrading an existing database, run:
 -- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS end_date DATE;
+-- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0;
 
 ALTER TABLE fundraising_activities ENABLE ROW LEVEL SECURITY;
 

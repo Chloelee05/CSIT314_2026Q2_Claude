@@ -27,6 +27,12 @@ export function ViewActivityDetailsUI({
       </a>
       <div className="mt-4 flex flex-wrap gap-3">
         <a
+          href={`/dashboard/activities/${activity.id}/stats`}
+          className="text-sm font-medium text-indigo-700 bg-indigo-50 hover:bg-indigo-100 border border-indigo-200 px-4 py-2 rounded-lg"
+        >
+          View statistics
+        </a>
+        <a
           href={`/dashboard/activities/${activity.id}/edit`}
           className="text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 px-4 py-2 rounded-lg"
         >
