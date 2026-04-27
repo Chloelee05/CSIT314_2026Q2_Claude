@@ -28,7 +28,12 @@ export default async function UserDashboard() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-gray-900">FundRaise</h1>
+          <h1 className="text-lg font-bold text-gray-900">
+            FundRaise{' '}
+            {session.role === 'donee' && <span className="text-indigo-600">Donee</span>}
+            {session.role === 'fund_raiser' && <span className="text-indigo-600">Fund Raiser</span>}
+            {session.role === 'platform_management' && <span className="text-indigo-600">Platform Management</span>}
+          </h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">
               Logged in as{' '}
@@ -65,6 +70,14 @@ export default async function UserDashboard() {
             >
               <h3 className="font-semibold text-gray-900">Search Campaigns</h3>
               <p className="text-sm text-gray-500">Browse and search for active fundraising campaigns.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/donee/activity/viewSaved"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">My Favourites</h3>
+              <p className="text-sm text-gray-500">View fundraising campaigns you have saved.</p>
               <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
             </Link>
           </div>

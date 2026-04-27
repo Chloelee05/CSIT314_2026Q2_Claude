@@ -46,4 +46,58 @@ export class SavedFRAData {
 
     return [true, 'Activity saved successfully.'];
   }
+
+  /**
+   * BCE Method: fetchSavedFRAs
+   * Retrieves all fundraising activities saved by the donee, with campaign details.
+   * Returns [success, message, savedList]
+   */
+  static async fetchSavedFRAs(doneeId: string): Promise<[boolean, string, SavedFRAWithDetails[]]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('saved_fundraising_activities')
+      .select(`
+        id,
+        saved_at,
+        fundraising_activities (
+          id, title, description, goal_amount, raised_amount, status, end_date
+        )
+      `)
+      .eq('donee_id', doneeId)
+      .order('saved_at', { ascending: false });
+
+    if (error) {
+      return [false, 'Failed to retrieve your favourites. Please try again.', []];
+    }
+
+    const saved = (data ?? [])
+      .filter((row) => row.fundraising_activities !== null)
+      .map((row) => {
+        const fra = row.fundraising_activities as unknown as Record<string, unknown>;
+        return {
+          savedId: row.id as string,
+          savedAt: row.saved_at as string,
+          ...fra,
+        };
+      }) as SavedFRAWithDetails[];
+
+    if (saved.length === 0) {
+      return [false, 'Your favourite list is empty.', []];
+    }
+
+    return [true, 'Favourites retrieved.', saved];
+  }
+}
+
+export interface SavedFRAWithDetails {
+  savedId: string;
+  savedAt: string;
+  id: string;
+  title: string;
+  description: string | null;
+  goal_amount: number;
+  raised_amount: number;
+  status: string;
+  end_date: string | null;
 }
