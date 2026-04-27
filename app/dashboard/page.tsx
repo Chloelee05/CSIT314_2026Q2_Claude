@@ -1,6 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { userLogoutAction } from '@/app/login/actions';
+import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
   fund_raiser: 'Fund Raiser',
@@ -46,7 +47,7 @@ export default async function UserDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Welcome, {session.username}
           </h2>
@@ -55,6 +56,19 @@ export default async function UserDashboard() {
             <span className="font-medium text-indigo-600">{roleLabel}</span>.
           </p>
         </div>
+
+        {session.role === 'donee' && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/donee/activity/search"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Search Campaigns</h3>
+              <p className="text-sm text-gray-500">Browse and search for active fundraising campaigns.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+          </div>
+        )}
       </main>
     </div>
   );
