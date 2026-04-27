@@ -83,4 +83,44 @@ export class Donation {
 
     return [true, 'Donations found.', donations];
   }
+
+  /**
+   * BCE Method: getByUserId (User Story #37)
+   * Retrieves all donation history for a donee.
+   * Returns a tuple: [success, message, donations]
+   */
+  static async getByUserId(
+    userId: string,
+  ): Promise<[boolean, string, DonationWithActivity[]]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('donations')
+      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activities(title, status)')
+      .eq('donee_id', userId)
+      .order('donated_at', { ascending: false });
+
+    if (error) {
+      return [false, 'Failed to fetch donation history.', []];
+    }
+
+    const donations: DonationWithActivity[] = (data ?? []).map((row) => {
+      const fra = row.fundraising_activities as unknown as Record<string, unknown> | null;
+      return {
+        id: row.id as string,
+        donee_id: row.donee_id as string,
+        fra_id: row.fra_id as string,
+        amount: row.amount as number,
+        donated_at: row.donated_at as string,
+        campaign_title: fra ? (fra.title as string) : 'Unknown Campaign',
+        campaign_status: fra ? (fra.status as string) : 'unknown',
+      };
+    });
+
+    if (donations.length === 0) {
+      return [false, 'No donation history found.', []];
+    }
+
+    return [true, 'Donation history found.', donations];
+  }
 }
