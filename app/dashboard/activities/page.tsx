@@ -1,13 +1,17 @@
 import { getSession } from '@/lib/auth';
-import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
+import { SearchActivityController } from '@/lib/controllers/SearchActivityController';
 import { redirect } from 'next/navigation';
 import ViewActivityUI from './ViewActivityUI';
 
 /**
- * BCE Boundary: navigateToActivities / my activities page (User Story #19)
- * Precondition: Fund Raiser is logged in with an active session.
+ * BCE Boundary: activity list + search (User Story #19, #22)
+ * Precondition: Fund Raiser is logged in (search applies to their activities only).
  */
-export default async function ActivitiesListPage() {
+export default async function ActivitiesListPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string }>;
+}) {
   const session = await getSession();
   if (!session) {
     redirect('/login');
@@ -16,7 +20,13 @@ export default async function ActivitiesListPage() {
     redirect('/dashboard');
   }
 
-  const activities = await ViewActivityController.getActivities(session.userId);
+  const params = await searchParams;
+  const q = params.q ?? '';
+
+  const [activities, searchFlash] = await SearchActivityController.SearchActivity(
+    q,
+    session.userId,
+  );
 
   const rows = activities.map((a) => ({
     id: a.id,
@@ -28,7 +38,11 @@ export default async function ActivitiesListPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewActivityUI activities={rows} />
+      <ViewActivityUI
+        activities={rows}
+        initialQuery={q}
+        searchEmptyFlash={searchFlash}
+      />
     </div>
   );
 }

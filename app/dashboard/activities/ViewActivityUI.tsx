@@ -5,6 +5,7 @@ import {
   deleteActivityAction,
   type DeleteActivityState,
 } from './actions';
+import { SearchActivityBoundary } from './SearchActivityBoundary';
 
 type ActivityRow = {
   id: string;
@@ -20,17 +21,22 @@ const initialDeleteState: DeleteActivityState = {
 };
 
 /**
- * BCE Boundary: ViewActivityUI (User Story #19)
+ * BCE Boundary: ViewActivityUI (User Story #19) + list/results container for SearchActivityBoundary (#22)
  *
  * - displayActivityList(activities) — render the list (or empty state)
  * - navigateToActivities / selectActivity — links to detail route
+ * - show_results — displays rows returned from SearchActivityController
  *
  * Delete flow (User Story #21) remains on the same page for convenience.
  */
 export default function ViewActivityUI({
   activities,
+  initialQuery = '',
+  searchEmptyFlash = null,
 }: {
   activities: ActivityRow[];
+  initialQuery?: string;
+  searchEmptyFlash?: string | null;
 }) {
   const [deleteState, deleteFormAction, isDeletePending] = useActionState(
     deleteActivityAction,
@@ -51,7 +57,7 @@ export default function ViewActivityUI({
             My fundraising activities
           </h1>
           <p className="text-sm text-gray-500 mt-1">
-            View campaign details or remove an activity you no longer need.
+            Search, view, edit, or remove your campaigns.
           </p>
         </div>
         <a
@@ -62,7 +68,8 @@ export default function ViewActivityUI({
         </a>
       </div>
 
-      {deleteState.message && (
+      <SearchActivityBoundary initialQuery={initialQuery}>
+        {deleteState.message && (
         <div
           className={`mb-6 p-3 rounded-lg text-sm border ${
             deleteState.success
@@ -73,10 +80,20 @@ export default function ViewActivityUI({
         >
           {deleteState.message}
         </div>
-      )}
+        )}
 
-      {/* displayActivityList — ALT 2a: no activities */}
-      {activities.length === 0 ? (
+        {/* show_results — exception flow: no matches for keyword */}
+        {searchEmptyFlash && (
+          <div
+            className="mb-6 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm"
+            role="status"
+          >
+            {searchEmptyFlash}
+          </div>
+        )}
+
+        {/* displayActivityList — use case 4a: empty list; #19 ALT: no activities at all */}
+        {activities.length === 0 && !searchEmptyFlash ? (
         <div className="bg-white rounded-xl border border-gray-200 p-8 text-center text-gray-700">
           <p>No fundraising activities found.</p>
           <a
@@ -86,6 +103,10 @@ export default function ViewActivityUI({
             Create your first activity
           </a>
         </div>
+      ) : activities.length === 0 ? (
+        <p className="text-sm text-gray-500 text-center py-6">
+          Try a different keyword or clear the search.
+        </p>
       ) : (
         <ul className="space-y-3">
           {activities.map((a) => (
@@ -122,6 +143,7 @@ export default function ViewActivityUI({
           ))}
         </ul>
       )}
+      </SearchActivityBoundary>
     </div>
   );
 }

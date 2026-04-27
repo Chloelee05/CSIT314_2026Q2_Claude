@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -89,6 +89,30 @@ export class FundraisingActivity {
       return [];
     }
     return data.map((row) => new FundraisingActivity(row));
+  }
+
+  /**
+   * Find activities for a user whose title, description, or category matches the keyword
+   * (case-insensitive substring). Empty keyword returns all activities for the user (use case 4b).
+   * Signature matches BCE diagram: find_activities(keyword: str) — return list as part of the tuple
+   * produced by the controller.
+   */
+  static async find_activities(
+    keyword: string,
+    userId: string,
+  ): Promise<FundraisingActivity[]> {
+    const all = await FundraisingActivity.getByUserId(userId);
+    const kw = keyword.trim();
+    if (!kw) {
+      return all;
+    }
+    const lower = kw.toLowerCase();
+    return all.filter(
+      (a) =>
+        a.title.toLowerCase().includes(lower) ||
+        a.description.toLowerCase().includes(lower) ||
+        a.category.toLowerCase().includes(lower),
+    );
   }
 
   /**
