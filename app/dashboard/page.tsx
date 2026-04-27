@@ -1,6 +1,8 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { userLogoutAction } from '@/app/login/actions';
+import { doneeLogoutAction } from '@/app/donee/account/logout/actions';
+import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
   fund_raiser: 'Fund Raiser',
@@ -27,13 +29,18 @@ export default async function UserDashboard() {
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <h1 className="text-lg font-bold text-gray-900">FundRaise</h1>
+          <h1 className="text-lg font-bold text-gray-900">
+            FundRaise{' '}
+            {session.role === 'donee' && <span className="text-indigo-600">Donee</span>}
+            {session.role === 'fund_raiser' && <span className="text-indigo-600">Fund Raiser</span>}
+            {session.role === 'platform_management' && <span className="text-indigo-600">Platform Management</span>}
+          </h1>
           <div className="flex items-center gap-4">
             <span className="text-sm text-gray-600">
               Logged in as{' '}
               <span className="font-medium">{session.username}</span>
             </span>
-            <form action={userLogoutAction}>
+            <form action={session.role === 'donee' ? doneeLogoutAction : userLogoutAction}>
               <button
                 type="submit"
                 className="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer"
@@ -46,7 +53,7 @@ export default async function UserDashboard() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-2">
             Welcome, {session.username}
           </h2>
@@ -55,6 +62,43 @@ export default async function UserDashboard() {
             <span className="font-medium text-indigo-600">{roleLabel}</span>.
           </p>
         </div>
+
+        {session.role === 'donee' && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/donee/activity/search"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Search Campaigns</h3>
+              <p className="text-sm text-gray-500">Browse and search for active fundraising campaigns.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/donee/activity/viewSaved"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">My Favourites</h3>
+              <p className="text-sm text-gray-500">View fundraising campaigns you have saved.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/donee/donation/history"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Search Donations</h3>
+              <p className="text-sm text-gray-500">Search your past donations by campaign name.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/donee/donation/viewHistory"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">View Donation History</h3>
+              <p className="text-sm text-gray-500">View all your past donation transactions.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+          </div>
+        )}
       </main>
     </div>
   );

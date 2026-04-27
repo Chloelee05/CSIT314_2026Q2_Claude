@@ -50,6 +50,29 @@ export class LoginController {
    *
    * @returns [success, message]
    */
+  /**
+   * User Story #30 — Donee login.
+   * Signature matches BCE diagram: authenticate(username, password)
+   */
+  static async authenticate(
+    username: string,
+    password: string,
+  ): Promise<[boolean, string]> {
+    const [success, message, user] = await UserAccount.validateCredentials(username, password);
+
+    if (!success || !user) {
+      return [false, message];
+    }
+
+    await createSession({
+      userId: user.id,
+      username: user.username,
+      role: user.role,
+    });
+
+    return [true, 'Successful Login.'];
+  }
+
   static async authenticateUser(
     email: string,
     pw: string,

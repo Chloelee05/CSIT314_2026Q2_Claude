@@ -224,6 +224,40 @@ export class UserAccount {
    *
    * @returns true if session was cleared, false if already expired
    */
+  /**
+   * BCE Method: validateCredentials (US#30)
+   * Verifies a donee's username and password.
+   * Returns [success, message, account | null]
+   */
+  static async validateCredentials(
+    username: string,
+    password: string,
+  ): Promise<[boolean, string, UserAccount | null]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('username', username)
+      .eq('role', 'donee')
+      .single();
+
+    if (error || !data) {
+      return [false, 'Invalid username or password.', null];
+    }
+
+    if (data.status === 'suspended') {
+      return [false, 'Your account has been suspended. Please contact an administrator.', null];
+    }
+
+    const passwordMatch = await bcrypt.compare(password, data.password_hash);
+    if (!passwordMatch) {
+      return [false, 'Invalid username or password.', null];
+    }
+
+    return [true, 'Credentials validated.', new UserAccount(data)];
+  }
+
   static async clearSession(): Promise<boolean> {
     const session = await getSession();
 

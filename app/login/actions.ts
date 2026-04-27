@@ -2,7 +2,7 @@
 
 import { LoginController } from '@/lib/controllers/LoginController';
 import { LogoutController } from '@/lib/controllers/LogoutController';
-import { deleteSession } from '@/lib/auth';
+import { deleteSession, getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export interface LoginState {
@@ -95,10 +95,10 @@ export async function adminLogoutAction(): Promise<void> {
  * ALT: session already expired → still redirects to login page
  */
 export async function userLogoutAction(): Promise<void> {
-  // LogoutUI → LogoutController: logout()
-  // LogoutController → UserAccount: clearSession()
+  const session = await getSession();
+  const role = session?.role;
+
   await LogoutController.logout();
 
-  // displayLoginPage(): redirect to login regardless of result
-  redirect('/login');
+  redirect(role === 'donee' ? '/donee/account/login' : '/login');
 }

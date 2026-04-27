@@ -1,0 +1,91 @@
+import { createServerClient } from '@/lib/supabase/server';
+
+export class FundraisingActivity {
+  id: string;
+  title: string;
+  description: string | null;
+  goal_amount: number;
+  raised_amount: number;
+  status: string;
+  organizer_id: string | null;
+  end_date: string | null;
+  created_at: string;
+  updated_at: string;
+
+  constructor(data: Record<string, unknown>) {
+    this.id = data.id as string;
+    this.title = data.title as string;
+    this.description = (data.description as string) ?? null;
+    this.goal_amount = (data.goal_amount as number) ?? 0;
+    this.raised_amount = (data.raised_amount as number) ?? 0;
+    this.status = data.status as string;
+    this.organizer_id = (data.organizer_id as string) ?? null;
+    this.end_date = (data.end_date as string) ?? null;
+    this.created_at = data.created_at as string;
+    this.updated_at = data.updated_at as string;
+  }
+
+  /**
+   * BCE Method: find_activities
+   * Searches active fundraising activities by keyword (title match).
+   * Returns a tuple: [success, message, activities]
+   */
+  static async find_activities(
+    keyword: string,
+  ): Promise<[boolean, string, FundraisingActivity[]]> {
+    const supabase = createServerClient();
+
+    let query = supabase
+      .from('fundraising_activities')
+      .select('*')
+      .eq('status', 'active')
+      .order('created_at', { ascending: false });
+
+    if (keyword && keyword.trim() !== '') {
+      query = query.ilike('title', `%${keyword.trim()}%`);
+    }
+
+    const { data, error } = await query;
+
+    if (error) {
+      return [false, 'Failed to fetch activities.', []];
+    }
+
+    const activities = (data ?? []).map((row) => new FundraisingActivity(row));
+
+    if (activities.length === 0) {
+      return [false, 'No activities found.', []];
+    }
+
+    return [true, 'Activities found.', activities];
+  }
+
+  /**
+   * BCE Method: get_activities_details
+   * Fetches full details of a single fundraising activity by ID.
+   * Returns a tuple: [success, message, activity | null]
+   */
+  static async get_activities_details(
+    activity_id: string,
+  ): Promise<[boolean, string, FundraisingActivity | null]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fundraising_activities')
+      .select('*')
+      .eq('id', activity_id)
+      .single();
+
+    if (error || !data) {
+      return [false, 'Activity not found.', null];
+    }
+
+    const activity = new FundraisingActivity(data);
+
+    if (activity.status === 'completed' || activity.status === 'inactive') {
+      return [false, `Activity is ${activity.status}.`, activity];
+    }
+
+    return [true, 'Activity found.', activity];
+  }
+}
