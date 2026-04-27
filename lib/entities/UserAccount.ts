@@ -3,7 +3,7 @@ import { deleteSession, getSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
 
 /**
- * BCE Entity: UserAccount (User Story #6, #7, #49, #50)
+ * BCE Entity: UserAccount (User Story #6, #7, #23, #49, #50)
  *
  * Represents a user account in the system.
  * Provides data-access methods, persistence, and session management.
@@ -29,6 +29,47 @@ export class UserAccount {
     this.full_name = (data.full_name as string) ?? null;
     this.created_at = data.created_at as string;
     this.updated_at = data.updated_at as string;
+  }
+
+  /**
+   * Verify user credentials against the database.
+   * Signature matches BCE diagram (User Story #23):
+   * verify_credentials(username: str, password: str, role: str): tuple
+   *
+   * @returns [success, message, userAccount | null]
+   */
+  static async verify_credentials(
+    username: string,
+    password: string,
+    role: string,
+  ): Promise<[boolean, string, UserAccount | null]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('user_profiles')
+      .select('*')
+      .eq('username', username)
+      .eq('role', role)
+      .single();
+
+    if (error || !data) {
+      return [false, 'Invalid username or role.', null];
+    }
+
+    if (data.status === 'suspended') {
+      return [
+        false,
+        'Your account has been suspended. Please contact an administrator.',
+        null,
+      ];
+    }
+
+    const passwordMatch = await bcrypt.compare(password, data.password_hash);
+    if (!passwordMatch) {
+      return [false, 'Invalid password.', null];
+    }
+
+    return [true, 'Credentials verified.', new UserAccount(data)];
   }
 
   /**

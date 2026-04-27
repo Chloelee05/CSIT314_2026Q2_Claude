@@ -54,6 +54,25 @@ CREATE POLICY "Allow all operations for anon on user_profile_details"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: FundraisingActivity (User Story #18, #19, #20)
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS fundraising_activities (
+  id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id        UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  title          TEXT NOT NULL,
+  description    TEXT NOT NULL,
+  goal_amount    NUMERIC(14, 2) NOT NULL CHECK (goal_amount > 0),
+  category       TEXT NOT NULL,
+  end_date       DATE,
+  view_count     INTEGER NOT NULL DEFAULT 0 CHECK (view_count >= 0),
+  created_at     TIMESTAMPTZ DEFAULT NOW(),
+  updated_at     TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- If upgrading an existing database, run:
+-- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS end_date DATE;
+-- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS view_count INTEGER NOT NULL DEFAULT 0;
+
 -- BCE Entity: FundraisingActivity (#25)
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS fundraising_activities (
@@ -78,6 +97,24 @@ CREATE POLICY "Allow all operations for anon on fundraising_activities"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: SavedFRAData (User Story #33)
+-- Donees “shortlist” (save/favorite) fundraising activities; one row per (donee, activity).
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS saved_fra (
+  id                      UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id                 UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  fundraising_activity_id UUID NOT NULL REFERENCES fundraising_activities(id) ON DELETE CASCADE,
+  created_at              TIMESTAMPTZ DEFAULT NOW(),
+  CONSTRAINT saved_fra_user_activity_unique UNIQUE (user_id, fundraising_activity_id)
+);
+
+-- If upgrading an existing database:
+-- (run the CREATE TABLE above, or) ensure foreign keys and unique constraint match.
+
+ALTER TABLE saved_fra ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on saved_fra"
+  ON saved_fra
 -- BCE Entity: SavedFRAData (#27)
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS saved_fundraising_activities (

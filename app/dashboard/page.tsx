@@ -13,6 +13,7 @@ const ROLE_LABELS: Record<string, string> = {
 /**
  * User Dashboard — shown after successful non-admin login.
  * BCE Boundary: show_dashboard() target for non-admin roles.
+ * Logout (User Story #24): form action `userLogoutAction` → LogoutBoundary.process_logout()
  */
 export default async function UserDashboard() {
   const session = await getSession();
@@ -61,6 +62,28 @@ export default async function UserDashboard() {
             You are logged in as{' '}
             <span className="font-medium text-indigo-600">{roleLabel}</span>.
           </p>
+          {session.role === 'fund_raiser' && (
+            <p className="mt-4 flex flex-wrap gap-4">
+              <a
+                href="/dashboard/activities"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                My activities →
+              </a>
+              <a
+                href="/dashboard/activities/create"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                Create fundraising activity →
+              </a>
+              <a
+                href="/dashboard/activities/completed"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                Search completed activities →
+              </a>
+            </p>
+          )}
         </div>
 
         {session.role === 'donee' && (

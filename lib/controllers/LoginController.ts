@@ -1,4 +1,3 @@
-import { UserProfile } from '@/lib/entities/UserProfile';
 import { UserAccount } from '@/lib/entities/UserAccount';
 import { createSession } from '@/lib/auth';
 import bcrypt from 'bcryptjs';
@@ -9,13 +8,14 @@ import bcrypt from 'bcryptjs';
  * Handles the business logic for user authentication.
  *
  * - Login()             → User Story #16 (Admin login via username + role)
+ *                         User Story #23 (FR login via username + role)
  * - authenticateUser()  → User Story #49 (User login via email)
  */
 export class LoginController {
   /**
-   * User Story #16 — Admin login.
+   * User Story #16 / #23 — Login via username + role.
    * Signature matches BCE diagram: Login(username, password, role): tuple
-   * Delegates credential verification to UserProfile entity.
+   * Delegates credential verification to UserAccount entity.
    *
    * @returns [success, message]
    */
@@ -24,7 +24,7 @@ export class LoginController {
     password: string,
     role: string,
   ): Promise<[boolean, string]> {
-    const [success, message, user] = await UserProfile.verify_credentials(
+    const [success, message, user] = await UserAccount.verify_credentials(
       username,
       password,
       role,
