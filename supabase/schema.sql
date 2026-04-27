@@ -54,7 +54,7 @@ CREATE POLICY "Allow all operations for anon on user_profile_details"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
--- BCE Entity: FundraisingActivity (User Story #18, #19)
+-- BCE Entity: FundraisingActivity (User Story #18, #19, #20)
 -- ──────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS fundraising_activities (
   id             UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -63,9 +63,13 @@ CREATE TABLE IF NOT EXISTS fundraising_activities (
   description    TEXT NOT NULL,
   goal_amount    NUMERIC(14, 2) NOT NULL CHECK (goal_amount > 0),
   category       TEXT NOT NULL,
+  end_date       DATE,
   created_at     TIMESTAMPTZ DEFAULT NOW(),
   updated_at     TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- If upgrading an existing database, run:
+-- ALTER TABLE fundraising_activities ADD COLUMN IF NOT EXISTS end_date DATE;
 
 ALTER TABLE fundraising_activities ENABLE ROW LEVEL SECURITY;
 

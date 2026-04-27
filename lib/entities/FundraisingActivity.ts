@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #19, #21)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -12,6 +12,7 @@ export class FundraisingActivity {
   description: string;
   goal_amount: number;
   category: string;
+  end_date: string | null;
   created_at: string;
   updated_at: string;
 
@@ -25,6 +26,10 @@ export class FundraisingActivity {
         ? parseFloat(data.goal_amount)
         : (data.goal_amount as number);
     this.category = data.category as string;
+    this.end_date =
+      data.end_date === undefined || data.end_date === null
+        ? null
+        : String(data.end_date);
     this.created_at = data.created_at as string;
     this.updated_at = data.updated_at as string;
   }
@@ -42,6 +47,7 @@ export class FundraisingActivity {
       description: activity.description,
       goal_amount: activity.goal_amount,
       category: activity.category,
+      end_date: activity.end_date,
     });
 
     return !error;
@@ -110,5 +116,40 @@ export class FundraisingActivity {
     }
 
     return [true, 'Activity removed.'];
+  }
+
+  /**
+   * Update an existing fundraising activity in persistent storage.
+   * Signature matches BCE diagram: save_activity(activity_id: int, title: str, description: str, goal: float): tuple
+   *
+   * User Story #20 use case also supports an optional campaign end date (stored as end_date).
+   *
+   * @returns [success, message]
+   */
+  static async save_activity(
+    activity_id: string,
+    title: string,
+    description: string,
+    goal: number,
+    endDate: string | null = null,
+  ): Promise<[boolean, string]> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('fundraising_activities')
+      .update({
+        title,
+        description,
+        goal_amount: goal,
+        end_date: endDate && endDate.trim() ? endDate.trim() : null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq('id', activity_id);
+
+    if (error) {
+      return [false, 'Could not update the activity. Please try again.'];
+    }
+
+    return [true, 'Activity updated.'];
   }
 }

@@ -46,6 +46,7 @@ function serializeActivity(a: FundraisingActivity) {
     description: a.description,
     goal_amount: a.goal_amount,
     category: a.category,
+    end_date: a.end_date,
     created_at: a.created_at,
     updated_at: a.updated_at,
   };

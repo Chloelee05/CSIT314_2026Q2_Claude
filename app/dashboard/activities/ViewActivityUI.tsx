@@ -106,6 +106,12 @@ export default function ViewActivityUI({
                 >
                   View details
                 </a>
+                <a
+                  href={`/dashboard/activities/${a.id}/edit`}
+                  className="text-sm font-medium text-gray-700 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-200 bg-white"
+                >
+                  Edit
+                </a>
                 <DeleteRowForm
                   activityId={a.id}
                   formAction={deleteFormAction}

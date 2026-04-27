@@ -13,6 +13,7 @@ describe('ViewActivityController', () => {
       description: 'Desc',
       goal_amount: 100,
       category: 'Health',
+      end_date: null,
       created_at: '2025-01-01',
       updated_at: '2025-01-01',
       ...overrides,

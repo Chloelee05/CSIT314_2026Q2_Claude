@@ -36,6 +36,7 @@ export class CreateActivityController {
       description: description.trim(),
       goal_amount: goalAmount,
       category: category.trim(),
+      end_date: null,
       created_at: new Date().toISOString(),
       updated_at: new Date().toISOString(),
     });
