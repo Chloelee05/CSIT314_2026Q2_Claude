@@ -64,9 +64,10 @@ export default async function SearchActivityPage({
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {activities.map((activity) => (
-              <div
+              <Link
                 key={activity.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md transition"
+                href={`/donee/activity/view?id=${activity.id}`}
+                className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md hover:border-indigo-200 transition"
               >
                 <div>
                   <h3 className="font-semibold text-gray-900 text-base">{activity.title}</h3>
@@ -97,7 +98,7 @@ export default async function SearchActivityPage({
                 <span className="inline-block text-xs font-medium bg-green-100 text-green-700 px-2 py-0.5 rounded-full w-fit">
                   Active
                 </span>
-              </div>
+              </Link>
             ))}
           </div>
         )}

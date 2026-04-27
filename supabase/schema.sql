@@ -64,6 +64,7 @@ CREATE TABLE IF NOT EXISTS fundraising_activities (
   raised_amount NUMERIC(12, 2) NOT NULL DEFAULT 0,
   status        TEXT NOT NULL DEFAULT 'active' CHECK (status IN ('active', 'inactive', 'completed')),
   organizer_id  UUID REFERENCES user_profiles(id) ON DELETE SET NULL,
+  end_date      DATE,
   created_at    TIMESTAMPTZ DEFAULT NOW(),
   updated_at    TIMESTAMPTZ DEFAULT NOW()
 );
@@ -89,10 +90,10 @@ INSERT INTO user_profiles (username, password_hash, role, status, full_name, ema
 -- ──────────────────────────────────────────────
 -- Seed data: fundraising_activities
 -- ──────────────────────────────────────────────
-INSERT INTO fundraising_activities (title, description, goal_amount, raised_amount, status) VALUES
-  ('Help Children Get Education',   'Raising funds to provide school supplies and scholarships for underprivileged children.', 10000.00, 6500.00,  'active'),
-  ('Clean Water for Villages',      'Building wells and water purification systems in rural communities.',                       25000.00, 12000.00, 'active'),
-  ('Animal Shelter Support',        'Funding food, medical care, and housing for rescued animals at the local shelter.',         5000.00,  3200.00,  'active'),
-  ('Medical Aid for Seniors',       'Providing free medical check-ups and medicine for elderly residents in need.',             15000.00, 9800.00,  'active'),
-  ('Disaster Relief Fund',          'Emergency supplies and rebuilding support for families affected by recent floods.',        50000.00, 31000.00, 'active'),
-  ('Completed Campaign Example',    'This campaign has ended.',                                                                  1000.00,  1000.00,  'completed');
+INSERT INTO fundraising_activities (title, description, goal_amount, raised_amount, status, end_date) VALUES
+  ('Help Children Get Education',   'Raising funds to provide school supplies and scholarships for underprivileged children.', 10000.00, 6500.00,  'active',    '2026-08-31'),
+  ('Clean Water for Villages',      'Building wells and water purification systems in rural communities.',                       25000.00, 12000.00, 'active',    '2026-09-15'),
+  ('Animal Shelter Support',        'Funding food, medical care, and housing for rescued animals at the local shelter.',         5000.00,  3200.00,  'active',    '2026-07-01'),
+  ('Medical Aid for Seniors',       'Providing free medical check-ups and medicine for elderly residents in need.',             15000.00, 9800.00,  'active',    '2026-10-01'),
+  ('Disaster Relief Fund',          'Emergency supplies and rebuilding support for families affected by recent floods.',        50000.00, 31000.00, 'active',    '2026-06-30'),
+  ('Completed Campaign Example',    'This campaign has ended.',                                                                  1000.00,  1000.00,  'completed', '2026-01-01');

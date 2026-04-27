@@ -8,6 +8,7 @@ export class FundraisingActivity {
   raised_amount: number;
   status: string;
   organizer_id: string | null;
+  end_date: string | null;
   created_at: string;
   updated_at: string;
 
@@ -19,6 +20,7 @@ export class FundraisingActivity {
     this.raised_amount = (data.raised_amount as number) ?? 0;
     this.status = data.status as string;
     this.organizer_id = (data.organizer_id as string) ?? null;
+    this.end_date = (data.end_date as string) ?? null;
     this.created_at = data.created_at as string;
     this.updated_at = data.updated_at as string;
   }
@@ -56,5 +58,34 @@ export class FundraisingActivity {
     }
 
     return [true, 'Activities found.', activities];
+  }
+
+  /**
+   * BCE Method: get_activities_details
+   * Fetches full details of a single fundraising activity by ID.
+   * Returns a tuple: [success, message, activity | null]
+   */
+  static async get_activities_details(
+    activity_id: string,
+  ): Promise<[boolean, string, FundraisingActivity | null]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fundraising_activities')
+      .select('*')
+      .eq('id', activity_id)
+      .single();
+
+    if (error || !data) {
+      return [false, 'Activity not found.', null];
+    }
+
+    const activity = new FundraisingActivity(data);
+
+    if (activity.status === 'completed' || activity.status === 'inactive') {
+      return [false, `Activity is ${activity.status}.`, activity];
+    }
+
+    return [true, 'Activity found.', activity];
   }
 }
