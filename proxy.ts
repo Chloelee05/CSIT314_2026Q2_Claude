@@ -17,9 +17,9 @@ async function getSessionFromRequest(request: NextRequest) {
 }
 
 function dashboardUrl(role: string, baseUrl: string) {
-  return role === 'admin'
-    ? new URL('/admin/dashboard', baseUrl)
-    : new URL('/dashboard', baseUrl);
+  if (role === 'admin') return new URL('/admin/dashboard', baseUrl);
+  if (role === 'donee') return new URL('/donee/activity/search', baseUrl);
+  return new URL('/dashboard', baseUrl);
 }
 
 export async function proxy(request: NextRequest) {
@@ -33,7 +33,7 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 
-  if (pathname === '/login') {
+  if (pathname === '/login' || pathname === '/donee/account/login') {
     if (session) {
       return NextResponse.redirect(dashboardUrl(session.role, request.url));
     }
@@ -45,6 +45,10 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/admin') && session.role !== 'admin') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  if (pathname.startsWith('/donee') && session.role !== 'donee') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 

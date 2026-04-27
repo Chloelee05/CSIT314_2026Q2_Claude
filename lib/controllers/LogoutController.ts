@@ -1,19 +1,27 @@
 import { UserAccount } from '@/lib/entities/UserAccount';
+import { UserSession } from '@/lib/entities/UserSession';
 
 /**
- * BCE Controller: LogoutController (User Story #50)
+ * BCE Controller: LogoutController (User Story #50, #31)
  *
  * Handles the business logic for user logout.
- * Delegates session destruction to the UserAccount entity.
+ * - logout()            → US#50: delegates to UserAccount.clearSession()
+ * - logout(sessionId)   → US#31: delegates to UserSession.invalidateSession()
  */
 export class LogoutController {
   /**
-   * Process a user logout request.
+   * US#50 — Admin/User logout.
    * Signature matches BCE diagram: logout(): boolean
-   *
-   * @returns true if session was cleared, false if already expired
    */
   static async logout(): Promise<boolean> {
     return await UserAccount.clearSession();
+  }
+
+  /**
+   * US#31 — Donee logout.
+   * Signature matches BCE diagram: logout(sessionId): boolean
+   */
+  static async logoutDonee(sessionId: string): Promise<boolean> {
+    return await UserSession.invalidateSession(sessionId);
   }
 }

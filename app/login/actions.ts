@@ -3,6 +3,8 @@
 import { LoginController } from '@/lib/controllers/LoginController';
 import { LogoutBoundary } from '@/lib/boundaries/LogoutBoundary';
 import { deleteSession } from '@/lib/auth';
+import { LogoutController } from '@/lib/controllers/LogoutController';
+import { deleteSession, getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export interface LoginState {
@@ -100,4 +102,10 @@ export async function adminLogoutAction(): Promise<void> {
  */
 export async function userLogoutAction(): Promise<void> {
   return LogoutBoundary.process_logout();
+  const session = await getSession();
+  const role = session?.role;
+
+  await LogoutController.logout();
+
+  redirect(role === 'donee' ? '/donee/account/login' : '/login');
 }
