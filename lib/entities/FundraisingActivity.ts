@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22, #32, #34)
+ * BCE Entity: FundraisingActivity (User Story #18, #19, #20, #21, #22, #32, #34, #35)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -155,6 +155,21 @@ export class FundraisingActivity {
         a.description.toLowerCase().includes(lower) ||
         a.category.toLowerCase().includes(lower),
     );
+  }
+
+  /**
+   * Load a single activity by id only if it is “completed” (end date on or before today).
+   * BCE diagram: getCompletedById(activityId: String)
+   */
+  static async getCompletedById(
+    activityId: string,
+  ): Promise<FundraisingActivity | null> {
+    const a = await FundraisingActivity.getById(activityId);
+    if (!a) return null;
+    if (!FundraisingActivity.isCompletedActivity(a)) {
+      return null;
+    }
+    return a;
   }
 
   /**

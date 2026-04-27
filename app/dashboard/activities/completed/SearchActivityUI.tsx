@@ -36,7 +36,7 @@ function displaySearchResults(activities: ActivityRow[]) {
             </p>
           </div>
           <a
-            href={`/dashboard/activities/${a.id}`}
+            href={`/dashboard/activities/completed/${a.id}`}
             className="text-sm font-medium text-indigo-600 hover:text-indigo-800 px-3 py-1.5 rounded-lg border border-indigo-200 bg-indigo-50 self-start"
           >
             View details

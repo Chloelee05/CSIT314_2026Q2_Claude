@@ -1,4 +1,5 @@
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
+import { ViewCompletedActivityController } from '@/lib/controllers/ViewCompletedActivityController';
 
 /**
  * BCE Controller: SearchActivityController (User Story #22, #34)
@@ -40,16 +41,9 @@ export class SearchActivityController {
     keyword: string,
     userId: string,
   ): Promise<[FundraisingActivity[], string | null]> {
-    const activities = await FundraisingActivity.getCompletedByKeyword(
-      keyword,
+    return ViewCompletedActivityController.getCompletedActivitiesWithMessage(
       userId,
+      keyword,
     );
-    if (activities.length === 0) {
-      return [
-        activities,
-        'No completed fundraising activities found.',
-      ];
-    }
-    return [activities, null];
   }
 }

@@ -86,3 +86,68 @@ describe('FundraisingActivity.getCompletedByKeyword (User Story #34)', () => {
     expect(r[0].id).toBe('a');
   });
 });
+
+describe('FundraisingActivity.getCompletedById (User Story #35)', () => {
+  let getByIdSpy: jest.SpyInstance;
+
+  const row = (overrides: Partial<Record<string, unknown>> = {}) =>
+    new FundraisingActivity({
+      id: 'x',
+      user_id: 'u1',
+      title: 'T',
+      description: 'D',
+      goal_amount: 1,
+      category: 'C',
+      end_date: '2025-01-01',
+      view_count: 0,
+      created_at: '2025-01-01',
+      updated_at: '2025-01-01',
+      ...overrides,
+    });
+
+  beforeAll(() => {
+    getByIdSpy = jest.spyOn(FundraisingActivity, 'getById');
+  });
+
+  afterAll(() => {
+    getByIdSpy.mockRestore();
+  });
+
+  beforeEach(() => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date('2026-06-01T12:00:00.000Z'));
+    jest.clearAllMocks();
+  });
+
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
+  it('returns the row when the activity is completed (end on or before today)', async () => {
+    const a = row();
+    getByIdSpy.mockResolvedValue(a);
+
+    const r = await FundraisingActivity.getCompletedById('x');
+
+    expect(r).toBe(a);
+  });
+
+  it('returns null when the activity is not yet completed (future end date)', async () => {
+    getByIdSpy.mockResolvedValue(
+      row({ end_date: '2027-01-01' }),
+    );
+
+    const r = await FundraisingActivity.getCompletedById('x');
+
+    expect(r).toBeNull();
+  });
+
+  it('returns null when the activity is missing or has no end date', async () => {
+    getByIdSpy.mockResolvedValue(null);
+
+    expect(await FundraisingActivity.getCompletedById('x')).toBeNull();
+
+    getByIdSpy.mockResolvedValue(row({ end_date: null }));
+    expect(await FundraisingActivity.getCompletedById('x')).toBeNull();
+  });
+});

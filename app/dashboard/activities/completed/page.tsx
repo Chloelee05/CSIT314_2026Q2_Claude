@@ -1,11 +1,11 @@
 import { getSession } from '@/lib/auth';
-import { SearchActivityController } from '@/lib/controllers/SearchActivityController';
+import { ViewCompletedActivityController } from '@/lib/controllers/ViewCompletedActivityController';
 import { redirect } from 'next/navigation';
 import { SearchActivityUI } from './SearchActivityUI';
 
 /**
- * BCE Boundary: search page — User Story #34
- * Sequence: enterSearchKeyword → searchCompletedActivities → getCompletedByKeyword → displaySearchResults
+ * BCE Boundary: completed list + search — User Story #34, #35
+ * #35: getCompletedActivities / list + alt. empty message; open detail at completed/[id]
  */
 export default async function CompletedFundraisingSearchPage({
   searchParams,
@@ -24,7 +24,10 @@ export default async function CompletedFundraisingSearchPage({
   const q = params.q ?? '';
 
   const [activities, emptyStateMessage] =
-    await SearchActivityController.searchCompletedActivities(q, session.userId);
+    await ViewCompletedActivityController.getCompletedActivitiesWithMessage(
+      session.userId,
+      q,
+    );
 
   const rows = activities.map((a) => ({
     id: a.id,
