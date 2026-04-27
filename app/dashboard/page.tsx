@@ -81,6 +81,14 @@ export default async function UserDashboard() {
               <p className="text-sm text-gray-500">View fundraising campaigns you have saved.</p>
               <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
             </Link>
+            <Link
+              href="/donee/donation/history"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Donation History</h3>
+              <p className="text-sm text-gray-500">Search and view your past donation transactions.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
           </div>
         )}
       </main>

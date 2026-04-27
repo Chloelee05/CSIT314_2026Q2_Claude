@@ -107,6 +107,25 @@ INSERT INTO user_profiles (username, password_hash, role, status, full_name, ema
   ('suspended1',   crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'suspended', 'Suspended Account',    'suspended@fundraise.com');
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: Donation (#36)
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS donations (
+  id          UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  donee_id    UUID NOT NULL REFERENCES user_profiles(id) ON DELETE CASCADE,
+  fra_id      UUID NOT NULL REFERENCES fundraising_activities(id) ON DELETE CASCADE,
+  amount      NUMERIC(10, 2) NOT NULL CHECK (amount > 0),
+  donated_at  TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+ALTER TABLE donations ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on donations"
+  ON donations
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- Seed data: fundraising_activities
 -- ──────────────────────────────────────────────
 INSERT INTO fundraising_activities (title, description, goal_amount, raised_amount, status, end_date) VALUES
@@ -116,3 +135,22 @@ INSERT INTO fundraising_activities (title, description, goal_amount, raised_amou
   ('Medical Aid for Seniors',       'Providing free medical check-ups and medicine for elderly residents in need.',             15000.00, 9800.00,  'active',    '2026-10-01'),
   ('Disaster Relief Fund',          'Emergency supplies and rebuilding support for families affected by recent floods.',        50000.00, 31000.00, 'active',    '2026-06-30'),
   ('Completed Campaign Example',    'This campaign has ended.',                                                                  1000.00,  1000.00,  'completed', '2026-01-01');
+
+-- ──────────────────────────────────────────────
+-- Seed data: donations (for donee1 / Bob Smith)
+-- ──────────────────────────────────────────────
+INSERT INTO donations (donee_id, fra_id, amount, donated_at)
+SELECT
+  up.id,
+  fra.id,
+  seed.amount,
+  seed.donated_at::TIMESTAMPTZ
+FROM (VALUES
+  ('Help Children Get Education',  50.00,  '2026-03-10'),
+  ('Clean Water for Villages',     120.00, '2026-03-22'),
+  ('Animal Shelter Support',       25.00,  '2026-04-01'),
+  ('Disaster Relief Fund',         200.00, '2026-04-15'),
+  ('Completed Campaign Example',   30.00,  '2025-12-20')
+) AS seed(title, amount, donated_at)
+JOIN fundraising_activities fra ON fra.title = seed.title
+JOIN user_profiles up ON up.username = 'donee1';
