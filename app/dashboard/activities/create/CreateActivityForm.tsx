@@ -27,10 +27,10 @@ export default function CreateActivityForm() {
     <div className="max-w-2xl mx-auto">
       <div className="mb-6">
         <a
-          href="/dashboard"
+          href="/dashboard/activities"
           className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
         >
-          ← Back to dashboard
+          ← Back to activities
         </a>
         <h1 className="text-2xl font-bold text-gray-900 mt-4">
           Create Fundraising Activity

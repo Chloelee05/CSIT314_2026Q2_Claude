@@ -55,7 +55,13 @@ export default async function UserDashboard() {
             <span className="font-medium text-indigo-600">{roleLabel}</span>.
           </p>
           {session.role === 'fund_raiser' && (
-            <p className="mt-4">
+            <p className="mt-4 flex flex-wrap gap-4">
+              <a
+                href="/dashboard/activities"
+                className="text-sm font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                My activities →
+              </a>
               <a
                 href="/dashboard/activities/create"
                 className="text-sm font-medium text-indigo-600 hover:text-indigo-800"

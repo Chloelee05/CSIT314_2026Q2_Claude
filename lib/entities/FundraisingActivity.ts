@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FundraisingActivity (User Story #18)
+ * BCE Entity: FundraisingActivity (User Story #18, #21)
  *
  * Represents a fundraising campaign activity in the system.
  */
@@ -45,5 +45,68 @@ export class FundraisingActivity {
     });
 
     return !error;
+  }
+
+  /**
+   * Load a single activity by id.
+   */
+  static async getById(id: string): Promise<FundraisingActivity | null> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fundraising_activities')
+      .select('*')
+      .eq('id', id)
+      .single();
+
+    if (error || !data) {
+      return null;
+    }
+    return new FundraisingActivity(data);
+  }
+
+  /**
+   * List all activities created by a user (for FR activity list, User Story #21).
+   */
+  static async listByUserId(userId: string): Promise<FundraisingActivity[]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fundraising_activities')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error || !data) {
+      return [];
+    }
+    return data.map((row) => new FundraisingActivity(row));
+  }
+
+  /**
+   * Remove an activity from persistent storage.
+   * Signature matches BCE diagram: remove_activity(activity_id: int): tuple
+   *
+   * @returns [success, message]
+   */
+  static async remove_activity(
+    activity_id: string,
+  ): Promise<[boolean, string]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fundraising_activities')
+      .delete()
+      .eq('id', activity_id)
+      .select('id');
+
+    if (error) {
+      return [false, 'Could not remove the activity. Please try again.'];
+    }
+    if (!data || data.length === 0) {
+      return [false, 'Activity not found.'];
+    }
+
+    return [true, 'Activity removed.'];
   }
 }
