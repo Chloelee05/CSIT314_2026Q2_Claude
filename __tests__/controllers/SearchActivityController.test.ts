@@ -19,6 +19,7 @@ describe('SearchActivityController', () => {
     });
 
   let getCompletedByKeywordSpy: jest.SpyInstance;
+  let findActiveActivitiesSpy: jest.SpyInstance;
 
   beforeAll(() => {
     findSpy = jest.spyOn(FundraisingActivity, 'find_activities');
@@ -26,11 +27,16 @@ describe('SearchActivityController', () => {
       FundraisingActivity,
       'getCompletedByKeyword',
     );
+    findActiveActivitiesSpy = jest.spyOn(
+      FundraisingActivity,
+      'find_active_activities',
+    );
   });
 
   afterAll(() => {
     findSpy.mockRestore();
     getCompletedByKeywordSpy.mockRestore();
+    findActiveActivitiesSpy.mockRestore();
   });
 
   beforeEach(() => {
@@ -117,6 +123,60 @@ describe('SearchActivityController', () => {
 
       expect(activities).toEqual([]);
       expect(msg).toBe('No completed fundraising activities found.');
+    });
+  });
+
+  // ===========================================================
+  // User Story #25 — Donee searches for fundraising activities
+  // SearchActivityController.searchActiveActivities(keyword)
+  //   → FundraisingActivity.find_active_activities(keyword)
+  // ===========================================================
+  describe('User Story #25: searchActiveActivities', () => {
+    it('returns success tuple with matching activities when keyword matches', async () => {
+      const list = [mockActivity('Save the Reef')];
+      findActiveActivitiesSpy.mockResolvedValue([true, 'Activities found.', list]);
+
+      const [success, message, activities] =
+        await SearchActivityController.searchActiveActivities('reef');
+
+      expect(success).toBe(true);
+      expect(message).toBe('Activities found.');
+      expect(activities).toEqual(list);
+      expect(findActiveActivitiesSpy).toHaveBeenCalledWith('reef');
+    });
+
+    it('returns all active activities when keyword is empty', async () => {
+      const list = [mockActivity('A'), mockActivity('B')];
+      findActiveActivitiesSpy.mockResolvedValue([true, 'Activities found.', list]);
+
+      const [success, message, activities] =
+        await SearchActivityController.searchActiveActivities('');
+
+      expect(success).toBe(true);
+      expect(activities).toHaveLength(2);
+      expect(findActiveActivitiesSpy).toHaveBeenCalledWith('');
+    });
+
+    it('returns failure tuple when keyword has no matches (Exception 3a)', async () => {
+      findActiveActivitiesSpy.mockResolvedValue([false, 'No activities found.', []]);
+
+      const [success, message, activities] =
+        await SearchActivityController.searchActiveActivities('nomatch');
+
+      expect(success).toBe(false);
+      expect(message).toBe('No activities found.');
+      expect(activities).toEqual([]);
+    });
+
+    it('returns failure tuple on DB error', async () => {
+      findActiveActivitiesSpy.mockResolvedValue([false, 'Failed to fetch activities.', []]);
+
+      const [success, message, activities] =
+        await SearchActivityController.searchActiveActivities('anything');
+
+      expect(success).toBe(false);
+      expect(message).toBe('Failed to fetch activities.');
+      expect(activities).toEqual([]);
     });
   });
 });

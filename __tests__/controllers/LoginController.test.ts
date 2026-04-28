@@ -167,6 +167,93 @@ describe('LoginController', () => {
   });
 
   // ===========================================================
+  // User Story #30 — Donee Login
+  // LoginController.authenticate(username, password) → UserAccount.validateCredentials()
+  // ===========================================================
+  describe('User Story #30: Donee Login (authenticate)', () => {
+    const mockDonee = { id: 'd1', username: 'donee1', role: 'donee' };
+
+    it('should return success when donee credentials are valid', async () => {
+      (UserAccount.validateCredentials as jest.Mock).mockResolvedValue([
+        true,
+        'Credentials validated.',
+        mockDonee,
+      ]);
+      (auth.createSession as jest.Mock).mockResolvedValue(undefined);
+
+      const [success, message] = await LoginController.authenticate(
+        'donee1',
+        'password123',
+      );
+
+      expect(success).toBe(true);
+      expect(message).toBe('Successful Login.');
+      expect(UserAccount.validateCredentials).toHaveBeenCalledWith(
+        'donee1',
+        'password123',
+      );
+      expect(auth.createSession).toHaveBeenCalledWith({
+        userId: 'd1',
+        username: 'donee1',
+        role: 'donee',
+      });
+    });
+
+    it('should fail when donee username does not exist (Exception 4a)', async () => {
+      (UserAccount.validateCredentials as jest.Mock).mockResolvedValue([
+        false,
+        'Invalid username or password.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.authenticate(
+        'nobody',
+        'password123',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Invalid username or password.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+
+    it('should fail when donee account is suspended (Exception 4b)', async () => {
+      (UserAccount.validateCredentials as jest.Mock).mockResolvedValue([
+        false,
+        'Your account has been suspended. Please contact an administrator.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.authenticate(
+        'donee1',
+        'password123',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe(
+        'Your account has been suspended. Please contact an administrator.',
+      );
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+
+    it('should fail when donee password is wrong (Exception 4c)', async () => {
+      (UserAccount.validateCredentials as jest.Mock).mockResolvedValue([
+        false,
+        'Invalid username or password.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.authenticate(
+        'donee1',
+        'wrongpassword',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Invalid username or password.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================
   // User Story #49 — User Login (via email)
   // ===========================================================
   describe('User Story #49: authenticateUser', () => {
