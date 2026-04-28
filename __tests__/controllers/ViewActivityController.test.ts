@@ -4,6 +4,7 @@ import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 describe('ViewActivityController', () => {
   let getByUserIdSpy: jest.SpyInstance;
   let getByIdSpy: jest.SpyInstance;
+  let getDetailsSpy: jest.SpyInstance;
 
   const sample = (overrides: Partial<Record<string, unknown>> = {}) =>
     new FundraisingActivity({
@@ -22,11 +23,13 @@ describe('ViewActivityController', () => {
   beforeAll(() => {
     getByUserIdSpy = jest.spyOn(FundraisingActivity, 'getByUserId');
     getByIdSpy = jest.spyOn(FundraisingActivity, 'getById');
+    getDetailsSpy = jest.spyOn(FundraisingActivity, 'get_activities_details');
   });
 
   afterAll(() => {
     getByUserIdSpy.mockRestore();
     getByIdSpy.mockRestore();
+    getDetailsSpy.mockRestore();
   });
 
   beforeEach(() => {
@@ -84,6 +87,61 @@ describe('ViewActivityController', () => {
       const result = await ViewActivityController.getActivityForUser('a1', 'u1');
 
       expect(result).toBeNull();
+    });
+  });
+
+  // ===========================================================
+  // User Story #26 — Donee views fundraising activity details
+  // ViewActivityController.ViewActivity(activityId)
+  //   → FundraisingActivity.get_activities_details(activityId)
+  // ===========================================================
+  describe('User Story #26: ViewActivity', () => {
+    it('returns success tuple with activity when it is active', async () => {
+      const activity = sample({ status: 'active' });
+      getDetailsSpy.mockResolvedValue([true, 'Activity found.', activity]);
+
+      const [success, message, result] =
+        await ViewActivityController.ViewActivity('a1');
+
+      expect(success).toBe(true);
+      expect(message).toBe('Activity found.');
+      expect(result).toBe(activity);
+      expect(getDetailsSpy).toHaveBeenCalledWith('a1');
+    });
+
+    it('returns failure tuple when activity is not found', async () => {
+      getDetailsSpy.mockResolvedValue([false, 'Activity not found.', null]);
+
+      const [success, message, result] =
+        await ViewActivityController.ViewActivity('nonexistent');
+
+      expect(success).toBe(false);
+      expect(message).toBe('Activity not found.');
+      expect(result).toBeNull();
+    });
+
+    it('returns failure tuple when activity is completed', async () => {
+      const activity = sample({ status: 'completed' });
+      getDetailsSpy.mockResolvedValue([false, 'Activity is completed.', activity]);
+
+      const [success, message, result] =
+        await ViewActivityController.ViewActivity('a1');
+
+      expect(success).toBe(false);
+      expect(message).toBe('Activity is completed.');
+      expect(result).toBe(activity);
+    });
+
+    it('returns failure tuple when activity is inactive', async () => {
+      const activity = sample({ status: 'inactive' });
+      getDetailsSpy.mockResolvedValue([false, 'Activity is inactive.', activity]);
+
+      const [success, message, result] =
+        await ViewActivityController.ViewActivity('a1');
+
+      expect(success).toBe(false);
+      expect(message).toBe('Activity is inactive.');
+      expect(result).toBe(activity);
     });
   });
 });

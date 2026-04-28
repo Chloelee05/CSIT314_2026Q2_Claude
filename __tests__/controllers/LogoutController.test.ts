@@ -1,7 +1,9 @@
 import { LogoutController } from '@/lib/controllers/LogoutController';
 import { UserAccount } from '@/lib/entities/UserAccount';
+import { UserSession } from '@/lib/entities/UserSession';
 
 jest.mock('@/lib/entities/UserAccount');
+jest.mock('@/lib/entities/UserSession');
 
 describe('LogoutController', () => {
   beforeEach(() => {
@@ -30,6 +32,31 @@ describe('LogoutController', () => {
 
       expect(result).toBe(false);
       expect(UserAccount.clearSession).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  // ===========================================================
+  // User Story #31 — Donee Logout
+  // LogoutController.logoutDonee(sessionId) → UserSession.invalidateSession(sessionId)
+  // ===========================================================
+  describe('User Story #31: logoutDonee', () => {
+    it('should return true and call invalidateSession with the sessionId', async () => {
+      (UserSession.invalidateSession as jest.Mock).mockResolvedValue(true);
+
+      const result = await LogoutController.logoutDonee('session-abc');
+
+      expect(result).toBe(true);
+      expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-abc');
+      expect(UserSession.invalidateSession).toHaveBeenCalledTimes(1);
+    });
+
+    it('should return false when invalidateSession returns false', async () => {
+      (UserSession.invalidateSession as jest.Mock).mockResolvedValue(false);
+
+      const result = await LogoutController.logoutDonee('session-xyz');
+
+      expect(result).toBe(false);
+      expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-xyz');
     });
   });
 });
