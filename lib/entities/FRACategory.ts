@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FRACategory (User Story #38, #39, #40)
+ * BCE Entity: FRACategory / CategoryData (User Story #38, #39, #40, #41)
  *
  * Represents a fundraising activity category managed by the Platform Manager.
  */
@@ -75,6 +75,39 @@ export class FRACategory {
       .eq('id', categoryId);
 
     return !error;
+  }
+
+  /**
+   * Delete a category by ID.
+   * Signature matches BCE diagram: deleteCategory(category_id): void
+   */
+  static async deleteCategory(categoryId: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('fra_categories')
+      .delete()
+      .eq('id', categoryId);
+
+    return !error;
+  }
+
+  /**
+   * Check whether the given category name is referenced by any active fundraising activity.
+   * Used for exception flow 5a in US #41.
+   */
+  static async isInUseByActiveFRAs(categoryName: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { data } = await supabase
+      .from('fundraising_activities')
+      .select('id')
+      .eq('category', categoryName)
+      .eq('status', 'active')
+      .limit(1)
+      .maybeSingle();
+
+    return data !== null;
   }
 
   /**
