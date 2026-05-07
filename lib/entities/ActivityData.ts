@@ -17,6 +17,15 @@ export interface WeeklyReport {
   newUsers: number;
 }
 
+export interface MonthlyReport {
+  month: number;
+  year: number;
+  newActivities: number;
+  totalDonations: number;
+  totalDonationAmount: number;
+  newUsers: number;
+}
+
 /**
  * BCE Entity: ActivityData (User Story #45, #46)
  * Aggregates platform activity from the database.
@@ -103,6 +112,55 @@ export class ActivityData {
     return {
       startDate: start_date,
       endDate: end_date,
+      newActivities: activitiesRes.count ?? 0,
+      totalDonations: donationsRes.data?.length ?? 0,
+      totalDonationAmount,
+      newUsers: usersRes.count ?? 0,
+    };
+  }
+
+  /**
+   * US#47 — Fetch monthly activity metrics for a given month (1–12) and year.
+   */
+  static async getMonthlyActivity(
+    month: number,
+    year: number,
+  ): Promise<MonthlyReport> {
+    const supabase = createServerClient();
+
+    const monthStart = new Date(year, month - 1, 1);
+    const monthEnd = new Date(year, month, 0, 23, 59, 59, 999);
+    const rangeStart = monthStart.toISOString();
+    const rangeEnd = monthEnd.toISOString();
+
+    const [activitiesRes, donationsRes, usersRes] = await Promise.all([
+      supabase
+        .from('fundraising_activities')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', rangeStart)
+        .lte('created_at', rangeEnd),
+
+      supabase
+        .from('donations')
+        .select('amount')
+        .gte('donated_at', rangeStart)
+        .lte('donated_at', rangeEnd),
+
+      supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', rangeStart)
+        .lte('created_at', rangeEnd),
+    ]);
+
+    const totalDonationAmount = (donationsRes.data ?? []).reduce(
+      (sum, d) => sum + parseFloat(String(d.amount)),
+      0,
+    );
+
+    return {
+      month,
+      year,
       newActivities: activitiesRes.count ?? 0,
       totalDonations: donationsRes.data?.length ?? 0,
       totalDonationAmount,

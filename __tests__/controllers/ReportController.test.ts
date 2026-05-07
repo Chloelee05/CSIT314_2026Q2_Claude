@@ -172,4 +172,78 @@ describe('ReportController', () => {
       expect(flash).toBe('');
     });
   });
+
+  // ===========================================================
+  // User Story #47 — Generate Monthly Report
+  // ReportController.generateMonthlyReport(month, year) → ActivityData.getMonthlyActivity()
+  // ===========================================================
+  describe('User Story #47: generateMonthlyReport', () => {
+    const mockMonthlyReport = {
+      month: 5,
+      year: 2026,
+      newActivities: 10,
+      totalDonations: 30,
+      totalDonationAmount: 1500.0,
+      newUsers: 8,
+    };
+
+    it('should return report data when activity exists for the month', async () => {
+      (ActivityData.getMonthlyActivity as jest.Mock).mockResolvedValue(mockMonthlyReport);
+
+      const [report, flash] = await ReportController.generateMonthlyReport(5, 2026);
+
+      expect(report).toEqual(mockMonthlyReport);
+      expect(flash).toBe('');
+      expect(ActivityData.getMonthlyActivity).toHaveBeenCalledWith(5, 2026);
+    });
+
+    it('should return null and flash when no data exists for the month (Exception 5a)', async () => {
+      (ActivityData.getMonthlyActivity as jest.Mock).mockResolvedValue({
+        month: 1,
+        year: 2020,
+        newActivities: 0,
+        totalDonations: 0,
+        totalDonationAmount: 0,
+        newUsers: 0,
+      });
+
+      const [report, flash] = await ReportController.generateMonthlyReport(1, 2020);
+
+      expect(report).toBeNull();
+      expect(flash).toBe('No activity data available for the selected month.');
+    });
+
+    it('should return null and flash when month is 0 (invalid)', async () => {
+      const [report, flash] = await ReportController.generateMonthlyReport(0, 2026);
+
+      expect(report).toBeNull();
+      expect(flash).toBe('Please select a month and year.');
+      expect(ActivityData.getMonthlyActivity).not.toHaveBeenCalled();
+    });
+
+    it('should return null and flash when year is 0 (invalid)', async () => {
+      const [report, flash] = await ReportController.generateMonthlyReport(5, 0);
+
+      expect(report).toBeNull();
+      expect(flash).toBe('Please select a month and year.');
+      expect(ActivityData.getMonthlyActivity).not.toHaveBeenCalled();
+    });
+
+    it('should return report when only new activities exist (partial data)', async () => {
+      (ActivityData.getMonthlyActivity as jest.Mock).mockResolvedValue({
+        month: 3,
+        year: 2026,
+        newActivities: 2,
+        totalDonations: 0,
+        totalDonationAmount: 0,
+        newUsers: 0,
+      });
+
+      const [report, flash] = await ReportController.generateMonthlyReport(3, 2026);
+
+      expect(report).not.toBeNull();
+      expect(report?.newActivities).toBe(2);
+      expect(flash).toBe('');
+    });
+  });
 });
