@@ -26,9 +26,15 @@ export default async function SearchCategoriesPage({
 
   const [categories, flash] = await CategoryController.searchFRACategories(q);
 
+  const rows = categories.map((c) => ({
+    id: c.id,
+    name: c.name,
+    created_at: c.created_at,
+  }));
+
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <SearchCategoriesBoundary categories={categories} flash={flash} />
+      <SearchCategoriesBoundary categories={rows} flash={flash} />
     </div>
   );
 }

@@ -2,10 +2,14 @@
 
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useTransition } from 'react';
-import { FRACategory } from '@/lib/entities/FRACategory';
+interface CategoryRow {
+  id: string;
+  name: string;
+  created_at: string;
+}
 
 interface Props {
-  categories: FRACategory[];
+  categories: CategoryRow[];
   flash: string;
 }
 
