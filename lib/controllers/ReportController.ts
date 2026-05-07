@@ -1,8 +1,8 @@
-import { ActivityData, DailyReport } from '@/lib/entities/ActivityData';
+import { ActivityData, DailyReport, WeeklyReport } from '@/lib/entities/ActivityData';
 
 /**
- * BCE Controller: ReportController (User Story #45)
- * Generates daily activity reports for Platform Managers.
+ * BCE Controller: ReportController (User Story #45, #46)
+ * Generates activity reports for Platform Managers.
  */
 export class ReportController {
   /**
@@ -26,6 +26,33 @@ export class ReportController {
       report.newUsers === 0
     ) {
       return [null, 'No activity data available for the selected date.'];
+    }
+
+    return [report, ''];
+  }
+
+  /**
+   * US#46 — Generate a weekly report for the given date range.
+   * Signature matches BCE diagram: generateWeeklyReport(start_date, end_date)
+   *
+   * @returns [report | null, flash message]
+   */
+  static async generateWeeklyReport(
+    start_date: string,
+    end_date: string,
+  ): Promise<[WeeklyReport | null, string]> {
+    if (!start_date || !end_date) {
+      return [null, 'Please select a start date.'];
+    }
+
+    const report = await ActivityData.getWeeklyActivity(start_date, end_date);
+
+    if (
+      report.newActivities === 0 &&
+      report.totalDonations === 0 &&
+      report.newUsers === 0
+    ) {
+      return [null, 'No activity data available for the selected week.'];
     }
 
     return [report, ''];

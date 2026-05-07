@@ -158,6 +158,14 @@ export default async function UserDashboard() {
               <p className="text-sm text-gray-500">Generate a daily activity report for any date.</p>
               <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
             </Link>
+            <Link
+              href="/pr/weeklyReport/create"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Weekly Report</h3>
+              <p className="text-sm text-gray-500">Generate a 7-day activity report to track trends.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
           </div>
         )}
       </main>

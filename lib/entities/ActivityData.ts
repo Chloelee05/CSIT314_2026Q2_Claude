@@ -8,9 +8,18 @@ export interface DailyReport {
   newUsers: number;
 }
 
+export interface WeeklyReport {
+  startDate: string;
+  endDate: string;
+  newActivities: number;
+  totalDonations: number;
+  totalDonationAmount: number;
+  newUsers: number;
+}
+
 /**
- * BCE Entity: ActivityData (User Story #45)
- * Aggregates daily platform activity from the database.
+ * BCE Entity: ActivityData (User Story #45, #46)
+ * Aggregates platform activity from the database.
  */
 export class ActivityData {
   /**
@@ -48,6 +57,52 @@ export class ActivityData {
 
     return {
       date,
+      newActivities: activitiesRes.count ?? 0,
+      totalDonations: donationsRes.data?.length ?? 0,
+      totalDonationAmount,
+      newUsers: usersRes.count ?? 0,
+    };
+  }
+
+  /**
+   * US#46 — Fetch weekly activity metrics between start_date and end_date (YYYY-MM-DD).
+   */
+  static async getWeeklyActivity(
+    start_date: string,
+    end_date: string,
+  ): Promise<WeeklyReport> {
+    const supabase = createServerClient();
+    const rangeStart = `${start_date}T00:00:00.000Z`;
+    const rangeEnd = `${end_date}T23:59:59.999Z`;
+
+    const [activitiesRes, donationsRes, usersRes] = await Promise.all([
+      supabase
+        .from('fundraising_activities')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', rangeStart)
+        .lte('created_at', rangeEnd),
+
+      supabase
+        .from('donations')
+        .select('amount')
+        .gte('donated_at', rangeStart)
+        .lte('donated_at', rangeEnd),
+
+      supabase
+        .from('user_profiles')
+        .select('*', { count: 'exact', head: true })
+        .gte('created_at', rangeStart)
+        .lte('created_at', rangeEnd),
+    ]);
+
+    const totalDonationAmount = (donationsRes.data ?? []).reduce(
+      (sum, d) => sum + parseFloat(String(d.amount)),
+      0,
+    );
+
+    return {
+      startDate: start_date,
+      endDate: end_date,
       newActivities: activitiesRes.count ?? 0,
       totalDonations: donationsRes.data?.length ?? 0,
       totalDonationAmount,

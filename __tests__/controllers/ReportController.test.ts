@@ -86,4 +86,90 @@ describe('ReportController', () => {
       expect(flash).toBe('');
     });
   });
+
+  // ===========================================================
+  // User Story #46 — Generate Weekly Report
+  // ReportController.generateWeeklyReport(start_date, end_date) → ActivityData.getWeeklyActivity()
+  // ===========================================================
+  describe('User Story #46: generateWeeklyReport', () => {
+    const mockWeeklyReport = {
+      startDate: '2026-05-01',
+      endDate: '2026-05-07',
+      newActivities: 5,
+      totalDonations: 12,
+      totalDonationAmount: 680.0,
+      newUsers: 4,
+    };
+
+    it('should return report data when activity exists for the week', async () => {
+      (ActivityData.getWeeklyActivity as jest.Mock).mockResolvedValue(mockWeeklyReport);
+
+      const [report, flash] = await ReportController.generateWeeklyReport(
+        '2026-05-01',
+        '2026-05-07',
+      );
+
+      expect(report).toEqual(mockWeeklyReport);
+      expect(flash).toBe('');
+      expect(ActivityData.getWeeklyActivity).toHaveBeenCalledWith(
+        '2026-05-01',
+        '2026-05-07',
+      );
+    });
+
+    it('should return null and flash when no data exists for the week (Exception 5a)', async () => {
+      (ActivityData.getWeeklyActivity as jest.Mock).mockResolvedValue({
+        startDate: '2026-01-01',
+        endDate: '2026-01-07',
+        newActivities: 0,
+        totalDonations: 0,
+        totalDonationAmount: 0,
+        newUsers: 0,
+      });
+
+      const [report, flash] = await ReportController.generateWeeklyReport(
+        '2026-01-01',
+        '2026-01-07',
+      );
+
+      expect(report).toBeNull();
+      expect(flash).toBe('No activity data available for the selected week.');
+    });
+
+    it('should return null and flash when start date is empty', async () => {
+      const [report, flash] = await ReportController.generateWeeklyReport('', '2026-05-07');
+
+      expect(report).toBeNull();
+      expect(flash).toBe('Please select a start date.');
+      expect(ActivityData.getWeeklyActivity).not.toHaveBeenCalled();
+    });
+
+    it('should return null and flash when end date is empty', async () => {
+      const [report, flash] = await ReportController.generateWeeklyReport('2026-05-01', '');
+
+      expect(report).toBeNull();
+      expect(flash).toBe('Please select a start date.');
+      expect(ActivityData.getWeeklyActivity).not.toHaveBeenCalled();
+    });
+
+    it('should return report when only donations exist in the week (partial data)', async () => {
+      (ActivityData.getWeeklyActivity as jest.Mock).mockResolvedValue({
+        startDate: '2026-05-01',
+        endDate: '2026-05-07',
+        newActivities: 0,
+        totalDonations: 3,
+        totalDonationAmount: 150.0,
+        newUsers: 0,
+      });
+
+      const [report, flash] = await ReportController.generateWeeklyReport(
+        '2026-05-01',
+        '2026-05-07',
+      );
+
+      expect(report).not.toBeNull();
+      expect(report?.totalDonations).toBe(3);
+      expect(flash).toBe('');
+    });
+  });
 });
