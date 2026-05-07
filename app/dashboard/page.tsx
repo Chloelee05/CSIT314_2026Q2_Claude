@@ -122,6 +122,27 @@ export default async function UserDashboard() {
             </Link>
           </div>
         )}
+
+        {session.role === 'platform_management' && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/pr/FRA/createCategories"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Create Category</h3>
+              <p className="text-sm text-gray-500">Add a new category to organise fundraising campaigns.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/FRA/viewCategories"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">View Categories</h3>
+              <p className="text-sm text-gray-500">Browse and manage all FRA categories.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+          </div>
+        )}
       </main>
     </div>
   );

@@ -19,6 +19,7 @@ async function getSessionFromRequest(request: NextRequest) {
 function dashboardUrl(role: string, baseUrl: string) {
   if (role === 'admin') return new URL('/admin/dashboard', baseUrl);
   if (role === 'donee') return new URL('/donee/activity/search', baseUrl);
+  if (role === 'platform_management') return new URL('/pr/dashboard', baseUrl);
   return new URL('/dashboard', baseUrl);
 }
 
@@ -49,6 +50,10 @@ export async function proxy(request: NextRequest) {
   }
 
   if (pathname.startsWith('/donee') && session.role !== 'donee') {
+    return NextResponse.redirect(new URL('/dashboard', request.url));
+  }
+
+  if (pathname.startsWith('/pr') && session.role !== 'platform_management') {
     return NextResponse.redirect(new URL('/dashboard', request.url));
   }
 
