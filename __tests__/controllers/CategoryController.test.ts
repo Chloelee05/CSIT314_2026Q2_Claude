@@ -29,6 +29,67 @@ describe('CategoryController', () => {
   });
 
   // ===========================================================
+  // User Story #42 — Search FRA Categories
+  // ===========================================================
+  describe('User Story #42: searchFRACategories', () => {
+    it('returns matching categories and empty flash when keyword matches (main flow)', async () => {
+      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
+      const list = [makeCategory('Health'), makeCategory('Health & Wellness')];
+      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
+
+      const [categories, flash] = await CategoryController.searchFRACategories('health');
+
+      expect(categories).toEqual(list);
+      expect(flash).toBe('');
+      expect(FRACategory.getCategoriesByKeyword).toHaveBeenCalledWith('health');
+    });
+
+    it('returns empty list and flash message when no categories match (exception flow 4a)', async () => {
+      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
+      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue([]);
+
+      const [categories, flash] = await CategoryController.searchFRACategories('xyz');
+
+      expect(categories).toEqual([]);
+      expect(flash).toBe('No categories found matching your search.');
+    });
+
+    it('returns all categories when keyword is empty', async () => {
+      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
+      const list = [makeCategory('Health'), makeCategory('Education')];
+      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
+
+      const [categories, flash] = await CategoryController.searchFRACategories('');
+
+      expect(categories).toEqual(list);
+      expect(flash).toBe('');
+    });
+
+    it('returns [[], "Unauthorised."] when session is missing', async () => {
+      (auth.getSession as jest.Mock).mockResolvedValue(null);
+
+      const [categories, flash] = await CategoryController.searchFRACategories('health');
+
+      expect(categories).toEqual([]);
+      expect(flash).toBe('Unauthorised.');
+      expect(FRACategory.getCategoriesByKeyword).not.toHaveBeenCalled();
+    });
+
+    it('returns [[], "Unauthorised."] when role is not platform_management', async () => {
+      (auth.getSession as jest.Mock).mockResolvedValue({
+        userId: 'a1',
+        username: 'admin',
+        role: 'admin',
+      });
+
+      const [categories, flash] = await CategoryController.searchFRACategories('health');
+
+      expect(categories).toEqual([]);
+      expect(flash).toBe('Unauthorised.');
+    });
+  });
+
+  // ===========================================================
   // User Story #41 — Delete FRA Category
   // ===========================================================
   describe('User Story #41: deleteFRACategory', () => {

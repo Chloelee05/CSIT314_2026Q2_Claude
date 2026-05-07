@@ -78,6 +78,28 @@ export class FRACategory {
   }
 
   /**
+   * Filter categories by keyword (case-insensitive substring on name).
+   * Empty keyword returns all categories.
+   * Signature matches BCE diagram: getCategoriesByKeyword(keyword): list
+   */
+  static async getCategoriesByKeyword(keyword: string): Promise<FRACategory[]> {
+    const supabase = createServerClient();
+
+    let query = supabase
+      .from('fra_categories')
+      .select('*')
+      .order('name', { ascending: true });
+
+    if (keyword.trim()) {
+      query = query.ilike('name', `%${keyword.trim()}%`);
+    }
+
+    const { data, error } = await query;
+    if (error || !data) return [];
+    return data.map((row) => new FRACategory(row));
+  }
+
+  /**
    * Delete a category by ID.
    * Signature matches BCE diagram: deleteCategory(category_id): void
    */
