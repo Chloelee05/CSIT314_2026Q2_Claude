@@ -50,9 +50,17 @@ export default function ViewCategoryUI({ categories }: Props) {
               className="flex items-center justify-between px-5 py-4"
             >
               <span className="text-sm font-medium text-gray-900">{cat.name}</span>
-              <span className="text-xs text-gray-400">
-                {new Date(cat.created_at).toLocaleDateString()}
-              </span>
+              <div className="flex items-center gap-4">
+                <span className="text-xs text-gray-400">
+                  {new Date(cat.created_at).toLocaleDateString()}
+                </span>
+                <a
+                  href={`/pr/FRA/updateCategories?id=${cat.id}`}
+                  className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+                >
+                  Edit
+                </a>
+              </div>
             </li>
           ))}
         </ul>

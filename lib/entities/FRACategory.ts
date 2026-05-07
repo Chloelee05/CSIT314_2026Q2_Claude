@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FRACategory (User Story #38)
+ * BCE Entity: FRACategory (User Story #38, #39, #40)
  *
  * Represents a fundraising activity category managed by the Platform Manager.
  */
@@ -44,6 +44,37 @@ export class FRACategory {
 
     if (error || !data) return [];
     return data.map((row) => new FRACategory(row));
+  }
+
+  /**
+   * Load a single category by ID.
+   */
+  static async getById(categoryId: string): Promise<FRACategory | null> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('fra_categories')
+      .select('*')
+      .eq('id', categoryId)
+      .maybeSingle();
+
+    if (error || !data) return null;
+    return new FRACategory(data);
+  }
+
+  /**
+   * Update an existing category name.
+   * Signature matches BCE diagram: update(categoryId: String, categoryName: String): boolean
+   */
+  static async update(categoryId: string, categoryName: string): Promise<boolean> {
+    const supabase = createServerClient();
+
+    const { error } = await supabase
+      .from('fra_categories')
+      .update({ name: categoryName.trim() })
+      .eq('id', categoryId);
+
+    return !error;
   }
 
   /**
