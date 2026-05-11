@@ -16,5 +16,5 @@ export async function doneeLogoutAction(): Promise<void> {
 
   await LogoutController.logoutDonee(sessionId);
 
-  redirect('/donee/account/login');
+  redirect('/login');
 }
