@@ -44,35 +44,11 @@ export class LoginController {
   }
 
   /**
-   * User Story #49 — User login.
+   * User Story #49 — User login via email.
    * Signature matches BCE diagram: authenticateUser(email, pw): boolean
-   * Retrieves account via UserAccount.getByEmail(), then verifies password.
    *
    * @returns [success, message]
    */
-  /**
-   * User Story #30 — Donee login.
-   * Signature matches BCE diagram: authenticate(username, password)
-   */
-  static async authenticate(
-    username: string,
-    password: string,
-  ): Promise<[boolean, string]> {
-    const [success, message, user] = await UserAccount.validateCredentials(username, password);
-
-    if (!success || !user) {
-      return [false, message];
-    }
-
-    await createSession({
-      userId: user.id,
-      username: user.username,
-      role: user.role,
-    });
-
-    return [true, 'Successful Login.'];
-  }
-
   static async authenticateUser(
     email: string,
     pw: string,

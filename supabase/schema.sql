@@ -139,6 +139,24 @@ CREATE POLICY "Allow all operations for anon on donations"
   WITH CHECK (true);
 
 -- ──────────────────────────────────────────────
+-- BCE Entity: FRACategory (#38)
+-- Platform Manager managed categories for FRA
+-- ──────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS fra_categories (
+  id         UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  name       TEXT UNIQUE NOT NULL,
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+ALTER TABLE fra_categories ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Allow all operations for anon on fra_categories"
+  ON fra_categories
+  FOR ALL
+  USING (true)
+  WITH CHECK (true);
+
+-- ──────────────────────────────────────────────
 -- Seed data (5 test accounts)
 -- ──────────────────────────────────────────────
 INSERT INTO user_profiles (username, password_hash, role, status, full_name, email) VALUES
@@ -147,6 +165,17 @@ INSERT INTO user_profiles (username, password_hash, role, status, full_name, ema
   ('donee1',       crypt('password123', gen_salt('bf', 10)), 'donee',               'active',    'Bob Smith',            'bob@fundraise.com'),
   ('platformmgr',  crypt('password123', gen_salt('bf', 10)), 'platform_management', 'active',    'Charlie Brown',        'charlie@fundraise.com'),
   ('suspended1',   crypt('password123', gen_salt('bf', 10)), 'fund_raiser',         'suspended', 'Suspended Account',    'suspended@fundraise.com');
+
+-- ──────────────────────────────────────────────
+-- Seed data: fra_categories
+-- ──────────────────────────────────────────────
+INSERT INTO fra_categories (name) VALUES
+  ('Education'),
+  ('Environment'),
+  ('Health'),
+  ('Animals'),
+  ('Emergency'),
+  ('General');
 
 -- ──────────────────────────────────────────────
 -- Seed data: fundraising_activities

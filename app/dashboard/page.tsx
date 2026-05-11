@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { userLogoutAction } from '@/app/login/actions';
 import { doneeLogoutAction } from '@/app/donee/account/logout/actions';
+import { pmLogoutAction } from '@/app/pr/account/logout/actions';
 import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -41,7 +42,7 @@ export default async function UserDashboard() {
               Logged in as{' '}
               <span className="font-medium">{session.username}</span>
             </span>
-            <form action={session.role === 'donee' ? doneeLogoutAction : userLogoutAction}>
+            <form action={session.role === 'donee' ? doneeLogoutAction : session.role === 'platform_management' ? pmLogoutAction : userLogoutAction}>
               <button
                 type="submit"
                 className="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer"
@@ -118,6 +119,59 @@ export default async function UserDashboard() {
             >
               <h3 className="font-semibold text-gray-900">View Donation History</h3>
               <p className="text-sm text-gray-500">View all your past donation transactions.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+          </div>
+        )}
+
+        {session.role === 'platform_management' && (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            <Link
+              href="/pr/FRA/createCategories"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Create Category</h3>
+              <p className="text-sm text-gray-500">Add a new category to organise fundraising campaigns.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/FRA/viewCategories"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">View Categories</h3>
+              <p className="text-sm text-gray-500">Browse and manage all FRA categories.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/FRA/searchCategories"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Search Categories</h3>
+              <p className="text-sm text-gray-500">Search FRA categories by keyword.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/dailyReport/create"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Daily Report</h3>
+              <p className="text-sm text-gray-500">Generate a daily activity report for any date.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/weeklyReport/create"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Weekly Report</h3>
+              <p className="text-sm text-gray-500">Generate a 7-day activity report to track trends.</p>
+              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
+            </Link>
+            <Link
+              href="/pr/monthlyReport/create"
+              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
+            >
+              <h3 className="font-semibold text-gray-900">Monthly Report</h3>
+              <p className="text-sm text-gray-500">Analyse long-term performance for any month.</p>
               <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
             </Link>
           </div>
