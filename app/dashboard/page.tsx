@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { userLogoutAction } from '@/app/login/actions';
-import { doneeLogoutAction } from '@/app/donee/account/logout/actions';
+import { clickLogout } from '@/app/dashboard/DashboardPageBoundary';
 import { pmLogoutAction } from '@/app/pr/account/logout/actions';
 import Link from 'next/link';
 
@@ -14,7 +14,7 @@ const ROLE_LABELS: Record<string, string> = {
 /**
  * User Dashboard — shown after successful non-admin login.
  * BCE Boundary: show_dashboard() target for non-admin roles.
- * Logout (User Story #24): form action `userLogoutAction` → LogoutBoundary.process_logout()
+ * Donee logout (User Story #31): form action `clickLogout` → DashboardPageBoundary.
  */
 export default async function UserDashboard() {
   const session = await getSession();
@@ -42,7 +42,7 @@ export default async function UserDashboard() {
               Logged in as{' '}
               <span className="font-medium">{session.username}</span>
             </span>
-            <form action={session.role === 'donee' ? doneeLogoutAction : session.role === 'platform_management' ? pmLogoutAction : userLogoutAction}>
+            <form action={session.role === 'donee' ? clickLogout : session.role === 'platform_management' ? pmLogoutAction : userLogoutAction}>
               <button
                 type="submit"
                 className="text-sm bg-red-50 text-red-600 hover:bg-red-100 px-3 py-1.5 rounded-lg font-medium transition cursor-pointer"

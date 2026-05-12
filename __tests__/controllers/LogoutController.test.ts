@@ -37,13 +37,13 @@ describe('LogoutController', () => {
 
   // ===========================================================
   // User Story #31 — Donee Logout
-  // LogoutController.logoutDonee(sessionId) → UserSession.invalidateSession(sessionId)
+  // LogoutController.logout(sessionId) → UserSession.invalidateSession(sessionId)
   // ===========================================================
-  describe('User Story #31: logoutDonee', () => {
+  describe('User Story #31: logout(sessionId)', () => {
     it('should return true and call invalidateSession with the sessionId', async () => {
       (UserSession.invalidateSession as jest.Mock).mockResolvedValue(true);
 
-      const result = await LogoutController.logoutDonee('session-abc');
+      const result = await LogoutController.logout('session-abc');
 
       expect(result).toBe(true);
       expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-abc');
@@ -53,7 +53,7 @@ describe('LogoutController', () => {
     it('should return false when invalidateSession returns false', async () => {
       (UserSession.invalidateSession as jest.Mock).mockResolvedValue(false);
 
-      const result = await LogoutController.logoutDonee('session-xyz');
+      const result = await LogoutController.logout('session-xyz');
 
       expect(result).toBe(false);
       expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-xyz');
