@@ -16,9 +16,9 @@ export async function clickLogout(): Promise<void> {
 
   await LogoutController.logout(sessionId);
 
-  redirectToLoginPage();
+  await redirectToLoginPage();
 }
 
-export function redirectToLoginPage(): never {
+export async function redirectToLoginPage(): Promise<never> {
   redirect('/login');
 }
