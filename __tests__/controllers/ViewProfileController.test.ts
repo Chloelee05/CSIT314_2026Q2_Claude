@@ -1,9 +1,9 @@
-import { ProfileViewController } from '@/lib/controllers/ProfileViewController';
+import { ViewProfileController } from '@/lib/controllers/ViewProfileController';
 import { UserProfile } from '@/lib/entities/UserProfile';
 
 jest.mock('@/lib/entities/UserProfile');
 
-describe('ProfileViewController', () => {
+describe('ViewProfileController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
@@ -17,7 +17,7 @@ describe('ProfileViewController', () => {
     it('should return profile when entity finds it', async () => {
       (UserProfile.fetchProfile as jest.Mock).mockResolvedValue(mockProfile);
 
-      const result = await ProfileViewController.getProfileDetails('account-1');
+      const result = await ViewProfileController.getProfileDetails('account-1');
 
       expect(result).toEqual({ profile: mockProfile });
       expect(UserProfile.fetchProfile).toHaveBeenCalledWith('account-1');
@@ -26,7 +26,7 @@ describe('ProfileViewController', () => {
     it('should return error when profile does not exist (null)', async () => {
       (UserProfile.fetchProfile as jest.Mock).mockResolvedValue(null);
 
-      const result = await ProfileViewController.getProfileDetails('nonexistent-id');
+      const result = await ViewProfileController.getProfileDetails('nonexistent-id');
 
       expect(result).toEqual({ error: 'Profile could not be loaded or no longer exists' });
     });
@@ -34,7 +34,7 @@ describe('ProfileViewController', () => {
     it('should return error when entity throws an exception', async () => {
       (UserProfile.fetchProfile as jest.Mock).mockRejectedValue(new Error('DB connection failed'));
 
-      const result = await ProfileViewController.getProfileDetails('account-1');
+      const result = await ViewProfileController.getProfileDetails('account-1');
 
       expect(result).toEqual({ error: 'An unexpected system error occurred' });
     });
@@ -49,7 +49,7 @@ describe('ProfileViewController', () => {
     it('should return list of profiles on success', async () => {
       (UserProfile.fetchAllProfiles as jest.Mock).mockResolvedValue(mockProfiles);
 
-      const result = await ProfileViewController.getProfileList();
+      const result = await ViewProfileController.getProfileList();
 
       expect(result).toEqual(mockProfiles);
       expect(UserProfile.fetchAllProfiles).toHaveBeenCalled();
@@ -58,7 +58,7 @@ describe('ProfileViewController', () => {
     it('should return empty array when entity throws an exception', async () => {
       (UserProfile.fetchAllProfiles as jest.Mock).mockRejectedValue(new Error('DB error'));
 
-      const result = await ProfileViewController.getProfileList();
+      const result = await ViewProfileController.getProfileList();
 
       expect(result).toEqual([]);
     });

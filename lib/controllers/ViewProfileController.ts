@@ -1,10 +1,10 @@
 import { UserProfile } from '@/lib/entities/UserProfile';
 
 /**
- * BCE Controller: ProfileViewController (User Story #12)
+ * BCE Controller: ViewProfileController (User Story #12)
  * Orchestrates the retrieval of user profile credentials.
  */
-export class ProfileViewController {
+export class ViewProfileController {
   static async getProfileDetails(userId: string) {
     try {
       const profile = await UserProfile.fetchProfile(userId);
