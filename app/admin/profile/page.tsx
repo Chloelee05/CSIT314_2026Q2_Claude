@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
-import { ProfileViewController } from '@/lib/controllers/ProfileViewController';
+import { ViewProfileController } from '@/lib/controllers/ViewProfileController';
 import { SearchUserProfileController } from '@/lib/controllers/SearchUserProfileController';
 import SuspendUserProfileBoundary from './suspend/SuspendUserProfileBoundary';
 import SearchUserProfileBoundary from './search/SearchUserProfileBoundary';
@@ -30,7 +30,7 @@ export default async function ProfileListPage({
     profiles = await SearchUserProfileController.SearchUserProfile(keyword, searchBy);
   } else {
     // Otherwise, retrieve the full list as usual
-    profiles = await ProfileViewController.getProfileList();
+    profiles = await ViewProfileController.getProfileList();
   }
 
   return (

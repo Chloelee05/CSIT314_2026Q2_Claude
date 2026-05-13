@@ -1,4 +1,4 @@
-import { ProfileViewController } from '@/lib/controllers/ProfileViewController';
+import { ViewProfileController } from '@/lib/controllers/ViewProfileController';
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
@@ -13,7 +13,7 @@ export default async function ViewProfileBoundary({ params }: { params: { id: st
     redirect('/login');
   }
   
-  const result = await ProfileViewController.getProfileDetails(id);
+  const result = await ViewProfileController.getProfileDetails(id);
 
   // Exception Flow: Styled to match the wide layout
   if (result.error || !result.profile) {
