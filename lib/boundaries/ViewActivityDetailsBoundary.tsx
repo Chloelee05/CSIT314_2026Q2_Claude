@@ -10,9 +10,9 @@ type ActivityDetails = {
 };
 
 /**
- * BCE Boundary: ViewActivityUI — displayActivityDetails(activity) (User Story #19)
+ * BCE Boundary: ViewActivityBoundary — displayActivityDetails(activity) (User Story #19)
  */
-export function ViewActivityDetailsUI({
+export function ViewActivityDetailsBoundary({
   activity,
 }: {
   activity: ActivityDetails;

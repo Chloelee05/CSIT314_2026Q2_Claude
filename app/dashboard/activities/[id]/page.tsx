@@ -2,11 +2,11 @@ import { getSession } from '@/lib/auth';
 import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
 import { redirect } from 'next/navigation';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
-import { ViewActivityDetailsUI } from './ViewActivityDetailsUI';
+import { ViewActivityDetailsBoundary } from '@/lib/boundaries/ViewActivityDetailsBoundary';
 
 /**
- * BCE Boundary: displayActivityDetails (User Story #19)
- * Sequence: selectActivity → ViewActivityController → getById → displayActivityDetails
+ * BCE Boundary: ViewActivityBoundary — displayActivityDetails(activity) (User Story #19)
+ * Sequence: selectActivity → ViewActivityController.getActivityForUser → displayActivityDetails
  */
 export default async function ViewActivityDetailsPage({
   params,
@@ -32,7 +32,7 @@ export default async function ViewActivityDetailsPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewActivityDetailsUI
+      <ViewActivityDetailsBoundary
         activity={serializeActivity(activity)}
       />
     </div>
