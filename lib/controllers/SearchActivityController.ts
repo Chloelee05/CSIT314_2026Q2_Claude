@@ -1,8 +1,7 @@
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
-import { ViewCompletedActivityController } from '@/lib/controllers/ViewCompletedActivityController';
 
 /**
- * BCE Controller: SearchActivityController (User Story #22, #34)
+ * BCE Controller: SearchActivityController (User Story #22)
  *
  * Coordinates search over fundraising activities.
  */
@@ -28,20 +27,6 @@ export class SearchActivityController {
       return [activities, 'No activities found.'];
     }
     return [activities, null];
-  }
-
-  /**
-   * Search among completed (ended) activities only. Delegates to
-   * ViewCompletedActivityController (BCE: searchCompletedActivities → getCompletedByKeyword).
-   */
-  static async searchCompletedActivities(
-    keyword: string,
-    userId: string,
-  ): Promise<[FundraisingActivity[], string | null]> {
-    return ViewCompletedActivityController.getCompletedActivitiesWithMessage(
-      userId,
-      keyword,
-    );
   }
 
   /**

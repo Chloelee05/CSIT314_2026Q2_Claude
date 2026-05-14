@@ -1,6 +1,11 @@
 'use client';
 
-import { SearchActivityBoundary } from '../SearchActivityBoundary';
+/**
+ * BCE Boundary: SearchCompleteActivityBoundary (User Story #34)
+ *
+ * - process_search()  — GET form targeting the completed activities page
+ * - show_results()    — renders the matched list or the alternate-flow flash message
+ */
 
 type ActivityRow = {
   id: string;
@@ -8,17 +13,9 @@ type ActivityRow = {
   category: string;
   goal_amount: number;
   end_date: string | null;
-  created_at: string;
 };
 
-/**
- * BCE Boundary: SearchActivityUI (User Story #34)
- *
- * - enterSearchKeyword — GET form to `/dashboard/activities/completed`
- * - displaySearchResults(activities) — list rows when `activities` is non-empty
- * - displayMessage('No completed fundraising activities found.') — alt. 3a
- */
-function displaySearchResults(activities: ActivityRow[]) {
+function show_results(activities: ActivityRow[]) {
   return (
     <ul className="space-y-3" role="list">
       {activities.map((a) => (
@@ -47,14 +44,13 @@ function displaySearchResults(activities: ActivityRow[]) {
   );
 }
 
-export function SearchActivityUI({
+export function SearchCompleteActivityBoundary({
   activities,
   initialQuery,
   emptyStateMessage,
 }: {
   activities: ActivityRow[];
   initialQuery: string;
-  /** From SearchActivityController — exact copy for alt. 3a when list is empty */
   emptyStateMessage: string | null;
 }) {
   return (
@@ -72,24 +68,40 @@ export function SearchActivityUI({
         Only campaigns with an end date on or before today are included.
       </p>
 
-      <div className="mt-6">
-        <SearchActivityBoundary
-          initialQuery={initialQuery}
-          formAction="/dashboard/activities/completed"
-          searchAriaLabel="Search completed fundraising activities"
-          searchPlaceholder="Search by title, description, or category…"
+      {/* process_search(): GET form */}
+      <form
+        method="GET"
+        action="/dashboard/activities/completed"
+        className="mt-6 flex gap-2"
+      >
+        <input
+          type="text"
+          name="q"
+          defaultValue={initialQuery}
+          placeholder="Search by title, description, or category…"
+          aria-label="Search completed fundraising activities"
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+        />
+        <button
+          type="submit"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
         >
-          {activities.length === 0 ? (
-            <p
-              className="p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm"
-              role="status"
-            >
-              {emptyStateMessage}
-            </p>
-          ) : (
-            displaySearchResults(activities)
-          )}
-        </SearchActivityBoundary>
+          Search
+        </button>
+      </form>
+
+      {/* show_results(): list or alternate-flow flash */}
+      <div className="mt-6">
+        {activities.length === 0 ? (
+          <p
+            className="p-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-sm"
+            role="status"
+          >
+            {emptyStateMessage ?? 'No completed fundraising activities found.'}
+          </p>
+        ) : (
+          show_results(activities)
+        )}
       </div>
     </div>
   );

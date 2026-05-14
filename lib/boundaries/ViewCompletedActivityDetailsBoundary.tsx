@@ -11,10 +11,10 @@ type ActivityDetails = {
 };
 
 /**
- * BCE Boundary: ViewCompletedActivityUI (User Story #35)
+ * BCE Boundary: ViewCompletedActivityDetailsBoundary (User Story #35)
  * displayActivityDetails(activity) — show full details for a completed (ended) campaign
  */
-export function ViewCompletedActivityUI({
+export function ViewCompletedActivityDetailsBoundary({
   activity,
 }: {
   activity: ActivityDetails;

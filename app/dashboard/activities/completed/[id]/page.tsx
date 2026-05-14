@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { ViewCompletedActivityController } from '@/lib/controllers/ViewCompletedActivityController';
 import { redirect } from 'next/navigation';
-import { ViewCompletedActivityUI } from '../ViewCompletedActivityUI';
+import { ViewCompletedActivityDetailsBoundary } from '@/lib/boundaries/ViewCompletedActivityDetailsBoundary';
 
 /**
  * BCE Boundary: completed activity details — User Story #35
@@ -31,7 +31,7 @@ export default async function CompletedActivityDetailsPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewCompletedActivityUI
+      <ViewCompletedActivityDetailsBoundary
         activity={{
           id: activity.id,
           title: activity.title,

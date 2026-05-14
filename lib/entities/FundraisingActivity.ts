@@ -201,6 +201,16 @@ export class FundraisingActivity {
   }
 
   /**
+   * Fetch all completed activities for a user.
+   * Signature matches BCE diagram: fetchCompletedActivity(): list — User Story #35
+   */
+  static async fetchCompletedActivity(
+    userId: string,
+  ): Promise<FundraisingActivity[]> {
+    return FundraisingActivity.getCompletedByKeyword('', userId);
+  }
+
+  /**
    * Completed activities for a user that match the keyword.
    * BCE diagram: getCompletedByKeyword(keyword)
    */
