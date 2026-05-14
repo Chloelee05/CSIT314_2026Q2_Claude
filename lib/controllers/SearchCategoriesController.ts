@@ -2,11 +2,11 @@ import { getSession } from '@/lib/auth';
 import { FRACategory } from '@/lib/entities/FRACategory';
 
 /**
- * BCE Controller: CategoryController (User Story #42)
+ * BCE Controller: SearchCategoriesController (User Story #42)
  *
  * Orchestrates category search operations for the Platform Manager.
  */
-export class CategoryController {
+export class SearchCategoriesController {
   /**
    * Search FRA categories by keyword.
    * Signature matches BCE diagram: searchFRACategories(keyword)
