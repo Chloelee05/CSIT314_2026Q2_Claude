@@ -2,12 +2,12 @@ import { getSession } from '@/lib/auth';
 import { ViewStatisticsController } from '@/lib/controllers/ViewStatisticsController';
 import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
 import { redirect } from 'next/navigation';
-import { ViewFRAStatisticsBoundary } from './ViewFRAStatisticsBoundary';
+import { ViewStatisticsBoundary } from '@/lib/boundaries/ViewStatisticsBoundary';
 
 /**
- * BCE Boundary: statistics page — User Story #32, #33
- * #32: getViewCount → FRAData.fetchViewCount → displayViewCount
- * #33: getShortlistCount → SavedFRAData.countShortlists → displayShortlistCount
+ * BCE page: ViewStatisticsBoundary — User Story #32, #33
+ * #32: getViewCount(fraId) → FRAData.fetchViewCount(fraId) → viewStatistics()
+ * #33: getShortlistCount → SavedFRAData.countShortlists → displayShortlistCount()
  */
 export default async function ActivityStatisticsPage({
   params,
@@ -33,7 +33,6 @@ export default async function ActivityStatisticsPage({
 
   const [viewOk, viewCount, viewError] = await ViewStatisticsController.getViewCount(
     activityId,
-    session.userId,
   );
   const [slOk, shortlistCount, shortlistError] =
     await ViewStatisticsController.getShortlistCount(
@@ -43,7 +42,7 @@ export default async function ActivityStatisticsPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewFRAStatisticsBoundary
+      <ViewStatisticsBoundary
         activityId={activityId}
         activityTitle={activity.title}
         viewSuccess={viewOk}

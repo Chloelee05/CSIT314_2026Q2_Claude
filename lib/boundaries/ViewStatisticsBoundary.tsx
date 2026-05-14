@@ -1,8 +1,8 @@
 /**
- * BCE Boundary: ViewFRAStatisticsBoundary (User Story #32, #33)
+ * BCE Boundary: ViewStatisticsBoundary (User Story #32, #33)
  *
- * - clickViewStatistics() — user opens this page (link from activity details)
- * - displayViewCount(count) / displayShortlistCount(count)
+ * - viewStatistics()       — renders the statistics page for the activity
+ * - displayShortlistCount() — surfaces the shortlist count metric
  */
 type StatErrorProps = { activityId: string; message: string; label: string };
 
@@ -29,7 +29,7 @@ function shortlistLabel(n: number): string {
   return `${n} shortlists`;
 }
 
-export function ViewFRAStatisticsBoundary({
+export function ViewStatisticsBoundary({
   activityId,
   activityTitle,
   viewSuccess,
