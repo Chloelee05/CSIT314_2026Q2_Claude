@@ -1,10 +1,9 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: SavedFRAData (User Story #27, #33)
+ * BCE Entity: SavedFRAData (User Story #27)
  *
  * - save: Donee saves a fundraising activity as a favourite (User Story #27)
- * - countShortlists: FR statistics — counts rows in `saved_fra` (User Story #33)
  */
 export class SavedFRAData {
   id: string;
@@ -17,31 +16,6 @@ export class SavedFRAData {
     this.donee_id = data.donee_id as string;
     this.fra_id = data.fra_id as string;
     this.saved_at = data.saved_at as string;
-  }
-
-  /**
-   * Count how many Donees have shortlisted this activity (via saved_fra table).
-   * BCE diagram: countShortlists(fraId) — User Story #33
-   */
-  static async countShortlists(
-    fraId: string,
-  ): Promise<[boolean, number | null, string]> {
-    const supabase = createServerClient();
-
-    const { count, error } = await supabase
-      .from('saved_fra')
-      .select('*', { count: 'exact', head: true })
-      .eq('fundraising_activity_id', fraId);
-
-    if (error) {
-      return [
-        false,
-        null,
-        'Could not load shortlist count. Please try again.',
-      ];
-    }
-
-    return [true, count ?? 0, ''];
   }
 
   /**

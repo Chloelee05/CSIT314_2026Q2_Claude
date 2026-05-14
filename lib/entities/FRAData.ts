@@ -1,12 +1,13 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FRAData (User Story #28, #29, #32)
+ * BCE Entity: FRAData (User Story #28, #29, #32, #33)
  *
  * FRA: Fund Raising Activity.
  * - fetchSavedFRAs: retrieve a donee's saved campaigns (User Story #28)
  * - delete: remove a saved campaign from favourites (User Story #29)
  * - fetchViewCount: view-count visibility statistics (User Story #32)
+ * - fetchShortlistCount: shortlist count statistics (User Story #33)
  */
 export class FRAData {
   /**
@@ -108,6 +109,31 @@ export class FRAData {
     }
 
     return [true, n, ''];
+  }
+
+  /**
+   * Count how many Donees have shortlisted this activity.
+   * Signature matches BCE diagram: fetchShortlistCount(fraId): tuple — User Story #33
+   */
+  static async fetchShortlistCount(
+    fraId: string,
+  ): Promise<[boolean, number | null, string]> {
+    const supabase = createServerClient();
+
+    const { count, error } = await supabase
+      .from('saved_fundraising_activities')
+      .select('*', { count: 'exact', head: true })
+      .eq('fra_id', fraId);
+
+    if (error) {
+      return [
+        false,
+        null,
+        'Could not load shortlist count. Please try again.',
+      ];
+    }
+
+    return [true, count ?? 0, ''];
   }
 }
 
