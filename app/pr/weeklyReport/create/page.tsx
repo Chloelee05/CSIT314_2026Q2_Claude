@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { ReportController } from '@/lib/controllers/ReportController';
+import { ReportsController } from '@/lib/controllers/ReportsController';
 import ReportsPageBoundary from './ReportsPageBoundary';
 
 /**
@@ -26,7 +26,7 @@ export default async function WeeklyReportPage({
 
   const [report, flash] =
     start && end
-      ? await ReportController.generateWeeklyReport(start, end)
+      ? await ReportsController.generateWeeklyReport(start, end)
       : [null, ''];
 
   return (

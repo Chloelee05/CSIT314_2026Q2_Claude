@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { ReportController } from '@/lib/controllers/ReportController';
+import { ReportsController } from '@/lib/controllers/ReportsController';
 import ReportsPageBoundary from './ReportsPageBoundary';
 
 /**
@@ -25,7 +25,7 @@ export default async function DailyReportPage({
   const { date = '' } = await searchParams;
 
   const [report, flash] = date
-    ? await ReportController.generateDailyReport(date)
+    ? await ReportsController.generateDailyReport(date)
     : [null, ''];
 
   return (

@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { ReportController } from '@/lib/controllers/ReportController';
+import { ReportsController } from '@/lib/controllers/ReportsController';
 import ReportsPageBoundary from './ReportsPageBoundary';
 
 /**
@@ -32,7 +32,7 @@ export default async function MonthlyReportPage({
     const [yearStr, monthStr] = period.split('-');
     const year = parseInt(yearStr, 10);
     const month = parseInt(monthStr, 10);
-    [report, flash] = await ReportController.generateMonthlyReport(month, year);
+    [report, flash] = await ReportsController.generateMonthlyReport(month, year);
   }
 
   return (
