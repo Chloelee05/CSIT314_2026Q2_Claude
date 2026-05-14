@@ -37,4 +37,42 @@ describe('LogoutBoundary', () => {
       );
     });
   });
+
+  // ===========================================================
+  // User Story #44 — PM logout (Boundary-only sequence)
+  // Logout() → DisplayMessage(msg) → redirectToLoginPage()
+  // ===========================================================
+  describe('User Story #44', () => {
+    it('Logout clears the session then displays message and redirects', async () => {
+      await LogoutBoundary.Logout();
+
+      expect(auth.deleteSession).toHaveBeenCalledTimes(1);
+      expect(redirect).toHaveBeenCalledTimes(1);
+      expect(redirect).toHaveBeenCalledWith(
+        '/login?message=' + encodeURIComponent('You have been logged out successfully.'),
+      );
+    });
+
+    it('DisplayMessage redirects to login with the given message', () => {
+      LogoutBoundary.DisplayMessage('You have been logged out successfully.');
+
+      expect(redirect).toHaveBeenCalledWith(
+        '/login?message=' + encodeURIComponent('You have been logged out successfully.'),
+      );
+    });
+
+    it('redirectToLoginPage redirects to login with message when provided', () => {
+      LogoutBoundary.redirectToLoginPage('Goodbye!');
+
+      expect(redirect).toHaveBeenCalledWith(
+        '/login?message=' + encodeURIComponent('Goodbye!'),
+      );
+    });
+
+    it('redirectToLoginPage redirects to /login with no query string when no message', () => {
+      LogoutBoundary.redirectToLoginPage();
+
+      expect(redirect).toHaveBeenCalledWith('/login');
+    });
+  });
 });
