@@ -1,4 +1,4 @@
-import LoginForm from './LoginForm';
+import LoginBoundary from '@/lib/boundaries/LoginBoundary';
 
 /**
  * Login page (server component).
@@ -11,5 +11,5 @@ export default async function LoginPage({
   searchParams: Promise<{ message?: string }>;
 }) {
   const params = await searchParams;
-  return <LoginForm logoutMessage={params.message} />;
+  return <LoginBoundary logoutMessage={params.message} />;
 }
