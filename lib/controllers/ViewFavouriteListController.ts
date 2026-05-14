@@ -1,16 +1,16 @@
-import { SavedFRAData, type SavedFRAWithDetails } from '@/lib/entities/SavedFRAData';
+import { FRAData, type SavedFRAWithDetails } from '@/lib/entities/FRAData';
 
 /**
- * BCE Controller: ViewFavouriteListController
+ * BCE Controller: ViewFavouriteListController (User Story #28)
  */
 export class ViewFavouriteListController {
   /**
-   * Delegates to SavedFRAData to retrieve the donee's saved campaigns.
-   * Returns [success, message, savedList]
+   * Delegates to FRAData to retrieve the donee's saved campaigns.
+   * Signature matches BCE diagram: getFavouriteList(doneeId): list
    */
   static async getFavouriteList(
     doneeId: string,
   ): Promise<[boolean, string, SavedFRAWithDetails[]]> {
-    return SavedFRAData.fetchSavedFRAs(doneeId);
+    return FRAData.fetchSavedFRAs(doneeId);
   }
 }
