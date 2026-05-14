@@ -20,51 +20,51 @@ describe('ViewDonationHistoryController', () => {
 
   // ===========================================================
   // User Story #37 — Donee views complete donation history
-  // ViewDonationHistoryController.getDonationHistory(userId)
-  //   → Donation.getByUserId(userId)
+  // ViewDonationHistoryController.ViewDonationHistory(userId)
+  //   → Donation.fetchDonationHistory(userId)
   // ===========================================================
-  describe('User Story #37: getDonationHistory', () => {
-    it('returns success tuple with all donations when history exists', async () => {
-      (Donation.getByUserId as jest.Mock).mockResolvedValue([
+  describe('User Story #37: ViewDonationHistory', () => {
+    it('returns success tuple with all donations when history exists (main flow)', async () => {
+      (Donation.fetchDonationHistory as jest.Mock).mockResolvedValue([
         true,
         'Donation history found.',
         [mockDonation],
       ]);
 
       const [success, message, donations] =
-        await ViewDonationHistoryController.getDonationHistory('donee1');
+        await ViewDonationHistoryController.ViewDonationHistory('donee1');
 
       expect(success).toBe(true);
       expect(message).toBe('Donation history found.');
       expect(donations).toHaveLength(1);
       expect(donations[0].campaign_title).toBe('Feed the Hungry');
-      expect(Donation.getByUserId).toHaveBeenCalledWith('donee1');
+      expect(Donation.fetchDonationHistory).toHaveBeenCalledWith('donee1');
     });
 
-    it('returns failure tuple with empty list when no donation history exists', async () => {
-      (Donation.getByUserId as jest.Mock).mockResolvedValue([
+    it('returns failure tuple with empty list when no donation history exists (alternate flow)', async () => {
+      (Donation.fetchDonationHistory as jest.Mock).mockResolvedValue([
         false,
-        'No donation history found.',
+        'No matching donation found.',
         [],
       ]);
 
       const [success, message, donations] =
-        await ViewDonationHistoryController.getDonationHistory('donee1');
+        await ViewDonationHistoryController.ViewDonationHistory('donee1');
 
       expect(success).toBe(false);
-      expect(message).toBe('No donation history found.');
+      expect(message).toBe('No matching donation found.');
       expect(donations).toEqual([]);
     });
 
     it('returns failure tuple on DB error', async () => {
-      (Donation.getByUserId as jest.Mock).mockResolvedValue([
+      (Donation.fetchDonationHistory as jest.Mock).mockResolvedValue([
         false,
         'Failed to fetch donation history.',
         [],
       ]);
 
       const [success, message, donations] =
-        await ViewDonationHistoryController.getDonationHistory('donee1');
+        await ViewDonationHistoryController.ViewDonationHistory('donee1');
 
       expect(success).toBe(false);
       expect(message).toBe('Failed to fetch donation history.');

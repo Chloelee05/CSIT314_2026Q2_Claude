@@ -20,11 +20,11 @@ describe('SearchDonationHistoryController', () => {
 
   // ===========================================================
   // User Story #36 — Donee searches donation history by keyword
-  // SearchDonationHistoryController.searchDonations(keyword, doneeId)
+  // SearchDonationHistoryController.getDonationHistory(keyword, doneeId)
   //   → Donation.getByKeyword(keyword, doneeId)
   // ===========================================================
-  describe('User Story #36: searchDonations', () => {
-    it('returns success tuple with matching donations when keyword matches', async () => {
+  describe('User Story #36: getDonationHistory', () => {
+    it('returns success tuple with matching donations when keyword matches (main flow)', async () => {
       (Donation.getByKeyword as jest.Mock).mockResolvedValue([
         true,
         'Donations found.',
@@ -32,7 +32,7 @@ describe('SearchDonationHistoryController', () => {
       ]);
 
       const [success, message, donations] =
-        await SearchDonationHistoryController.searchDonations('forest', 'donee1');
+        await SearchDonationHistoryController.getDonationHistory('forest', 'donee1');
 
       expect(success).toBe(true);
       expect(message).toBe('Donations found.');
@@ -49,26 +49,26 @@ describe('SearchDonationHistoryController', () => {
         list,
       ]);
 
-      const [success, message, donations] =
-        await SearchDonationHistoryController.searchDonations('', 'donee1');
+      const [success, , donations] =
+        await SearchDonationHistoryController.getDonationHistory('', 'donee1');
 
       expect(success).toBe(true);
       expect(donations).toHaveLength(2);
       expect(Donation.getByKeyword).toHaveBeenCalledWith('', 'donee1');
     });
 
-    it('returns failure tuple when no donations match keyword (Exception 4a)', async () => {
+    it('returns failure tuple when no donations match keyword (alternate flow — flash message)', async () => {
       (Donation.getByKeyword as jest.Mock).mockResolvedValue([
         false,
-        'No matching donations found.',
+        'No donation history found.',
         [],
       ]);
 
       const [success, message, donations] =
-        await SearchDonationHistoryController.searchDonations('nomatch', 'donee1');
+        await SearchDonationHistoryController.getDonationHistory('nomatch', 'donee1');
 
       expect(success).toBe(false);
-      expect(message).toBe('No matching donations found.');
+      expect(message).toBe('No donation history found.');
       expect(donations).toEqual([]);
     });
 
@@ -80,7 +80,7 @@ describe('SearchDonationHistoryController', () => {
       ]);
 
       const [success, message, donations] =
-        await SearchDonationHistoryController.searchDonations('anything', 'donee1');
+        await SearchDonationHistoryController.getDonationHistory('anything', 'donee1');
 
       expect(success).toBe(false);
       expect(message).toBe('Failed to fetch donation history.');

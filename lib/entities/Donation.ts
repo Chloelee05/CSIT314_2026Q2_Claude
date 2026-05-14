@@ -85,6 +85,16 @@ export class Donation {
   }
 
   /**
+   * Fetch all donation history for a donee.
+   * Signature matches BCE diagram: fetchDonationHistory(): list — User Story #37
+   */
+  static async fetchDonationHistory(
+    userId: string,
+  ): Promise<[boolean, string, DonationWithActivity[]]> {
+    return Donation.getByUserId(userId);
+  }
+
+  /**
    * BCE Method: getByUserId (User Story #37)
    * Retrieves all donation history for a donee.
    * Returns a tuple: [success, message, donations]
