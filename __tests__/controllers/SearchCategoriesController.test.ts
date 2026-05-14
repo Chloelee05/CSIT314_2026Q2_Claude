@@ -1,4 +1,4 @@
-import { CategoryController } from '@/lib/controllers/CategoryController';
+import { SearchCategoriesController } from '@/lib/controllers/SearchCategoriesController';
 import { FRACategory } from '@/lib/entities/FRACategory';
 import * as auth from '@/lib/auth';
 
@@ -10,7 +10,7 @@ jest.mock('@/lib/auth', () => ({
 
 jest.mock('@/lib/entities/FRACategory');
 
-describe('CategoryController', () => {
+describe('SearchCategoriesController', () => {
   const pmSession = {
     userId: 'pm-1',
     username: 'platformmgr',
@@ -37,7 +37,7 @@ describe('CategoryController', () => {
       const list = [makeCategory('Health'), makeCategory('Health & Wellness')];
       (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
 
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
+      const [categories, flash] = await SearchCategoriesController.searchFRACategories('health');
 
       expect(categories).toEqual(list);
       expect(flash).toBe('');
@@ -48,7 +48,7 @@ describe('CategoryController', () => {
       (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
       (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue([]);
 
-      const [categories, flash] = await CategoryController.searchFRACategories('xyz');
+      const [categories, flash] = await SearchCategoriesController.searchFRACategories('xyz');
 
       expect(categories).toEqual([]);
       expect(flash).toBe('No categories found matching your search.');
@@ -59,7 +59,7 @@ describe('CategoryController', () => {
       const list = [makeCategory('Health'), makeCategory('Education')];
       (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
 
-      const [categories, flash] = await CategoryController.searchFRACategories('');
+      const [categories, flash] = await SearchCategoriesController.searchFRACategories('');
 
       expect(categories).toEqual(list);
       expect(flash).toBe('');
@@ -68,7 +68,7 @@ describe('CategoryController', () => {
     it('returns [[], "Unauthorised."] when session is missing', async () => {
       (auth.getSession as jest.Mock).mockResolvedValue(null);
 
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
+      const [categories, flash] = await SearchCategoriesController.searchFRACategories('health');
 
       expect(categories).toEqual([]);
       expect(flash).toBe('Unauthorised.');
@@ -82,7 +82,7 @@ describe('CategoryController', () => {
         role: 'admin',
       });
 
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
+      const [categories, flash] = await SearchCategoriesController.searchFRACategories('health');
 
       expect(categories).toEqual([]);
       expect(flash).toBe('Unauthorised.');
