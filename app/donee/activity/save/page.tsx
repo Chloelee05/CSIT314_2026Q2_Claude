@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
-import SaveFRABoundary from './SaveFRABoundary';
+import SaveFRABoundary from '@/lib/boundaries/SaveFRABoundary';
 import Link from 'next/link';
 
 /**
