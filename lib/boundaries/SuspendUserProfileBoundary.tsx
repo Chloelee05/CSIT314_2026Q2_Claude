@@ -19,7 +19,7 @@ const initialState: SuspendProfileState = { success: null, message: '' };
 export default function SuspendUserProfileBoundary({ userprofile_id, currentStatus }: Props) {
   const [state, formAction, isPending] = useActionState(suspendUserProfileAction, initialState);
 
-  function SuspendUserProfile(upid: string, status: string) {
+  function SuspendUserProfile(userprofile_id: string, status: string) {
     if (status === 'suspended') {
       return (
         <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
@@ -29,7 +29,7 @@ export default function SuspendUserProfileBoundary({ userprofile_id, currentStat
     }
     return (
       <form action={formAction} className="inline-block">
-        <input type="hidden" name="userprofile_id" value={upid} />
+        <input type="hidden" name="userprofile_id" value={userprofile_id} />
         {state.message && (
           <span className={`text-xs mr-2 ${state.success ? 'text-green-600' : 'text-red-600'}`}>
             {state.message}
