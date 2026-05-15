@@ -14,8 +14,9 @@ const initialState: CreateActivityState = {
 /**
  * BCE Boundary: CreateActivityBoundary (User Story #18)
  *
- * - create_activity_form() — render the activity creation form
- * - Flashes success/failure message based on controller response
+ * Matches class diagram:
+ * - create_activity() — boundary flow for launching the campaign UI (layout, feedback, delegates to form)
+ * - create_activity_form() — collects title, description, goalAmount, category and submits to server action → controller
  */
 export default function CreateActivityBoundary() {
   const [state, formAction, isPending] = useActionState(
@@ -25,36 +26,10 @@ export default function CreateActivityBoundary() {
 
   function create_activity_form() {
     return (
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <a
-            href="/dashboard/activities"
-            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-          >
-            ← Back to activities
-          </a>
-          <h1 className="text-2xl font-bold text-gray-900 mt-4">
-            Create Fundraising Activity
-          </h1>
-          <p className="text-sm text-gray-500 mt-1">
-            As a Fund Raiser, create a new campaign to launch your fundraising
-            activity.
-          </p>
-        </div>
-
-        {state.success && state.message && (
-          <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
-            {state.message}
-          </div>
-        )}
-
-        {!state.success && state.message && (
-          <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
-            {state.message}
-          </div>
-        )}
-
-        <form action={formAction} className="space-y-5 bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+      <form
+        action={formAction}
+        className="space-y-5 bg-white rounded-xl shadow-sm border border-gray-200 p-6"
+      >
           <div>
             <label
               htmlFor="title"
@@ -132,10 +107,45 @@ export default function CreateActivityBoundary() {
           >
             {isPending ? 'Creating…' : 'Create activity'}
           </button>
-        </form>
+      </form>
+    );
+  }
+
+  function create_activity() {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <a
+            href="/dashboard/activities"
+            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+          >
+            ← Back to activities
+          </a>
+          <h1 className="text-2xl font-bold text-gray-900 mt-4">
+            Create Fundraising Activity
+          </h1>
+          <p className="text-sm text-gray-500 mt-1">
+            As a Fund Raiser, create a new campaign to launch your fundraising
+            activity.
+          </p>
+        </div>
+
+        {state.success && state.message && (
+          <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
+            {state.message}
+          </div>
+        )}
+
+        {!state.success && state.message && (
+          <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
+            {state.message}
+          </div>
+        )}
+
+        {create_activity_form()}
       </div>
     );
   }
 
-  return create_activity_form();
+  return create_activity();
 }

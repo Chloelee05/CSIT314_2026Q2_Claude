@@ -15,7 +15,7 @@ export interface LoginState {
  * BCE Boundary action: process_login()
  *
  * Routes to the correct controller method based on login mode:
- * - Username mode (#16 / #23): LoginController.Login(username, password, role)
+ * - Username mode (#16 / #23 / #30): LoginController.Login(username, password, role)
  *   → role selected from dropdown (admin, fund_raiser, donee, platform_management)
  * - Email mode (#49): LoginController.authenticateUser(email, pw)
  */

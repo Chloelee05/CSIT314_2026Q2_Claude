@@ -24,8 +24,14 @@ export function ShortlistStatisticsBoundary({
   const shortlists = shortlistCount ?? 0;
 
   function viewStatistics() {
-    // Navigation context — rendered by the parent ViewStatisticsBoundary page
-    return null;
+    return (
+      <div className="mb-4">
+        <h2 className="text-lg font-semibold text-gray-900">Shortlist interest</h2>
+        <p className="text-sm text-gray-500 mt-1">
+          Measure how many Donees shortlisted this fundraising activity.
+        </p>
+      </div>
+    );
   }
 
   function displayShortlistCount() {

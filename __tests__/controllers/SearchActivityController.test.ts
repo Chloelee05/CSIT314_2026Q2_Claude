@@ -1,3 +1,9 @@
+/**
+ * User Story #22 — search an FR’s own (non–completed-focused) activities, and Donee browse helpers.
+ *
+ * For User Story #34 (search *completed* fundraising activities as FR), see
+ * SearchCompleteActivityController.test.ts — diagram uses SearchCompleteActivityController, not SearchActivityController.
+ */
 import { SearchActivityController } from '@/lib/controllers/SearchActivityController';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 

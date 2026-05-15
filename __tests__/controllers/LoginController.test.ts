@@ -165,6 +165,95 @@ describe('LoginController', () => {
   });
 
   // ===========================================================
+  // User Story #30 — Donee Login (BCE diagram)
+  // LoginController.Login(username, password, role) → UserAccount.verify_credentials()
+  // ===========================================================
+  describe('User Story #30: Login (Donee)', () => {
+    it('should return success when Donee credentials are valid', async () => {
+      const mockDonee = { id: 'd-1', username: 'donee1', role: 'donee' };
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        true,
+        'Credentials verified.',
+        mockDonee,
+      ]);
+      (auth.createSession as jest.Mock).mockResolvedValue(undefined);
+
+      const [success, message] = await LoginController.Login(
+        'donee1',
+        'secretpw',
+        'donee',
+      );
+
+      expect(success).toBe(true);
+      expect(message).toBe('Successful Login.');
+      expect(UserAccount.verify_credentials).toHaveBeenCalledWith(
+        'donee1',
+        'secretpw',
+        'donee',
+      );
+      expect(auth.createSession).toHaveBeenCalledWith({
+        userId: 'd-1',
+        username: 'donee1',
+        role: 'donee',
+      });
+    });
+
+    it('should fail when Donee username or role does not match', async () => {
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        false,
+        'Invalid username or role.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.Login(
+        'nobody',
+        'password',
+        'donee',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Unsuccessful Login.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+
+    it('should fail when Donee password is wrong', async () => {
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        false,
+        'Invalid password.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.Login(
+        'donee1',
+        'wrongpassword',
+        'donee',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Unsuccessful Login.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+
+    it('should fail when Donee account is suspended', async () => {
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        false,
+        'Your account has been suspended. Please contact an administrator.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.Login(
+        'donee1',
+        'secretpw',
+        'donee',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Unsuccessful Login.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================
   // User Story #43 — Platform Manager Login
   // LoginController.Login(username, password, role) → UserAccount.verify_credentials()
   // ===========================================================

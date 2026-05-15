@@ -1,3 +1,10 @@
+/**
+ * User Story #33 — BCE Controller tests for ShortlistStatisticsController.
+ *
+ * Diagram: `getShortlistCount(fraId)` → `FRAData.fetchShortlistCount(fraId)`.
+ * If someone asks for "ViewStatisticController.test", that name does not appear on the US #33 diagram;
+ * view-count (#32) uses ViewStatisticsController; shortlist count (#33) uses this controller.
+ */
 import { ShortlistStatisticsController } from '@/lib/controllers/ShortlistStatisticsController';
 import { FRAData } from '@/lib/entities/FRAData';
 

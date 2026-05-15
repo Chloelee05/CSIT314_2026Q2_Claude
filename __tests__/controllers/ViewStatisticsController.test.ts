@@ -1,3 +1,9 @@
+/**
+ * User Story #32 — BCE Controller tests for ViewStatisticsController (view count).
+ *
+ * For User Story #33 (shortlist / favourite count), see ShortlistStatisticsController.test.ts
+ * (diagram: ShortlistStatisticsController / FRAData.fetchShortlistCount — not ViewStatisticsController).
+ */
 import { ViewStatisticsController } from '@/lib/controllers/ViewStatisticsController';
 import { FRAData } from '@/lib/entities/FRAData';
 

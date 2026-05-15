@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import {
   updateActivityAction,
   type UpdateActivityState,
-} from './actions';
+} from '@/app/dashboard/activities/[id]/edit/actions';
 
 const initialState: UpdateActivityState = {
   success: false,
@@ -22,11 +22,11 @@ export type EditActivityInitial = {
 /**
  * BCE Boundary: UpdateActivityBoundary (User Story #20)
  *
- * - show_edit_form() — pre-filled fields
- * - process_update() — submit via server action
- * - flash success / flash failure — from action state
+ * Class diagram operations:
+ * - process_update() — submission path / boundary shell (feedback + delegates to form)
+ * - show_edit_form() — pre-filled edit fields bound to server action → UpdateActivityController.UpdateActivity()
  */
-export default function UpdateActivityForm({
+export default function UpdateActivityBoundary({
   initial,
 }: {
   initial: EditActivityInitial;
@@ -41,32 +41,8 @@ export default function UpdateActivityForm({
       ? initial.end_date.slice(0, 10)
       : initial.end_date ?? '';
 
-  return (
-    <div className="max-w-2xl mx-auto">
-      <a
-        href={`/dashboard/activities/${initial.id}`}
-        className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-      >
-        ← Back to activity
-      </a>
-      <h1 className="text-2xl font-bold text-gray-900 mt-4">Edit activity</h1>
-      <p className="text-sm text-gray-500 mt-1">
-        Update campaign information, then save your changes.
-      </p>
-
-      {state.message && (
-        <div
-          className={`mt-6 p-3 rounded-lg text-sm border ${
-            state.success
-              ? 'bg-green-50 border-green-200 text-green-800'
-              : 'bg-red-50 border-red-200 text-red-800'
-          }`}
-          role="status"
-        >
-          {state.message}
-        </div>
-      )}
-
+  function show_edit_form() {
+    return (
       <form
         action={formAction}
         className="mt-6 space-y-5 bg-white rounded-xl border border-gray-200 p-6"
@@ -150,6 +126,40 @@ export default function UpdateActivityForm({
           {isPending ? 'Saving…' : 'Save changes'}
         </button>
       </form>
-    </div>
-  );
+    );
+  }
+
+  function process_update() {
+    return (
+      <div className="max-w-2xl mx-auto">
+        <a
+          href={`/dashboard/activities/${initial.id}`}
+          className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+        >
+          ← Back to activity
+        </a>
+        <h1 className="text-2xl font-bold text-gray-900 mt-4">Edit activity</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Update campaign information, then save your changes.
+        </p>
+
+        {state.message && (
+          <div
+            className={`mt-6 p-3 rounded-lg text-sm border ${
+              state.success
+                ? 'bg-green-50 border-green-200 text-green-800'
+                : 'bg-red-50 border-red-200 text-red-800'
+            }`}
+            role="status"
+          >
+            {state.message}
+          </div>
+        )}
+
+        {show_edit_form()}
+      </div>
+    );
+  }
+
+  return process_update();
 }

@@ -1,3 +1,10 @@
+/**
+ * User Story #34 — BCE Controller tests for SearchCompleteActivityController.
+ *
+ * Diagram: SearchCompleteActivity(keyword) → FundraisingActivity persistence for completed campaigns.
+ * Active / non-completed FR search is SearchActivityController (User Story #22); tests live in
+ * SearchActivityController.test.ts — not this file.
+ */
 import { SearchCompleteActivityController } from '@/lib/controllers/SearchCompleteActivityController';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 
