@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { ViewProfileController } from '@/lib/controllers/ViewProfileController';
 import { SearchUserProfileController } from '@/lib/controllers/SearchUserProfileController';
-import SuspendUserProfileBoundary from './suspend/SuspendUserProfileBoundary';
+import SuspendUserProfileBoundary from '@/lib/boundaries/SuspendUserProfileBoundary';
 import SearchUserProfileBoundary from './search/SearchUserProfileBoundary';
 import Link from 'next/link';
 
