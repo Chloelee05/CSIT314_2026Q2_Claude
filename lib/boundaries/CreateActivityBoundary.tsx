@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import {
   createActivityAction,
   type CreateActivityState,
-} from './actions';
+} from '@/app/dashboard/activities/create/actions';
 
 const initialState: CreateActivityState = {
   success: false,
