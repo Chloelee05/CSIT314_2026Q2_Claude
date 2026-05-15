@@ -22,12 +22,15 @@ const initialDeleteState: DeleteActivityState = {
 };
 
 /**
- * BCE Boundary: ViewActivityBoundary (User Story #19)
+ * BCE Boundary: ViewActivityBoundary (User Story #19 — FR activity list)
  *
  * - navigateToActivities() — entry point rendered by the activities list page
  * - displayActivityDetails(activity: list) — render the activity list or flash empty state
  *
  * Wraps SearchActivityBoundary (#22) and uses DeleteActivityBoundary (#21) per row.
+ *
+ * Donee single-activity view (User Story #26) uses `DoneeViewActivityBoundary` instead —
+ * same UML «ViewActivityBoundary» role with process_view / show_activity_details, different UI.
  */
 export default function ViewActivityBoundary({
   activities,

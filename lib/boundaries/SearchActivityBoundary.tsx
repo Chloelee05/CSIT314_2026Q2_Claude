@@ -11,6 +11,9 @@
  * only handles input + presentation region for results.
  *
  * User Story #34: optional `formAction` targets `/dashboard/activities/completed`.
+ *
+ * Donee browse flow (User Story #25) uses `DoneeSearchActivityBoundary` in this folder instead —
+ * same UML «SearchActivityBoundary» role with `process_search` / `show_results`, different transport.
  */
 export function SearchActivityBoundary({
   initialQuery,

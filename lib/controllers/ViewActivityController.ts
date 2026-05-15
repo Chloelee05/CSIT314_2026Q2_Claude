@@ -37,8 +37,8 @@ export class ViewActivityController {
   }
 
   /**
-   * Load a single activity by ID (for donee viewing).
-   * BCE diagram: ViewActivity(activityId) — returns [success, message, activity | null]
+   * Load a single activity by ID (donee evaluates campaign — User Story #26).
+   * BCE diagram: ViewActivity(activity_id) — returns [success, message, activity | null]
    */
   static async ViewActivity(
     activityId: string,
