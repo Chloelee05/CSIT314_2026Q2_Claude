@@ -1,10 +1,12 @@
 import { getSession } from '@/lib/auth';
 import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
 import { redirect } from 'next/navigation';
-import UpdateActivityForm, { type EditActivityInitial } from './UpdateActivityForm';
+import UpdateActivityBoundary, {
+  type EditActivityInitial,
+} from '@/lib/boundaries/UpdateActivityBoundary';
 
 /**
- * BCE Boundary: show_edit_form() — pre-filled edit form (User Story #20)
+ * Route shell for User Story #20 — renders UpdateActivityBoundary (process_update → show_edit_form).
  */
 export default async function EditActivityPage({
   params,
@@ -38,7 +40,7 @@ export default async function EditActivityPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <UpdateActivityForm initial={initial} />
+      <UpdateActivityBoundary initial={initial} />
     </div>
   );
 }

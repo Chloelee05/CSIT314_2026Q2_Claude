@@ -1,11 +1,12 @@
 'use client';
 
-import { useActionState, useRef } from 'react';
+import { useActionState } from 'react';
 import {
   deleteActivityAction,
   type DeleteActivityState,
 } from '@/app/dashboard/activities/actions';
-import { SearchActivityBoundary } from '@/app/dashboard/activities/SearchActivityBoundary';
+import DeleteActivityBoundary from '@/lib/boundaries/DeleteActivityBoundary';
+import { SearchActivityBoundary } from '@/lib/boundaries/SearchActivityBoundary';
 
 type ActivityRow = {
   id: string;
@@ -26,7 +27,7 @@ const initialDeleteState: DeleteActivityState = {
  * - navigateToActivities() — entry point rendered by the activities list page
  * - displayActivityDetails(activity: list) — render the activity list or flash empty state
  *
- * Also hosts the inline delete form (User Story #21) and wraps SearchActivityBoundary (#22).
+ * Wraps SearchActivityBoundary (#22) and uses DeleteActivityBoundary (#21) per row.
  */
 export default function ViewActivityBoundary({
   activities,
@@ -118,7 +119,7 @@ export default function ViewActivityBoundary({
                   >
                     Edit
                   </a>
-                  <DeleteRowForm
+                  <DeleteActivityBoundary
                     activityId={a.id}
                     formAction={deleteFormAction}
                     isPending={isDeletePending}
@@ -161,40 +162,5 @@ export default function ViewActivityBoundary({
       </div>
       {displayActivityDetails(activities)}
     </div>
-  );
-}
-
-function DeleteRowForm({
-  activityId,
-  formAction,
-  isPending,
-}: {
-  activityId: string;
-  formAction: (formData: FormData) => void;
-  isPending: boolean;
-}) {
-  const formRef = useRef<HTMLFormElement>(null);
-
-  return (
-    <form ref={formRef} action={formAction} className="inline">
-      <input type="hidden" name="activityId" value={activityId} />
-      <button
-        type="button"
-        disabled={isPending}
-        onClick={() => {
-          if (
-            !window.confirm(
-              'Are you sure you want to remove this activity? This cannot be undone.',
-            )
-          ) {
-            return;
-          }
-          formRef.current?.requestSubmit();
-        }}
-        className="text-sm font-medium text-red-600 hover:text-red-800 bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg border border-red-200 disabled:opacity-50 cursor-pointer"
-      >
-        {isPending ? 'Removing…' : 'Remove'}
-      </button>
-    </form>
   );
 }
