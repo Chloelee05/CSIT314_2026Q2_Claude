@@ -33,12 +33,6 @@ export default function LoginBoundary({ logoutMessage }: LoginFormProps) {
     return null;
   }
 
-  function submitCredentials(email: string, password: string) {
-    // Credentials are captured via the form fields; formAction forwards to LoginController
-    void email; void password;
-    return null;
-  }
-
   function process_login() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -188,9 +182,8 @@ export default function LoginBoundary({ logoutMessage }: LoginFormProps) {
 
   return (
     <>
-      {show_dashboard()}
-      {submitCredentials('', '')}
       {process_login()}
+      {show_dashboard()}
     </>
   );
 }

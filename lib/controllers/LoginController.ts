@@ -9,11 +9,13 @@ import bcrypt from 'bcryptjs';
  *
  * - Login()             → User Story #16 (Admin login via username + role)
  *                         User Story #23 (FR login via username + role)
+ *                         User Story #30 (Donee login via username + role)
+ *                         User Story #43 (Platform Manager via username + role)
  * - authenticateUser()  → User Story #49 (User login via email)
  */
 export class LoginController {
   /**
-   * User Story #16 / #23 — Login via username + role.
+   * User Story #16 / #23 / #30 / #43 — Login via username + role.
    * Signature matches BCE diagram: Login(username, password, role): tuple
    * Delegates credential verification to UserAccount entity.
    *
