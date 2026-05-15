@@ -47,17 +47,13 @@ export class UserProfile {
   ): Promise<boolean> {
     const supabase = createServerClient();
 
-    console.log("1. Checking if profile exists for:", Account_id);
-    const { data: existing, error: existError } = await supabase
+    const { data: existing } = await supabase
       .from('user_profile_details')
       .select('id')
       .eq('account_id', Account_id)
       .maybeSingle();
 
-    if (existError) console.error("DB Check Error:", existError);
-
     if (existing) {
-      console.log("2. FAILED: Profile actually already exists in DB!", existing);
       return false;
     }
 
@@ -73,15 +69,11 @@ export class UserProfile {
       insertData.id = UserProfile_id;
     }
 
-    console.log("3. Attempting to insert:", insertData);
     const { error } = await supabase.from('user_profile_details').insert(insertData);
 
     if (error) {
-      console.error("4. FATAL DB INSERT ERROR:", error); // THIS WILL REVEAL THE BUG
       return false;
     }
-
-    console.log("5. DB Insert Successful!");
 
     if (Account_Password) {
       const passwordHash = await bcrypt.hash(Account_Password, 10);
@@ -145,7 +137,6 @@ export class UserProfile {
       .order('username');
 
     if (error) {
-      console.error("Supabase Fetch Error:", error);
       return [];
     }
     return data;
@@ -212,8 +203,7 @@ export class UserProfile {
         .eq('id', User_Account_id);
 
       if (credError) {
-        console.error("Failed to update credentials.", credError);
-        return false; // Triggers Alternate Flow
+        return false;
       }
 
       // 2. Update Particulars in `user_profile_details` (Smart Update)
@@ -278,13 +268,11 @@ export class UserProfile {
         .eq('id', userprofile_id);
 
       if (error) {
-        console.error("Failed to suspend user profile:", error);
         return false;
       }
 
       return true;
-    } catch (error) {
-      console.error("Exception during suspension:", error);
+    } catch {
       return false;
     }
   }
@@ -318,7 +306,6 @@ export class UserProfile {
     const { data, error } = await query;
     
     if (error) {
-      console.error("Failed to search user profiles:", error);
       return [];
     }
 

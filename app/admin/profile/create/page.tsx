@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { UserAccount } from '@/lib/entities/UserAccount';
 import Link from 'next/link';
-import CreateUserProfileForm from './CreateUserProfileForm';
+import CreateUserProfileBoundary from '@/lib/boundaries/CreateUserProfileBoundary';
 
 /**
  * BCE Boundary: CreateUserProfileBoundary — Show_Create_Form()
@@ -68,7 +68,7 @@ export default async function CreateUserProfilePage() {
           </p>
 
           {/* CreateUserProfileBoundary: Show_Create_Form() + CreateUserProfile() */}
-          <CreateUserProfileForm accounts={accountOptions} />
+          <CreateUserProfileBoundary accounts={accountOptions} />
         </div>
       </main>
     </div>
