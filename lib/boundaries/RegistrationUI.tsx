@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { createAccountAction, type CreateAccountState } from './actions';
+import { createAccountAction, type CreateAccountState } from '@/app/admin/accounts/create/actions';
 import Link from 'next/link';
 
 const initialState: CreateAccountState = {
@@ -12,10 +12,12 @@ const initialState: CreateAccountState = {
 /**
  * BCE Boundary: RegistrationUI (User Story #6)
  *
- * - displayRegistrationForm() → renders the account creation form
- * - displayResult(msg: String) → shows success or error message
+ * - navigateToRegister()        — user navigates to this page
+ * - displayRegistrationForm()   — renders the account creation form
+ * - submitDetails(email, pw)    — form submission triggers createAccount(email, pw)
+ * - displayResult(msg: String)  — shows "Account created" or "Email already exists"
  */
-export default function CreateAccountForm() {
+export default function RegistrationUI() {
   const [state, formAction, isPending] = useActionState(
     createAccountAction,
     initialState,
@@ -42,6 +44,7 @@ export default function CreateAccountForm() {
           </div>
         )}
 
+        {/* displayRegistrationForm() — submitDetails(email, pw) on submit */}
         <form action={formAction} className="space-y-5">
           <div>
             <label

@@ -44,7 +44,7 @@ describe('CreateAccountController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe('An account with this email already exists.');
+      expect(message).toBe('Email already exists');
       expect(UserAccount.save).not.toHaveBeenCalled();
     });
 

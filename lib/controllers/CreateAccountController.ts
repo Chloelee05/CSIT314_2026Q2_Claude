@@ -21,7 +21,7 @@ export class CreateAccountController {
   ): Promise<[boolean, string]> {
     const existing = await UserAccount.getByEmail(email);
     if (existing) {
-      return [false, 'An account with this email already exists.'];
+      return [false, 'Email already exists'];
     }
 
     const passwordHash = await bcrypt.hash(pw, 10);
