@@ -4,7 +4,7 @@ import { adminLogoutAction } from '@/app/login/actions';
 import { ViewProfileController } from '@/lib/controllers/ViewProfileController';
 import { SearchUserProfileController } from '@/lib/controllers/SearchUserProfileController';
 import SuspendUserProfileBoundary from '@/lib/boundaries/SuspendUserProfileBoundary';
-import SearchUserProfileBoundary from './search/SearchUserProfileBoundary';
+import SearchUserProfileBoundary from '@/lib/boundaries/SearchUserProfileBoundary';
 import Link from 'next/link';
 
 // Update the function to accept searchParams (Keywords and Filters)
