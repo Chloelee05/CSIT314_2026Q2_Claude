@@ -1,9 +1,7 @@
 import { LogoutController } from '@/lib/controllers/LogoutController';
 import { UserAccount } from '@/lib/entities/UserAccount';
-import { UserSession } from '@/lib/entities/UserSession';
 
 jest.mock('@/lib/entities/UserAccount');
-jest.mock('@/lib/entities/UserSession');
 
 describe('LogoutController', () => {
   beforeEach(() => {
@@ -37,26 +35,26 @@ describe('LogoutController', () => {
 
   // ===========================================================
   // User Story #31 — Donee Logout
-  // LogoutController.logout(sessionId) → UserSession.invalidateSession(sessionId)
+  // LogoutController.logout(sessionId) → UserAccount.invalidateSession(sessionId)
   // ===========================================================
   describe('User Story #31: logout(sessionId)', () => {
     it('should return true and call invalidateSession with the sessionId', async () => {
-      (UserSession.invalidateSession as jest.Mock).mockResolvedValue(true);
+      (UserAccount.invalidateSession as jest.Mock).mockResolvedValue(true);
 
       const result = await LogoutController.logout('session-abc');
 
       expect(result).toBe(true);
-      expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-abc');
-      expect(UserSession.invalidateSession).toHaveBeenCalledTimes(1);
+      expect(UserAccount.invalidateSession).toHaveBeenCalledWith('session-abc');
+      expect(UserAccount.invalidateSession).toHaveBeenCalledTimes(1);
     });
 
     it('should return false when invalidateSession returns false', async () => {
-      (UserSession.invalidateSession as jest.Mock).mockResolvedValue(false);
+      (UserAccount.invalidateSession as jest.Mock).mockResolvedValue(false);
 
       const result = await LogoutController.logout('session-xyz');
 
       expect(result).toBe(false);
-      expect(UserSession.invalidateSession).toHaveBeenCalledWith('session-xyz');
+      expect(UserAccount.invalidateSession).toHaveBeenCalledWith('session-xyz');
     });
   });
 });

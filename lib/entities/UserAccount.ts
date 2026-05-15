@@ -287,4 +287,13 @@ export class UserAccount {
     await deleteSession();
     return true;
   }
+
+  /**
+   * Invalidate a session by ID.
+   * Signature matches BCE diagram: invalidateSession(sessionId): boolean — User Story #31
+   */
+  static async invalidateSession(_sessionId: string): Promise<boolean> {
+    await deleteSession();
+    return true;
+  }
 }
