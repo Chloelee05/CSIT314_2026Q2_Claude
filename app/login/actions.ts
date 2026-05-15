@@ -86,11 +86,10 @@ export async function adminLogoutAction(): Promise<void> {
 }
 
 /**
- * User Story #24 — FR (and all non–admin) user logout from /dashboard
- * User Story #50 — LogoutController for donee-specific logout
+ * User Story #24 — FR 등: `/dashboard`에서 Donee/PM이 아닌 역할이 쓰는 로그아웃 액션.
+ * `LogoutController.logout()` 후 역할에 따라 리다이렉트.
  *
- * Checks the current role: donees are sent to /donee/account/login,
- * all other roles get the standard /login page with a success message.
+ * Donee 로그아웃(User Story #31)은 `DashboardPageBoundary.clickLogout` 경로를 사용.
  */
 export async function userLogoutAction(): Promise<void> {
   const session = await getSession();

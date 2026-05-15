@@ -10,10 +10,11 @@ describe('LogoutController', () => {
 
   // ===========================================================
   // User Story #17 — Admin logout
-  // User Story #50 — User logout
-  // Both share the same logout() method via clearSession()
+  // User Story #24 — FR logout (`userLogoutAction` → logout())
+  // User Story #50 — Generic session clear
+  // 구현 동일: UserAccount.clearSession()
   // ===========================================================
-  describe('User Story #17 / #50: logout', () => {
+  describe('User Story #17 / #24 / #50: logout()', () => {
     it('should return true when session is active and cleared', async () => {
       (UserAccount.clearSession as jest.Mock).mockResolvedValue(true);
 
