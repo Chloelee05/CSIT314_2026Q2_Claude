@@ -41,8 +41,7 @@ export default function SearchUserAccountBoundary({
   const currentKeyword = searchParams.get('keyword') ?? '';
   const currentSearchBy = searchParams.get('search_by') ?? 'UserName';
 
-  /* SearchUserAccount() — submit navigates with updated query params */
-  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
+  function SearchUserAccount(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = e.currentTarget;
     const kw = (form.elements.namedItem('keyword') as HTMLInputElement).value;
@@ -59,7 +58,7 @@ export default function SearchUserAccountBoundary({
 
   return (
     <>
-      <form onSubmit={handleSubmit} className="flex gap-2 flex-1 max-w-xl">
+      <form onSubmit={SearchUserAccount} className="flex gap-2 flex-1 max-w-xl">
         <select
           name="search_by"
           defaultValue={currentSearchBy}

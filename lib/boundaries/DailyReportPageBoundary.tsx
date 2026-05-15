@@ -28,30 +28,13 @@ export default function ReportsPageBoundary({ report, flash }: Props) {
     const date = (
       e.currentTarget.elements.namedItem('date') as HTMLInputElement
     ).value;
-
     startTransition(() => {
       router.push(`/pr/dailyReport/create?date=${date}`);
     });
   }
 
-  return (
-    <div className="max-w-2xl mx-auto">
-      <div className="mb-6">
-        <a
-          href="/dashboard"
-          className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-        >
-          ← Back to dashboard
-        </a>
-        <h1 className="text-2xl font-bold text-gray-900 mt-4">
-          Daily Report
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Select a date to generate a daily activity report.
-        </p>
-      </div>
-
-      {/* displayReportOptions() — date picker + submit */}
+  function displayReportOptions() {
+    return (
       <form onSubmit={handleSubmit} className="flex gap-2 mb-6">
         <input
           name="date"
@@ -68,49 +51,70 @@ export default function ReportsPageBoundary({ report, flash }: Props) {
           {isPending ? 'Generating…' : 'Generate Report'}
         </button>
       </form>
+    );
+  }
 
-      {/* Exception flow 5a — no data */}
+  function showDailyReport(report_data: DailyReport) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
+        <h2 className="text-lg font-semibold text-gray-900 mb-4">
+          Report for{' '}
+          <span className="text-indigo-600">
+            {new Date(report_data.date + 'T12:00:00').toLocaleDateString(undefined, {
+              year: 'numeric',
+              month: 'long',
+              day: 'numeric',
+            })}
+          </span>
+        </h2>
+        <dl className="divide-y divide-gray-100">
+          <div className="flex justify-between py-3">
+            <dt className="text-sm text-gray-600">New Fundraising Activities</dt>
+            <dd className="text-sm font-semibold text-gray-900">{report_data.newActivities}</dd>
+          </div>
+          <div className="flex justify-between py-3">
+            <dt className="text-sm text-gray-600">Donations Made</dt>
+            <dd className="text-sm font-semibold text-gray-900">{report_data.totalDonations}</dd>
+          </div>
+          <div className="flex justify-between py-3">
+            <dt className="text-sm text-gray-600">Total Donation Amount</dt>
+            <dd className="text-sm font-semibold text-gray-900">
+              ${report_data.totalDonationAmount.toFixed(2)}
+            </dd>
+          </div>
+          <div className="flex justify-between py-3">
+            <dt className="text-sm text-gray-600">New User Registrations</dt>
+            <dd className="text-sm font-semibold text-gray-900">{report_data.newUsers}</dd>
+          </div>
+        </dl>
+      </div>
+    );
+  }
+
+  return (
+    <div className="max-w-2xl mx-auto">
+      <div className="mb-6">
+        <a
+          href="/dashboard"
+          className="text-sm text-indigo-600 hover:text-indigo-800 font-medium"
+        >
+          ← Back to dashboard
+        </a>
+        <h1 className="text-2xl font-bold text-gray-900 mt-4">Daily Report</h1>
+        <p className="text-sm text-gray-500 mt-1">
+          Select a date to generate a daily activity report.
+        </p>
+      </div>
+
+      {displayReportOptions()}
+
       {flash && (
         <div className="mb-4 p-3 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-sm">
           {flash}
         </div>
       )}
 
-      {/* showDailyReport(report_data) — key metrics */}
-      {report && (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">
-            Report for{' '}
-            <span className="text-indigo-600">
-              {new Date(report.date + 'T12:00:00').toLocaleDateString(undefined, {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-              })}
-            </span>
-          </h2>
-          <dl className="divide-y divide-gray-100">
-            <div className="flex justify-between py-3">
-              <dt className="text-sm text-gray-600">New Fundraising Activities</dt>
-              <dd className="text-sm font-semibold text-gray-900">{report.newActivities}</dd>
-            </div>
-            <div className="flex justify-between py-3">
-              <dt className="text-sm text-gray-600">Donations Made</dt>
-              <dd className="text-sm font-semibold text-gray-900">{report.totalDonations}</dd>
-            </div>
-            <div className="flex justify-between py-3">
-              <dt className="text-sm text-gray-600">Total Donation Amount</dt>
-              <dd className="text-sm font-semibold text-gray-900">
-                ${report.totalDonationAmount.toFixed(2)}
-              </dd>
-            </div>
-            <div className="flex justify-between py-3">
-              <dt className="text-sm text-gray-600">New User Registrations</dt>
-              <dd className="text-sm font-semibold text-gray-900">{report.newUsers}</dd>
-            </div>
-          </dl>
-        </div>
-      )}
+      {report && showDailyReport(report)}
     </div>
   );
 }

@@ -53,6 +53,31 @@ export function SearchCompleteActivityBoundary({
   initialQuery: string;
   emptyStateMessage: string | null;
 }) {
+  function process_search(query: string) {
+    return (
+      <form
+        method="GET"
+        action="/dashboard/activities/completed"
+        className="mt-6 flex gap-2"
+      >
+        <input
+          type="text"
+          name="q"
+          defaultValue={query}
+          placeholder="Search by title, description, or category…"
+          aria-label="Search completed fundraising activities"
+          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
+        />
+        <button
+          type="submit"
+          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
+        >
+          Search
+        </button>
+      </form>
+    );
+  }
+
   return (
     <div className="max-w-4xl mx-auto">
       <a
@@ -68,29 +93,8 @@ export function SearchCompleteActivityBoundary({
         Only campaigns with an end date on or before today are included.
       </p>
 
-      {/* process_search(): GET form */}
-      <form
-        method="GET"
-        action="/dashboard/activities/completed"
-        className="mt-6 flex gap-2"
-      >
-        <input
-          type="text"
-          name="q"
-          defaultValue={initialQuery}
-          placeholder="Search by title, description, or category…"
-          aria-label="Search completed fundraising activities"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none"
-        />
-        <button
-          type="submit"
-          className="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 transition"
-        >
-          Search
-        </button>
-      </form>
+      {process_search(initialQuery)}
 
-      {/* show_results(): list or alternate-flow flash */}
       <div className="mt-6">
         {activities.length === 0 ? (
           <p

@@ -23,38 +23,51 @@ export function ShortlistStatisticsBoundary({
 }) {
   const shortlists = shortlistCount ?? 0;
 
-  if (!shortlistSuccess) {
+  function viewStatistics() {
+    // Navigation context — rendered by the parent ViewStatisticsBoundary page
+    return null;
+  }
+
+  function displayShortlistCount() {
+    if (!shortlistSuccess) {
+      return (
+        <div className="bg-white rounded-xl border border-red-200 p-6">
+          <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
+            Shortlist count
+          </p>
+          <p className="text-red-800 text-sm mt-2">
+            {shortlistErrorMessage ?? 'Could not load shortlist count. Please try again.'}
+          </p>
+          <a
+            href={`/dashboard/activities/${activityId}/stats`}
+            className="inline-block mt-4 text-sm font-medium text-indigo-600 hover:text-indigo-800"
+          >
+            Retry
+          </a>
+        </div>
+      );
+    }
     return (
-      <div className="bg-white rounded-xl border border-red-200 p-6">
-        <p className="text-sm font-medium text-gray-500 uppercase tracking-wide">
-          Shortlist count
+      <div
+        className="bg-white rounded-xl border border-gray-200 p-8 text-center"
+        role="status"
+        aria-live="polite"
+      >
+        <p className="text-sm text-gray-500 uppercase tracking-wide">Shortlist count</p>
+        <p className="text-3xl sm:text-4xl font-bold text-gray-900 mt-3">
+          {shortlistLabel(shortlists)}
         </p>
-        <p className="text-red-800 text-sm mt-2">
-          {shortlistErrorMessage ?? 'Could not load shortlist count. Please try again.'}
+        <p className="text-xs text-gray-400 mt-4">
+          Number of Donees who saved this activity as a favorite.
         </p>
-        <a
-          href={`/dashboard/activities/${activityId}/stats`}
-          className="inline-block mt-4 text-sm font-medium text-indigo-600 hover:text-indigo-800"
-        >
-          Retry
-        </a>
       </div>
     );
   }
 
   return (
-    <div
-      className="bg-white rounded-xl border border-gray-200 p-8 text-center"
-      role="status"
-      aria-live="polite"
-    >
-      <p className="text-sm text-gray-500 uppercase tracking-wide">Shortlist count</p>
-      <p className="text-3xl sm:text-4xl font-bold text-gray-900 mt-3">
-        {shortlistLabel(shortlists)}
-      </p>
-      <p className="text-xs text-gray-400 mt-4">
-        Number of Donees who saved this activity as a favorite.
-      </p>
-    </div>
+    <>
+      {viewStatistics()}
+      {displayShortlistCount()}
+    </>
   );
 }

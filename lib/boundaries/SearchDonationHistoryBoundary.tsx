@@ -20,9 +20,8 @@ export function SearchDonationHistoryBoundary({
   success: boolean;
   message: string;
 }) {
-  return (
-    <>
-      {/* process_search(): search form */}
+  function process_search(kw: string) {
+    return (
       <form
         method="GET"
         action="/donee/donation/history"
@@ -35,7 +34,7 @@ export function SearchDonationHistoryBoundary({
           <input
             type="text"
             name="keyword"
-            defaultValue={keyword}
+            defaultValue={kw}
             placeholder="Enter campaign name..."
             className="w-full rounded-lg border border-gray-300 px-3 py-2 text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition"
           />
@@ -47,7 +46,7 @@ export function SearchDonationHistoryBoundary({
           >
             Search
           </button>
-          {keyword && (
+          {kw && (
             <Link
               href="/donee/donation/history"
               className="bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-lg text-sm transition"
@@ -57,16 +56,22 @@ export function SearchDonationHistoryBoundary({
           )}
         </div>
       </form>
+    );
+  }
 
-      {/* displaySearchResults(donations: list) */}
-      {!success && keyword ? (
+  function displaySearchResults(donationList: DonationWithActivity[]) {
+    if (!success && keyword) {
+      return (
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-6 text-center">
           <p className="text-yellow-800 font-medium">No donation history found.</p>
           <p className="text-yellow-600 text-sm mt-1">
             No donations match &quot;{keyword}&quot;. Try a different keyword.
           </p>
         </div>
-      ) : !success ? (
+      );
+    }
+    if (!success) {
+      return (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
           <p className="text-gray-500">
             {message === 'No matching donations found.'
@@ -74,45 +79,53 @@ export function SearchDonationHistoryBoundary({
               : 'Enter a keyword above to search your donation history.'}
           </p>
         </div>
-      ) : (
-        <div className="flex flex-col gap-3">
-          {donations.map((donation) => (
-            <div
-              key={donation.id}
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-            >
-              <div>
-                <h3 className="font-semibold text-gray-900">{donation.campaign_title}</h3>
-                <p className="text-sm text-gray-500 mt-0.5">
-                  {new Date(donation.donated_at).toLocaleDateString('en-AU', {
-                    year: 'numeric',
-                    month: 'long',
-                    day: 'numeric',
-                  })}
-                </p>
-              </div>
-              <div className="flex items-center gap-3">
-                <span
-                  className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                    donation.campaign_status === 'active'
-                      ? 'bg-green-100 text-green-700'
-                      : 'bg-gray-100 text-gray-600'
-                  }`}
-                >
-                  {donation.campaign_status.charAt(0).toUpperCase() +
-                    donation.campaign_status.slice(1)}
-                </span>
-                <span className="text-indigo-600 font-semibold text-base">
-                  ${Number(donation.amount).toLocaleString('en-AU', {
-                    minimumFractionDigits: 2,
-                    maximumFractionDigits: 2,
-                  })}
-                </span>
-              </div>
+      );
+    }
+    return (
+      <div className="flex flex-col gap-3">
+        {donationList.map((donation) => (
+          <div
+            key={donation.id}
+            className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
+          >
+            <div>
+              <h3 className="font-semibold text-gray-900">{donation.campaign_title}</h3>
+              <p className="text-sm text-gray-500 mt-0.5">
+                {new Date(donation.donated_at).toLocaleDateString('en-AU', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
             </div>
-          ))}
-        </div>
-      )}
+            <div className="flex items-center gap-3">
+              <span
+                className={`text-xs font-medium px-2 py-0.5 rounded-full ${
+                  donation.campaign_status === 'active'
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-gray-100 text-gray-600'
+                }`}
+              >
+                {donation.campaign_status.charAt(0).toUpperCase() +
+                  donation.campaign_status.slice(1)}
+              </span>
+              <span className="text-indigo-600 font-semibold text-base">
+                ${Number(donation.amount).toLocaleString('en-AU', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </span>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  return (
+    <>
+      {process_search(keyword)}
+      {displaySearchResults(donations)}
     </>
   );
 }
