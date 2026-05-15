@@ -1,7 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
-import { ViewAccountController } from '@/lib/controllers/ViewAccountController';
 import { UserAccount } from '@/lib/entities/UserAccount';
 import Link from 'next/link';
 
@@ -30,10 +29,7 @@ export default async function AccountDetailPage({
 
   const { id } = await params;
 
-  // ViewAccountUI → ViewAccountController: getAccountDetails(userId)
-  const account = (await ViewAccountController.getAccountDetails(
-    id,
-  )) as UserAccount | null;
+  const account = await UserAccount.getById(id);
 
   if (!account) {
     redirect('/admin/accounts');

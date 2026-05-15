@@ -2,22 +2,13 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { ViewAccountController } from '@/lib/controllers/ViewAccountController';
-import { UserAccount } from '@/lib/entities/UserAccount';
-import { suspendUserAccountAction } from '@/app/admin/accounts/suspend/actions';
+import { ViewAccountUI } from '@/lib/boundaries/ViewAccountUI';
 import Link from 'next/link';
 
-const ROLE_LABELS: Record<string, string> = {
-  admin: 'Admin',
-  fund_raiser: 'Fund Raiser',
-  donee: 'Donee',
-  platform_management: 'Platform Management',
-};
-
 /**
- * BCE Boundary: ViewAccountUI — displayAccountList(accounts: list)
- *
- * Displays the list of all user accounts.
- * Sequence: navigateToUsers() → getAccountDetails(null) → getAll() → displayAccountList()
+ * BCE page: ViewAccountUI — User Story #7
+ * navigateToUsers() → getAccountDetails() → fetchAccountDetails()
+ *   → displayAccountDetails(account) | displayResult("No accounts found")
  */
 export default async function AccountListPage({
   searchParams,
@@ -29,12 +20,10 @@ export default async function AccountListPage({
     redirect('/login');
   }
 
-  const { message } = await searchParams;
+  const { message: flashMessage } = await searchParams;
 
-  // ViewAccountUI → ViewAccountController: getAccountDetails(null)
-  const accounts = (await ViewAccountController.getAccountDetails(
-    null,
-  )) as UserAccount[];
+  const [success, message, accounts] =
+    await ViewAccountController.getAccountDetails();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -62,9 +51,7 @@ export default async function AccountListPage({
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
-            User Accounts
-          </h2>
+          <h2 className="text-xl font-semibold text-gray-900">User Accounts</h2>
           <div className="flex gap-3">
             <Link
               href="/admin/dashboard"
@@ -87,94 +74,13 @@ export default async function AccountListPage({
           </div>
         </div>
 
-        {/* SuspendUserProfileBoundary: flash message */}
-        {message && (
+        {flashMessage && (
           <div className="mb-4 rounded-lg px-4 py-3 text-sm font-medium bg-green-50 text-green-700 border border-green-200">
-            {message}
+            {flashMessage}
           </div>
         )}
 
-        {/* ALT: No user accounts exist */}
-        {accounts.length === 0 ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
-            <p className="text-gray-500">No user accounts found.</p>
-          </div>
-        ) : (
-          /* displayAccountList(accounts) */
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">
-                    Name
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">
-                    Email
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">
-                    Role
-                  </th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">
-                    Status
-                  </th>
-                  <th className="px-4 py-3"></th>
-                </tr>
-              </thead>
-              <tbody>
-                {accounts.map((account) => (
-                  <tr
-                    key={account.id}
-                    className="border-b border-gray-100 hover:bg-gray-50 transition"
-                  >
-                    <td className="px-4 py-3 text-gray-900">
-                      {account.full_name ?? account.username}
-                    </td>
-                    <td className="px-4 py-3 text-gray-600">{account.email}</td>
-                    <td className="px-4 py-3">
-                      <span className="inline-block px-2 py-0.5 rounded-full text-xs font-medium bg-indigo-50 text-indigo-700">
-                        {ROLE_LABELS[account.role] ?? account.role}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span
-                        className={`inline-block px-2 py-0.5 rounded-full text-xs font-medium ${
-                          account.status === 'active'
-                            ? 'bg-green-50 text-green-700'
-                            : 'bg-red-50 text-red-700'
-                        }`}
-                      >
-                        {account.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end gap-3">
-                        {/* selectUser(userId) */}
-                        <Link
-                          href={`/admin/accounts/${account.id}`}
-                          className="text-indigo-600 hover:text-indigo-800 font-medium transition"
-                        >
-                          View Details
-                        </Link>
-                        {/* SuspendUserProfileBoundary: SuspendUserAccount(UserAccount_id) */}
-                        {account.status === 'active' && (
-                          <form action={suspendUserAccountAction}>
-                            <input type="hidden" name="userAccountId" value={account.id} />
-                            <button
-                              type="submit"
-                              className="text-red-600 hover:text-red-800 font-medium transition cursor-pointer"
-                            >
-                              Suspend
-                            </button>
-                          </form>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+        <ViewAccountUI success={success} message={message} accounts={accounts} />
       </main>
     </div>
   );
