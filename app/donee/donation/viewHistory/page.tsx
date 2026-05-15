@@ -1,11 +1,11 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ViewDonationHistoryController } from '@/lib/controllers/ViewDonationHistoryController';
-import Link from 'next/link';
+import { ViewDonationHistoryBoundary } from '@/lib/boundaries/ViewDonationHistoryBoundary';
 
 /**
- * BCE Boundary: ViewDonationHistoryUI (User Story #37)
- * navigateToDonationHistory() → getDonationHistory(userId) → displayDonationList(donations)
+ * BCE page: ViewDonationHistoryBoundary — User Story #37
+ * process_view() → ViewDonationHistory() → displayDonationHistory(donations)
  */
 export default async function ViewDonationHistoryPage() {
   const session = await getSession();
@@ -13,9 +13,8 @@ export default async function ViewDonationHistoryPage() {
     redirect('/login');
   }
 
-  const [success, message, donations] = await ViewDonationHistoryController.getDonationHistory(
-    session.userId,
-  );
+  const [success, message, donations] =
+    await ViewDonationHistoryController.ViewDonationHistory(session.userId);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -31,60 +30,13 @@ export default async function ViewDonationHistoryPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Donation History</h2>
-          <Link
-            href="/dashboard"
-            className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 transition"
-          >
-            Back to Dashboard
-          </Link>
-        </div>
+        <h2 className="text-xl font-semibold text-gray-900 mb-6">Donation History</h2>
 
-        {/* displayDonationList(donations) — alt: No donation history found */}
-        {!success ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
-            <p className="text-gray-500 font-medium">{message}</p>
-          </div>
-        ) : (
-          <div className="flex flex-col gap-3">
-            {donations.map((donation) => (
-              <div
-                key={donation.id}
-                className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
-              >
-                <div>
-                  <h3 className="font-semibold text-gray-900">{donation.campaign_title}</h3>
-                  <p className="text-sm text-gray-500 mt-0.5">
-                    {new Date(donation.donated_at).toLocaleDateString('en-AU', {
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                    })}
-                  </p>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span
-                    className={`text-xs font-medium px-2 py-0.5 rounded-full ${
-                      donation.campaign_status === 'active'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-gray-100 text-gray-600'
-                    }`}
-                  >
-                    {donation.campaign_status.charAt(0).toUpperCase() +
-                      donation.campaign_status.slice(1)}
-                  </span>
-                  <span className="text-indigo-600 font-semibold text-base">
-                    ${Number(donation.amount).toLocaleString('en-AU', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </span>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
+        <ViewDonationHistoryBoundary
+          success={success}
+          message={message}
+          donations={donations}
+        />
       </main>
     </div>
   );

@@ -1,13 +1,14 @@
 import { getSession } from '@/lib/auth';
 import { ViewStatisticsController } from '@/lib/controllers/ViewStatisticsController';
+import { ShortlistStatisticsController } from '@/lib/controllers/ShortlistStatisticsController';
 import { ViewActivityController } from '@/lib/controllers/ViewActivityController';
 import { redirect } from 'next/navigation';
-import { ViewFRAStatisticsBoundary } from './ViewFRAStatisticsBoundary';
+import { ViewStatisticsBoundary } from '@/lib/boundaries/ViewStatisticsBoundary';
+import { ShortlistStatisticsBoundary } from '@/lib/boundaries/ShortlistStatisticsBoundary';
 
 /**
- * BCE Boundary: statistics page — User Story #32, #33
- * #32: getViewCount → FRAData.fetchViewCount → displayViewCount
- * #33: getShortlistCount → SavedFRAData.countShortlists → displayShortlistCount
+ * Stats page for US#32 (view count) and US#33 (shortlist count).
+ * Renders ViewStatisticsBoundary and ShortlistStatisticsBoundary side by side.
  */
 export default async function ActivityStatisticsPage({
   params,
@@ -33,26 +34,27 @@ export default async function ActivityStatisticsPage({
 
   const [viewOk, viewCount, viewError] = await ViewStatisticsController.getViewCount(
     activityId,
-    session.userId,
   );
   const [slOk, shortlistCount, shortlistError] =
-    await ViewStatisticsController.getShortlistCount(
-      activityId,
-      session.userId,
-    );
+    await ShortlistStatisticsController.getShortlistCount(activityId);
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewFRAStatisticsBoundary
+      <ViewStatisticsBoundary
         activityId={activityId}
         activityTitle={activity.title}
         viewSuccess={viewOk}
         viewCount={viewCount}
         viewErrorMessage={viewOk ? null : viewError}
-        shortlistSuccess={slOk}
-        shortlistCount={shortlistCount}
-        shortlistErrorMessage={slOk ? null : shortlistError}
       />
+      <div className="max-w-2xl mx-auto mt-6">
+        <ShortlistStatisticsBoundary
+          activityId={activityId}
+          shortlistSuccess={slOk}
+          shortlistCount={shortlistCount}
+          shortlistErrorMessage={slOk ? null : shortlistError}
+        />
+      </div>
     </div>
   );
 }

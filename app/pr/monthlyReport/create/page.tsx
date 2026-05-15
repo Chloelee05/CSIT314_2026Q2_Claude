@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ReportsController } from '@/lib/controllers/ReportsController';
-import ReportsPageBoundary from './ReportsPageBoundary';
+import ReportsPageBoundary from '@/lib/boundaries/MonthlyReportPageBoundary';
 
 /**
  * BCE Boundary: ReportsPageBoundary page (User Story #47)

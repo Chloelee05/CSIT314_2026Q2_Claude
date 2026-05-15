@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { SearchActivityController } from '@/lib/controllers/SearchActivityController';
 import { redirect } from 'next/navigation';
-import ViewActivityUI from './ViewActivityUI';
+import ViewActivityBoundary from '@/lib/boundaries/ViewActivityBoundary';
 
 /**
  * BCE Boundary: activity list + search (User Story #19, #22)
@@ -38,7 +38,7 @@ export default async function ActivitiesListPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ViewActivityUI
+      <ViewActivityBoundary
         activities={rows}
         initialQuery={q}
         searchEmptyFlash={searchFlash}

@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import LoginPageBoundary from './LoginPageBoundary';
+import LoginPageBoundary from '@/lib/boundaries/LoginPageBoundary';
 
 /**
  * BCE Boundary: LoginPageBoundary page (User Story #43)

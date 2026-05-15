@@ -1,12 +1,11 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
-import CreateAccountForm from './CreateAccountForm';
+import RegistrationUI from '@/lib/boundaries/RegistrationUI';
 
 /**
- * Registration page (server component).
- * BCE Boundary: RegistrationUI — displayRegistrationForm()
- * Only accessible by admins.
+ * BCE page: RegistrationUI — User Story #6
+ * navigateToRegister() → displayRegistrationForm()
  */
 export default async function CreateAccountPage() {
   const session = await getSession();
@@ -39,7 +38,7 @@ export default async function CreateAccountPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <CreateAccountForm />
+        <RegistrationUI />
       </main>
     </div>
   );

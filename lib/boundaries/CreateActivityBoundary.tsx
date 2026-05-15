@@ -12,12 +12,12 @@ const initialState: CreateActivityState = {
 };
 
 /**
- * BCE Boundary: CreateActivityUI (User Story #18)
+ * BCE Boundary: CreateActivityBoundary (User Story #18)
  *
- * - displayForm() — render the activity creation form
- * - displayResult(msg) — show success or error message from action state
+ * - create_activity_form() — render the activity creation form
+ * - Flashes success/failure message based on controller response
  */
-export default function CreateActivityForm() {
+export default function CreateActivityBoundary() {
   const [state, formAction, isPending] = useActionState(
     createActivityAction,
     initialState,

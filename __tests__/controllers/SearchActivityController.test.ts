@@ -18,15 +18,10 @@ describe('SearchActivityController', () => {
       updated_at: '2025-01-01',
     });
 
-  let getCompletedByKeywordSpy: jest.SpyInstance;
   let findActiveActivitiesSpy: jest.SpyInstance;
 
   beforeAll(() => {
     findSpy = jest.spyOn(FundraisingActivity, 'find_activities');
-    getCompletedByKeywordSpy = jest.spyOn(
-      FundraisingActivity,
-      'getCompletedByKeyword',
-    );
     findActiveActivitiesSpy = jest.spyOn(
       FundraisingActivity,
       'find_active_activities',
@@ -35,7 +30,6 @@ describe('SearchActivityController', () => {
 
   afterAll(() => {
     findSpy.mockRestore();
-    getCompletedByKeywordSpy.mockRestore();
     findActiveActivitiesSpy.mockRestore();
   });
 
@@ -96,33 +90,6 @@ describe('SearchActivityController', () => {
 
       expect(activities).toEqual(list);
       expect(flash).toBeNull();
-    });
-  });
-
-  // ===========================================================
-  // User Story #34 — Search completed fundraising activities
-  // ===========================================================
-  describe('User Story #34: searchCompletedActivities', () => {
-    it('returns list and null message when completed matches exist (main flow)', async () => {
-      const list = [mockActivity('Past summer')];
-      getCompletedByKeywordSpy.mockResolvedValue(list);
-
-      const [activities, msg] =
-        await SearchActivityController.searchCompletedActivities('summer', 'u1');
-
-      expect(activities).toEqual(list);
-      expect(msg).toBeNull();
-      expect(getCompletedByKeywordSpy).toHaveBeenCalledWith('summer', 'u1');
-    });
-
-    it('returns empty list and the exact not-found message when there are no matches (alt. 3a)', async () => {
-      getCompletedByKeywordSpy.mockResolvedValue([]);
-
-      const [activities, msg] =
-        await SearchActivityController.searchCompletedActivities('nope', 'u1');
-
-      expect(activities).toEqual([]);
-      expect(msg).toBe('No completed fundraising activities found.');
     });
   });
 

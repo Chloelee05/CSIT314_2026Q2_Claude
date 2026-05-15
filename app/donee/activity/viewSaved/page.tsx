@@ -1,12 +1,12 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ViewFavouriteListController } from '@/lib/controllers/ViewFavouriteListController';
+import { ViewFavouriteListBoundary } from '@/lib/boundaries/ViewFavouriteListBoundary';
 import Link from 'next/link';
 
 /**
- * BCE Boundary: ViewFavouriteListBoundary
- * clickViewFavourites() → Donee navigates here from the dashboard.
- * displayFavouriteList(favList) → Rendered below.
+ * BCE Boundary: ViewFavouriteListBoundary — viewFavourite() (User Story #28)
+ * Authenticates the donee then delegates rendering to ViewFavouriteListBoundary.
  */
 export default async function ViewSavedPage({
   searchParams,
@@ -55,87 +55,11 @@ export default async function ViewSavedPage({
           </Link>
         </div>
 
-        {/* Exception flow: empty or error */}
-        {!success ? (
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-10 text-center">
-            <p className="text-gray-500">{message}</p>
-            <Link
-              href="/donee/activity/search"
-              className="inline-block mt-4 text-sm text-indigo-600 hover:text-indigo-800 font-medium"
-            >
-              Browse campaigns →
-            </Link>
-          </div>
-        ) : (
-          /* displayFavouriteList(favList) */
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {favList.map((item) => {
-              const progressPct =
-                item.goal_amount > 0
-                  ? Math.min(100, (item.raised_amount / item.goal_amount) * 100)
-                  : 0;
-
-              return (
-                <div
-                  key={item.savedId}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 flex flex-col gap-3 hover:shadow-md transition"
-                >
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-semibold text-gray-900 text-base">{item.title}</h3>
-                    <span
-                      className={`shrink-0 text-xs font-semibold px-2 py-0.5 rounded-full capitalize ${
-                        item.status === 'active'
-                          ? 'bg-green-100 text-green-700'
-                          : 'bg-gray-100 text-gray-500'
-                      }`}
-                    >
-                      {item.status}
-                    </span>
-                  </div>
-
-                  {item.description && (
-                    <p className="text-gray-500 text-sm line-clamp-2">{item.description}</p>
-                  )}
-
-                  <div className="mt-auto">
-                    <div className="flex justify-between text-sm text-gray-600 mb-1">
-                      <span>Raised</span>
-                      <span className="font-medium text-gray-900">
-                        ${item.raised_amount.toLocaleString()} / ${item.goal_amount.toLocaleString()}
-                      </span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2">
-                      <div
-                        className="bg-indigo-600 h-2 rounded-full"
-                        style={{ width: `${progressPct}%` }}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <p className="text-xs text-gray-400">
-                      Saved on {new Date(item.savedAt).toLocaleDateString()}
-                    </p>
-                    <div className="flex gap-3">
-                      <Link
-                        href={`/donee/activity/view?id=${item.id}`}
-                        className="text-xs text-indigo-600 hover:text-indigo-800 font-medium transition"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        href={`/donee/activity/removeSaved?fraId=${item.id}`}
-                        className="text-xs text-red-500 hover:text-red-700 font-medium transition"
-                      >
-                        Remove
-                      </Link>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
+        <ViewFavouriteListBoundary
+          success={success}
+          message={message}
+          favList={favList}
+        />
       </main>
     </div>
   );

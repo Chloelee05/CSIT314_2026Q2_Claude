@@ -59,7 +59,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe('Invalid username or role.');
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
   });
@@ -123,7 +123,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe('Invalid username or role.');
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
 
@@ -141,7 +141,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe('Invalid password.');
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
 
@@ -159,9 +159,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe(
-        'Your account has been suspended. Please contact an administrator.',
-      );
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
   });
@@ -209,7 +207,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe('Invalid username or password. Please try again.');
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
 
@@ -227,9 +225,7 @@ describe('LoginController', () => {
       );
 
       expect(success).toBe(false);
-      expect(message).toBe(
-        'Your account has been suspended. Please contact an administrator.',
-      );
+      expect(message).toBe('Unsuccessful Login.');
       expect(auth.createSession).not.toHaveBeenCalled();
     });
   });

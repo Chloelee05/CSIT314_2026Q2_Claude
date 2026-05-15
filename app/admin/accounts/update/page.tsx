@@ -4,7 +4,7 @@ import { adminLogoutAction } from '@/app/login/actions';
 import { UpdateUserAccountController } from '@/lib/controllers/UpdateUserAccountController';
 import { UserAccount } from '@/lib/entities/UserAccount';
 import Link from 'next/link';
-import UpdateUserAccountForm from './UpdateUserAccountForm';
+import UpdateUserAccountBoundary from '@/lib/boundaries/UpdateUserAccountBoundary';
 
 /**
  * BCE Boundary: UpdateUserAccountBoundary — Show_Update_Form(UserAccount_id)
@@ -78,8 +78,7 @@ export default async function UpdateUserAccountPage({
             <span className="font-medium text-gray-700">{account.full_name ?? account.username}</span>
           </p>
 
-          {/* UpdateUserAccountBoundary → Show_Update_Form(UserAccount_id) */}
-          <UpdateUserAccountForm
+          <UpdateUserAccountBoundary
             userAccountId={account.id}
             currentUsername={account.username}
             currentRole={account.role}

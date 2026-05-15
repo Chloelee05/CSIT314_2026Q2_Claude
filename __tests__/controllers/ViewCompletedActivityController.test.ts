@@ -21,19 +21,19 @@ describe('ViewCompletedActivityController', () => {
       ...overrides,
     });
 
-  let getCompletedByKeywordSpy: jest.SpyInstance;
+  let fetchCompletedActivitySpy: jest.SpyInstance;
   let getCompletedByIdSpy: jest.SpyInstance;
 
   beforeAll(() => {
-    getCompletedByKeywordSpy = jest.spyOn(
+    fetchCompletedActivitySpy = jest.spyOn(
       FundraisingActivity,
-      'getCompletedByKeyword',
+      'fetchCompletedActivity',
     );
     getCompletedByIdSpy = jest.spyOn(FundraisingActivity, 'getCompletedById');
   });
 
   afterAll(() => {
-    getCompletedByKeywordSpy.mockRestore();
+    fetchCompletedActivitySpy.mockRestore();
     getCompletedByIdSpy.mockRestore();
   });
 
@@ -42,49 +42,31 @@ describe('ViewCompletedActivityController', () => {
   });
 
   // ===========================================================
-  // User Story #35 — View completed fundraising activity details
+  // User Story #35 — View completed fundraising activity list
+  // ViewCompletedActivityController.getCompletedActivity(userId)
+  //   → FundraisingActivity.fetchCompletedActivity(userId)
   // ===========================================================
-  describe('User Story #35: getCompletedActivities', () => {
-    it('returns the user’s completed list from the entity (main list flow)', async () => {
+  describe('User Story #35: getCompletedActivity', () => {
+    it('returns the completed activity list from the entity (main flow)', async () => {
       const list = [makeAct()];
-      getCompletedByKeywordSpy.mockResolvedValue(list);
+      fetchCompletedActivitySpy.mockResolvedValue(list);
 
-      const result = await ViewCompletedActivityController.getCompletedActivities(
+      const result = await ViewCompletedActivityController.getCompletedActivity(
         userId,
       );
 
       expect(result).toEqual(list);
-      expect(getCompletedByKeywordSpy).toHaveBeenCalledWith('', userId);
-    });
-  });
-
-  describe('User Story #35: getCompletedActivitiesWithMessage', () => {
-    it('returns activities and null message when the list is non-empty', async () => {
-      const list = [makeAct()];
-      getCompletedByKeywordSpy.mockResolvedValue(list);
-
-      const [rows, msg] =
-        await ViewCompletedActivityController.getCompletedActivitiesWithMessage(
-          userId,
-          'run',
-        );
-
-      expect(rows).toEqual(list);
-      expect(msg).toBeNull();
-      expect(getCompletedByKeywordSpy).toHaveBeenCalledWith('run', userId);
+      expect(fetchCompletedActivitySpy).toHaveBeenCalledWith(userId);
     });
 
-    it('returns empty list and the exact not-found message when there are no completed matches (alt. flow)', async () => {
-      getCompletedByKeywordSpy.mockResolvedValue([]);
+    it('returns empty list when the user has no completed activities (alternate flow)', async () => {
+      fetchCompletedActivitySpy.mockResolvedValue([]);
 
-      const [rows, msg] =
-        await ViewCompletedActivityController.getCompletedActivitiesWithMessage(
-          userId,
-          'nope',
-        );
+      const result = await ViewCompletedActivityController.getCompletedActivity(
+        userId,
+      );
 
-      expect(rows).toEqual([]);
-      expect(msg).toBe('No completed fundraising activities found.');
+      expect(result).toEqual([]);
     });
   });
 

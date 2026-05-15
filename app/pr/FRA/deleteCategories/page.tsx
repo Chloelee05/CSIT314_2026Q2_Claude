@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect, notFound } from 'next/navigation';
 import { FRACategory } from '@/lib/entities/FRACategory';
-import ManageCategoriesBoundary from './ManageCategoriesBoundary';
+import ManageCategoriesBoundary from '@/lib/boundaries/ManageCategoriesBoundary';
 
 /**
  * BCE Boundary: ManageCategoriesBoundary page (User Story #41)

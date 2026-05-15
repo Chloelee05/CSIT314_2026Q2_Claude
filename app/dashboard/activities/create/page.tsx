@@ -1,9 +1,9 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import CreateActivityForm from './CreateActivityForm';
+import CreateActivityBoundary from '@/lib/boundaries/CreateActivityBoundary';
 
 /**
- * BCE Boundary: CreateActivityUI — navigatetoCreate() / displayForm()
+ * BCE Boundary: CreateActivityBoundary — create_activity()
  * Precondition (use case): Fund Raiser must be logged in with an active session.
  */
 export default async function CreateActivityPage() {
@@ -17,7 +17,7 @@ export default async function CreateActivityPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <CreateActivityForm />
+      <CreateActivityBoundary />
     </div>
   );
 }

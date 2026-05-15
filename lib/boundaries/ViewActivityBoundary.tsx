@@ -4,8 +4,8 @@ import { useActionState, useRef } from 'react';
 import {
   deleteActivityAction,
   type DeleteActivityState,
-} from './actions';
-import { SearchActivityBoundary } from './SearchActivityBoundary';
+} from '@/app/dashboard/activities/actions';
+import { SearchActivityBoundary } from '@/app/dashboard/activities/SearchActivityBoundary';
 
 type ActivityRow = {
   id: string;
@@ -21,15 +21,14 @@ const initialDeleteState: DeleteActivityState = {
 };
 
 /**
- * BCE Boundary: ViewActivityUI (User Story #19) + list/results container for SearchActivityBoundary (#22)
+ * BCE Boundary: ViewActivityBoundary (User Story #19)
  *
- * - displayActivityList(activities) — render the list (or empty state)
- * - navigateToActivities / selectActivity — links to detail route
- * - show_results — displays rows returned from SearchActivityController
+ * - navigateToActivities() — entry point rendered by the activities list page
+ * - displayActivityDetails(activity: list) — render the activity list or flash empty state
  *
- * Delete flow (User Story #21) remains on the same page for convenience.
+ * Also hosts the inline delete form (User Story #21) and wraps SearchActivityBoundary (#22).
  */
-export default function ViewActivityUI({
+export default function ViewActivityBoundary({
   activities,
   initialQuery = '',
   searchEmptyFlash = null,

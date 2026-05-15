@@ -1,7 +1,7 @@
 import { ViewFavouriteListController } from '@/lib/controllers/ViewFavouriteListController';
-import { SavedFRAData, type SavedFRAWithDetails } from '@/lib/entities/SavedFRAData';
+import { FRAData, type SavedFRAWithDetails } from '@/lib/entities/FRAData';
 
-jest.mock('@/lib/entities/SavedFRAData');
+jest.mock('@/lib/entities/FRAData');
 
 describe('ViewFavouriteListController', () => {
   beforeEach(() => {
@@ -23,11 +23,11 @@ describe('ViewFavouriteListController', () => {
   // ===========================================================
   // User Story #28 — Donee views saved/favourite activity list
   // ViewFavouriteListController.getFavouriteList(doneeId)
-  //   → SavedFRAData.fetchSavedFRAs(doneeId)
+  //   → FRAData.fetchSavedFRAs(doneeId)
   // ===========================================================
   describe('User Story #28: getFavouriteList', () => {
     it('returns success tuple with saved list when donee has favourites', async () => {
-      (SavedFRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
+      (FRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
         true,
         'Favourites retrieved.',
         [mockSaved],
@@ -40,11 +40,11 @@ describe('ViewFavouriteListController', () => {
       expect(message).toBe('Favourites retrieved.');
       expect(list).toHaveLength(1);
       expect(list[0].id).toBe('fra1');
-      expect(SavedFRAData.fetchSavedFRAs).toHaveBeenCalledWith('donee1');
+      expect(FRAData.fetchSavedFRAs).toHaveBeenCalledWith('donee1');
     });
 
     it('returns failure tuple with empty list when favourite list is empty', async () => {
-      (SavedFRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
+      (FRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
         false,
         'Your favourite list is empty.',
         [],
@@ -59,7 +59,7 @@ describe('ViewFavouriteListController', () => {
     });
 
     it('returns failure tuple with empty list on DB error', async () => {
-      (SavedFRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
+      (FRAData.fetchSavedFRAs as jest.Mock).mockResolvedValue([
         false,
         'Failed to retrieve your favourites. Please try again.',
         [],

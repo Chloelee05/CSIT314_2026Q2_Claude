@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { saveFRAAction, type SaveFRAState } from './actions';
+import { saveFRAAction, type SaveFRAState } from '@/app/donee/activity/save/actions';
 
 interface SaveFRABoundaryProps {
   fraId: string;

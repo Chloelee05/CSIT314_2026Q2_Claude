@@ -13,38 +13,39 @@ describe('ViewAccountController', () => {
   // they can inspect account information
   // ===========================================================
   describe('User Story #7: getAccountDetails', () => {
-    it('should return all accounts when userId is null', async () => {
+    it('returns success tuple with all accounts when accounts exist (main flow)', async () => {
       const mockAccounts = [
         { id: '1', username: 'user1', email: 'user1@test.com' },
         { id: '2', username: 'user2', email: 'user2@test.com' },
       ];
-      (UserAccount.getAll as jest.Mock).mockResolvedValue(mockAccounts);
+      (UserAccount.fetchAccountDetails as jest.Mock).mockResolvedValue([
+        true,
+        '',
+        mockAccounts,
+      ]);
 
-      const result = await ViewAccountController.getAccountDetails(null);
+      const [success, message, accounts] =
+        await ViewAccountController.getAccountDetails();
 
-      expect(result).toEqual(mockAccounts);
-      expect(UserAccount.getAll).toHaveBeenCalledTimes(1);
-      expect(UserAccount.getById).not.toHaveBeenCalled();
+      expect(success).toBe(true);
+      expect(message).toBe('');
+      expect(accounts).toEqual(mockAccounts);
+      expect(UserAccount.fetchAccountDetails).toHaveBeenCalledTimes(1);
     });
 
-    it('should return a single account when userId is provided', async () => {
-      const mockAccount = { id: '1', username: 'user1', email: 'user1@test.com' };
-      (UserAccount.getById as jest.Mock).mockResolvedValue(mockAccount);
+    it('returns failure tuple with empty list when no accounts exist (alternate flow)', async () => {
+      (UserAccount.fetchAccountDetails as jest.Mock).mockResolvedValue([
+        false,
+        'No accounts found',
+        [],
+      ]);
 
-      const result = await ViewAccountController.getAccountDetails('1');
+      const [success, message, accounts] =
+        await ViewAccountController.getAccountDetails();
 
-      expect(result).toEqual(mockAccount);
-      expect(UserAccount.getById).toHaveBeenCalledWith('1');
-      expect(UserAccount.getAll).not.toHaveBeenCalled();
-    });
-
-    it('should return null when userId does not exist', async () => {
-      (UserAccount.getById as jest.Mock).mockResolvedValue(null);
-
-      const result = await ViewAccountController.getAccountDetails('nonexistent');
-
-      expect(result).toBeNull();
-      expect(UserAccount.getById).toHaveBeenCalledWith('nonexistent');
+      expect(success).toBe(false);
+      expect(message).toBe('No accounts found');
+      expect(accounts).toEqual([]);
     });
   });
 });

@@ -112,6 +112,18 @@ export class UserAccount {
   }
 
   /**
+   * Retrieve all user accounts as a result tuple.
+   * Signature matches BCE diagram: fetchAccountDetails(): tuple
+   */
+  static async fetchAccountDetails(): Promise<[boolean, string, UserAccount[]]> {
+    const accounts = await UserAccount.getAll();
+    if (accounts.length === 0) {
+      return [false, 'No accounts found', []];
+    }
+    return [true, '', accounts];
+  }
+
+  /**
    * Retrieve a user account by ID.
    * Signature matches BCE diagram: getById(userId: String): UserAccount
    */
@@ -272,6 +284,15 @@ export class UserAccount {
       return false;
     }
 
+    await deleteSession();
+    return true;
+  }
+
+  /**
+   * Invalidate a session by ID.
+   * Signature matches BCE diagram: invalidateSession(sessionId): boolean — User Story #31
+   */
+  static async invalidateSession(_sessionId: string): Promise<boolean> {
     await deleteSession();
     return true;
   }

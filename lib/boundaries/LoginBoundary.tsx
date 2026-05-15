@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useActionState } from 'react';
-import { loginAction, type LoginState } from './actions';
+import { loginAction, type LoginState } from '@/app/login/actions';
 
 const initialState: LoginState = {
   success: false,
@@ -13,19 +13,15 @@ interface LoginFormProps {
 }
 
 /**
- * BCE Boundary: LoginBoundary (#16, #23) / LoginUI (#49)
+ * BCE Boundary: LoginBoundary (User Story #16, #23, #30)
  *
- * Username mode (#16 / #23):
- *   - process_login() via LoginController.Login(username, password, role)
- *   - show_dashboard() → redirect based on role
- *   - Role selected from dropdown (#23: FR selects "Fundraiser" role)
+ * - process_login()   — renders login form; submits to LoginController.Login(username, password, role)
+ * - show_dashboard()  — handled by server redirect on success (role-based)
  *
- * Email mode (#49):
+ * Email mode (User Story #49):
  *   - submitCredentials(email, password) via LoginController.authenticateUser(email, pw)
- *   - displayDashboard() → redirect to /dashboard
- *   - displayError(msg) → error banner
  */
-export default function LoginForm({ logoutMessage }: LoginFormProps) {
+export default function LoginBoundary({ logoutMessage }: LoginFormProps) {
   const [state, formAction, isPending] = useActionState(
     loginAction,
     initialState,
