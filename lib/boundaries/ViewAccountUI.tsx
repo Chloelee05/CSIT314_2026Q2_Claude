@@ -1,5 +1,5 @@
 import { UserAccount } from '@/lib/entities/UserAccount';
-import { suspendUserAccountAction } from '@/app/admin/accounts/suspend/actions';
+import { SuspendUserAccountBoundary } from '@/lib/boundaries/SuspendUserAccountBoundary';
 import Link from 'next/link';
 
 const ROLE_LABELS: Record<string, string> = {
@@ -82,15 +82,7 @@ export function ViewAccountUI({
                     View Details
                   </Link>
                   {account.status === 'active' && (
-                    <form action={suspendUserAccountAction}>
-                      <input type="hidden" name="userAccountId" value={account.id} />
-                      <button
-                        type="submit"
-                        className="text-red-600 hover:text-red-800 font-medium transition cursor-pointer"
-                      >
-                        Suspend
-                      </button>
-                    </form>
+                    <SuspendUserAccountBoundary userAccountId={account.id} />
                   )}
                 </div>
               </td>

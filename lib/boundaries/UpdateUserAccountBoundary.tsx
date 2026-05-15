@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { updateAccountAction, UpdateAccountState } from './actions';
+import { updateAccountAction, UpdateAccountState } from '@/app/admin/accounts/update/actions';
 
 const ROLES = [
   { value: 'fund_raiser', label: 'Fund Raiser' },
@@ -10,7 +10,7 @@ const ROLES = [
   { value: 'admin', label: 'Admin' },
 ];
 
-interface UpdateUserAccountFormProps {
+interface Props {
   userAccountId: string;
   currentUsername: string;
   currentRole: string;
@@ -19,21 +19,24 @@ interface UpdateUserAccountFormProps {
 const initialState: UpdateAccountState = { success: false, message: '' };
 
 /**
- * BCE Boundary: UpdateUserAccountBoundary — Show_Update_Form(UserAccount_id)
+ * BCE Boundary: UpdateUserAccountBoundary (User Story #8)
  *
- * Client-side form component for User Story #8.
+ * - Show_Update_Form(UserAccount_id: int)   — renders the pre-populated update form
+ * - UpdatedUserAccount(UserAccount_id: int) — form submission triggers UpdatedUserAccount on controller
  */
-export default function UpdateUserAccountForm({
+export default function UpdateUserAccountBoundary({
   userAccountId,
   currentUsername,
   currentRole,
-}: UpdateUserAccountFormProps) {
+}: Props) {
   const [state, formAction, isPending] = useActionState(updateAccountAction, initialState);
 
   return (
+    /* Show_Update_Form(UserAccount_id) — pre-populated form */
     <form action={formAction} className="space-y-5">
       <input type="hidden" name="userAccountId" value={userAccountId} />
 
+      {/* flash message: "Account updated Successfully" | "Account not updated successfully" */}
       {state.message && (
         <div
           className={`rounded-lg px-4 py-3 text-sm font-medium ${
@@ -92,6 +95,7 @@ export default function UpdateUserAccountForm({
         </select>
       </div>
 
+      {/* UpdatedUserAccount(UserAccount_id) — Save Changes submits to controller */}
       <div className="pt-2">
         <button
           type="submit"
