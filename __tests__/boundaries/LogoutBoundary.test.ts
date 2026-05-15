@@ -17,11 +17,11 @@ describe('LogoutBoundary', () => {
 
   // ===========================================================
   // User Story #31 — Donee logout (Boundary-only sequence)
-  // LogoutBoundary.Logout() → DisplayMessage(msg) → redirectToLoginPage()
+  // LogoutBoundary.process_logout() → show_login_page()
   // ===========================================================
   describe('User Story #31', () => {
-    it('Logout clears the session then redirects to login page', async () => {
-      await LogoutBoundary.Logout();
+    it('process_logout clears the session then redirects to login page', async () => {
+      await LogoutBoundary.process_logout();
 
       expect(auth.deleteSession).toHaveBeenCalledTimes(1);
       expect(redirect).toHaveBeenCalledTimes(1);
@@ -30,17 +30,12 @@ describe('LogoutBoundary', () => {
       );
     });
 
-    it('redirectToLoginPage invokes redirect with the logged-out success message', () => {
-      LogoutBoundary.redirectToLoginPage();
+    it('show_login_page redirects to login with the logged-out success message', () => {
+      LogoutBoundary.show_login_page();
 
       expect(redirect).toHaveBeenCalledWith(
         '/login?message=' + encodeURIComponent('Logged out successfully.'),
       );
-    });
-
-    it('DisplayMessage returns the message string', () => {
-      const msg = 'Logged out successfully.';
-      expect(LogoutBoundary.DisplayMessage(msg)).toBe(msg);
     });
   });
 
