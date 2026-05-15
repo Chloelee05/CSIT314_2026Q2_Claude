@@ -1,6 +1,6 @@
 'use server';
 
-import { CategoryController } from '@/lib/controllers/CategoryController';
+import { DeleteCategoryController } from '@/lib/controllers/DeleteCategoryController';
 import { redirect } from 'next/navigation';
 
 export interface DeleteCategoryState {
@@ -9,7 +9,7 @@ export interface DeleteCategoryState {
 }
 
 /**
- * BCE Boundary action: select category & click Delete → CategoryController.deleteFRACategory()
+ * BCE Boundary action: select category & click Delete → DeleteCategoryController.deleteFRACategory()
  * Maps controller result to showDeleteResult() messages (sequence diagram).
  * On success, redirects back to the category list.
  */
@@ -19,7 +19,7 @@ export async function deleteCategoryAction(
 ): Promise<DeleteCategoryState> {
   const categoryId = (formData.get('categoryId') as string) ?? '';
 
-  const [success, message] = await CategoryController.deleteFRACategory(categoryId);
+  const [success, message] = await DeleteCategoryController.deleteFRACategory(categoryId);
 
   if (success) {
     redirect('/pr/FRA/viewCategories');

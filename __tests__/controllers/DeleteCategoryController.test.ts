@@ -1,4 +1,4 @@
-import { CategoryController } from '@/lib/controllers/CategoryController';
+import { DeleteCategoryController } from '@/lib/controllers/DeleteCategoryController';
 import { FRACategory } from '@/lib/entities/FRACategory';
 import * as auth from '@/lib/auth';
 
@@ -10,7 +10,7 @@ jest.mock('@/lib/auth', () => ({
 
 jest.mock('@/lib/entities/FRACategory');
 
-describe('CategoryController', () => {
+describe('DeleteCategoryController', () => {
   const pmSession = {
     userId: 'pm-1',
     username: 'platformmgr',
@@ -29,68 +29,8 @@ describe('CategoryController', () => {
   });
 
   // ===========================================================
-  // User Story #42 — Search FRA Categories
-  // ===========================================================
-  describe('User Story #42: searchFRACategories', () => {
-    it('returns matching categories and empty flash when keyword matches (main flow)', async () => {
-      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
-      const list = [makeCategory('Health'), makeCategory('Health & Wellness')];
-      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
-
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
-
-      expect(categories).toEqual(list);
-      expect(flash).toBe('');
-      expect(FRACategory.getCategoriesByKeyword).toHaveBeenCalledWith('health');
-    });
-
-    it('returns empty list and flash message when no categories match (exception flow 4a)', async () => {
-      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
-      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue([]);
-
-      const [categories, flash] = await CategoryController.searchFRACategories('xyz');
-
-      expect(categories).toEqual([]);
-      expect(flash).toBe('No categories found matching your search.');
-    });
-
-    it('returns all categories when keyword is empty', async () => {
-      (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
-      const list = [makeCategory('Health'), makeCategory('Education')];
-      (FRACategory.getCategoriesByKeyword as jest.Mock).mockResolvedValue(list);
-
-      const [categories, flash] = await CategoryController.searchFRACategories('');
-
-      expect(categories).toEqual(list);
-      expect(flash).toBe('');
-    });
-
-    it('returns [[], "Unauthorised."] when session is missing', async () => {
-      (auth.getSession as jest.Mock).mockResolvedValue(null);
-
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
-
-      expect(categories).toEqual([]);
-      expect(flash).toBe('Unauthorised.');
-      expect(FRACategory.getCategoriesByKeyword).not.toHaveBeenCalled();
-    });
-
-    it('returns [[], "Unauthorised."] when role is not platform_management', async () => {
-      (auth.getSession as jest.Mock).mockResolvedValue({
-        userId: 'a1',
-        username: 'admin',
-        role: 'admin',
-      });
-
-      const [categories, flash] = await CategoryController.searchFRACategories('health');
-
-      expect(categories).toEqual([]);
-      expect(flash).toBe('Unauthorised.');
-    });
-  });
-
-  // ===========================================================
   // User Story #41 — Delete FRA Category
+  // DeleteCategoryController.deleteFRACategory(category_id) → FRACategory.deleteCategory()
   // ===========================================================
   describe('User Story #41: deleteFRACategory', () => {
     it('returns [true, success message] when category is not in use and delete succeeds (main flow)', async () => {
@@ -99,7 +39,7 @@ describe('CategoryController', () => {
       (FRACategory.isInUseByActiveFRAs as jest.Mock).mockResolvedValue(false);
       (FRACategory.deleteCategory as jest.Mock).mockResolvedValue(true);
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-1');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-1');
 
       expect(success).toBe(true);
       expect(message).toBe('Category deleted successfully.');
@@ -111,7 +51,7 @@ describe('CategoryController', () => {
       (FRACategory.getById as jest.Mock).mockResolvedValue(makeCategory());
       (FRACategory.isInUseByActiveFRAs as jest.Mock).mockResolvedValue(true);
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-1');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-1');
 
       expect(success).toBe(false);
       expect(message).toBe(
@@ -124,7 +64,7 @@ describe('CategoryController', () => {
       (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
       (FRACategory.getById as jest.Mock).mockResolvedValue(null);
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-999');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-999');
 
       expect(success).toBe(false);
       expect(message).toBe('Category not found.');
@@ -134,7 +74,7 @@ describe('CategoryController', () => {
     it('returns [false, error message] when categoryId is empty (validation)', async () => {
       (auth.getSession as jest.Mock).mockResolvedValue(pmSession);
 
-      const [success, message] = await CategoryController.deleteFRACategory('');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('');
 
       expect(success).toBe(false);
       expect(message).toBe('Invalid category.');
@@ -144,7 +84,7 @@ describe('CategoryController', () => {
     it('returns [false, error message] when session is missing (precondition)', async () => {
       (auth.getSession as jest.Mock).mockResolvedValue(null);
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-1');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-1');
 
       expect(success).toBe(false);
       expect(message).toBe('Unauthorised.');
@@ -158,7 +98,7 @@ describe('CategoryController', () => {
         role: 'admin',
       });
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-1');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-1');
 
       expect(success).toBe(false);
       expect(message).toBe('Unauthorised.');
@@ -171,7 +111,7 @@ describe('CategoryController', () => {
       (FRACategory.isInUseByActiveFRAs as jest.Mock).mockResolvedValue(false);
       (FRACategory.deleteCategory as jest.Mock).mockResolvedValue(false);
 
-      const [success, message] = await CategoryController.deleteFRACategory('cat-1');
+      const [success, message] = await DeleteCategoryController.deleteFRACategory('cat-1');
 
       expect(success).toBe(false);
       expect(message).toBe('Failed to delete category. Please try again.');

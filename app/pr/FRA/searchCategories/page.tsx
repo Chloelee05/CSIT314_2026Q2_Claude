@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import { CategoryController } from '@/lib/controllers/CategoryController';
+import { SearchCategoriesController } from '@/lib/controllers/SearchCategoriesController';
 import SearchCategoriesBoundary from './SearchCategoriesBoundary';
 
 /**
@@ -24,7 +24,7 @@ export default async function SearchCategoriesPage({
 
   const { q = '' } = await searchParams;
 
-  const [categories, flash] = await CategoryController.searchFRACategories(q);
+  const [categories, flash] = await SearchCategoriesController.searchFRACategories(q);
 
   const rows = categories.map((c) => ({
     id: c.id,

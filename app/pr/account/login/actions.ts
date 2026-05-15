@@ -1,6 +1,6 @@
 'use server';
 
-import { AuthController } from '@/lib/controllers/AuthController';
+import { LoginController } from '@/lib/controllers/LoginController';
 import { redirect } from 'next/navigation';
 
 export interface LoginState {
@@ -12,8 +12,8 @@ export interface LoginState {
  * BCE Boundary action: US#43 — Platform Manager Login
  *
  * Sequence: enter credentials & click Log In
- *   → AuthController.login(username, password)
- *   → UserData.validateCredentials(username, password)
+ *   → LoginController.Login(username, password, role)
+ *   → UserAccount.verify_credentials(username, password, role)
  *   → grant access → showDashboard()
  */
 export async function pmLoginAction(
@@ -27,7 +27,7 @@ export async function pmLoginAction(
     return { success: false, message: 'All fields are required.' };
   }
 
-  const [success, message] = await AuthController.login(username, password);
+  const [success, message] = await LoginController.Login(username, password, 'platform_management');
 
   if (!success) {
     return { success: false, message };

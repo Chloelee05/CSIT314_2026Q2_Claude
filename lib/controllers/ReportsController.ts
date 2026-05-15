@@ -1,10 +1,10 @@
 import { ActivityData, DailyReport, MonthlyReport, WeeklyReport } from '@/lib/entities/ActivityData';
 
 /**
- * BCE Controller: ReportController (User Story #45, #46, #47)
+ * BCE Controller: ReportsController (User Story #45, #46, #47)
  * Generates activity reports for Platform Managers.
  */
-export class ReportController {
+export class ReportsController {
   /**
    * US#45 — Generate a daily report for the given date.
    * Signature matches BCE diagram: generateDailyReport(date)

@@ -167,6 +167,74 @@ describe('LoginController', () => {
   });
 
   // ===========================================================
+  // User Story #43 — Platform Manager Login
+  // LoginController.Login(username, password, role) → UserAccount.verify_credentials()
+  // ===========================================================
+  describe('User Story #43: Login (Platform Manager)', () => {
+    it('should return success when PM credentials are valid', async () => {
+      const mockPM = { id: 'pm-1', username: 'pm_user', role: 'platform_management' };
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        true,
+        'Credentials verified.',
+        mockPM,
+      ]);
+      (auth.createSession as jest.Mock).mockResolvedValue(undefined);
+
+      const [success, message] = await LoginController.Login(
+        'pm_user',
+        'password123',
+        'platform_management',
+      );
+
+      expect(success).toBe(true);
+      expect(message).toBe('Successful Login.');
+      expect(UserAccount.verify_credentials).toHaveBeenCalledWith(
+        'pm_user',
+        'password123',
+        'platform_management',
+      );
+    });
+
+    it('should fail when PM credentials are invalid (Exception 4a)', async () => {
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        false,
+        'Invalid username or password. Please try again.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.Login(
+        'pm_user',
+        'wrongpass',
+        'platform_management',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe('Invalid username or password. Please try again.');
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+
+    it('should fail when PM account is suspended', async () => {
+      (UserAccount.verify_credentials as jest.Mock).mockResolvedValue([
+        false,
+        'Your account has been suspended. Please contact an administrator.',
+        null,
+      ]);
+
+      const [success, message] = await LoginController.Login(
+        'pm_user',
+        'password123',
+        'platform_management',
+      );
+
+      expect(success).toBe(false);
+      expect(message).toBe(
+        'Your account has been suspended. Please contact an administrator.',
+      );
+      expect(auth.createSession).not.toHaveBeenCalled();
+    });
+  });
+
+  // ===========================================================
   // User Story #49 — User Login (via email)
   // ===========================================================
   describe('User Story #49: authenticateUser', () => {

@@ -1,16 +1,16 @@
-import { ReportController } from '@/lib/controllers/ReportController';
+import { ReportsController } from '@/lib/controllers/ReportsController';
 import { ActivityData } from '@/lib/entities/ActivityData';
 
 jest.mock('@/lib/entities/ActivityData');
 
-describe('ReportController', () => {
+describe('ReportsController', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   // ===========================================================
   // User Story #45 — Generate Daily Report
-  // ReportController.generateDailyReport(date) → ActivityData.getDailyActivity(date)
+  // ReportsController.generateDailyReport(date) → ActivityData.getDailyActivity(date)
   // ===========================================================
   describe('User Story #45: generateDailyReport', () => {
     const mockReport = {
@@ -24,7 +24,7 @@ describe('ReportController', () => {
     it('should return report data when activity exists for the date', async () => {
       (ActivityData.getDailyActivity as jest.Mock).mockResolvedValue(mockReport);
 
-      const [report, flash] = await ReportController.generateDailyReport('2026-05-07');
+      const [report, flash] = await ReportsController.generateDailyReport('2026-05-07');
 
       expect(report).toEqual(mockReport);
       expect(flash).toBe('');
@@ -40,14 +40,14 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateDailyReport('2026-01-01');
+      const [report, flash] = await ReportsController.generateDailyReport('2026-01-01');
 
       expect(report).toBeNull();
       expect(flash).toBe('No activity data available for the selected date.');
     });
 
     it('should return null and flash when date is empty', async () => {
-      const [report, flash] = await ReportController.generateDailyReport('');
+      const [report, flash] = await ReportsController.generateDailyReport('');
 
       expect(report).toBeNull();
       expect(flash).toBe('Please select a date.');
@@ -63,7 +63,7 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateDailyReport('2026-05-07');
+      const [report, flash] = await ReportsController.generateDailyReport('2026-05-07');
 
       expect(report).not.toBeNull();
       expect(report?.totalDonations).toBe(2);
@@ -79,7 +79,7 @@ describe('ReportController', () => {
         newUsers: 1,
       });
 
-      const [report, flash] = await ReportController.generateDailyReport('2026-05-07');
+      const [report, flash] = await ReportsController.generateDailyReport('2026-05-07');
 
       expect(report).not.toBeNull();
       expect(report?.newUsers).toBe(1);
@@ -89,7 +89,7 @@ describe('ReportController', () => {
 
   // ===========================================================
   // User Story #46 — Generate Weekly Report
-  // ReportController.generateWeeklyReport(start_date, end_date) → ActivityData.getWeeklyActivity()
+  // ReportsController.generateWeeklyReport(start_date, end_date) → ActivityData.getWeeklyActivity()
   // ===========================================================
   describe('User Story #46: generateWeeklyReport', () => {
     const mockWeeklyReport = {
@@ -104,7 +104,7 @@ describe('ReportController', () => {
     it('should return report data when activity exists for the week', async () => {
       (ActivityData.getWeeklyActivity as jest.Mock).mockResolvedValue(mockWeeklyReport);
 
-      const [report, flash] = await ReportController.generateWeeklyReport(
+      const [report, flash] = await ReportsController.generateWeeklyReport(
         '2026-05-01',
         '2026-05-07',
       );
@@ -127,7 +127,7 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateWeeklyReport(
+      const [report, flash] = await ReportsController.generateWeeklyReport(
         '2026-01-01',
         '2026-01-07',
       );
@@ -137,7 +137,7 @@ describe('ReportController', () => {
     });
 
     it('should return null and flash when start date is empty', async () => {
-      const [report, flash] = await ReportController.generateWeeklyReport('', '2026-05-07');
+      const [report, flash] = await ReportsController.generateWeeklyReport('', '2026-05-07');
 
       expect(report).toBeNull();
       expect(flash).toBe('Please select a start date.');
@@ -145,7 +145,7 @@ describe('ReportController', () => {
     });
 
     it('should return null and flash when end date is empty', async () => {
-      const [report, flash] = await ReportController.generateWeeklyReport('2026-05-01', '');
+      const [report, flash] = await ReportsController.generateWeeklyReport('2026-05-01', '');
 
       expect(report).toBeNull();
       expect(flash).toBe('Please select a start date.');
@@ -162,7 +162,7 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateWeeklyReport(
+      const [report, flash] = await ReportsController.generateWeeklyReport(
         '2026-05-01',
         '2026-05-07',
       );
@@ -175,7 +175,7 @@ describe('ReportController', () => {
 
   // ===========================================================
   // User Story #47 — Generate Monthly Report
-  // ReportController.generateMonthlyReport(month, year) → ActivityData.getMonthlyActivity()
+  // ReportsController.generateMonthlyReport(month, year) → ActivityData.getMonthlyActivity()
   // ===========================================================
   describe('User Story #47: generateMonthlyReport', () => {
     const mockMonthlyReport = {
@@ -190,7 +190,7 @@ describe('ReportController', () => {
     it('should return report data when activity exists for the month', async () => {
       (ActivityData.getMonthlyActivity as jest.Mock).mockResolvedValue(mockMonthlyReport);
 
-      const [report, flash] = await ReportController.generateMonthlyReport(5, 2026);
+      const [report, flash] = await ReportsController.generateMonthlyReport(5, 2026);
 
       expect(report).toEqual(mockMonthlyReport);
       expect(flash).toBe('');
@@ -207,14 +207,14 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateMonthlyReport(1, 2020);
+      const [report, flash] = await ReportsController.generateMonthlyReport(1, 2020);
 
       expect(report).toBeNull();
       expect(flash).toBe('No activity data available for the selected month.');
     });
 
     it('should return null and flash when month is 0 (invalid)', async () => {
-      const [report, flash] = await ReportController.generateMonthlyReport(0, 2026);
+      const [report, flash] = await ReportsController.generateMonthlyReport(0, 2026);
 
       expect(report).toBeNull();
       expect(flash).toBe('Please select a month and year.');
@@ -222,7 +222,7 @@ describe('ReportController', () => {
     });
 
     it('should return null and flash when year is 0 (invalid)', async () => {
-      const [report, flash] = await ReportController.generateMonthlyReport(5, 0);
+      const [report, flash] = await ReportsController.generateMonthlyReport(5, 0);
 
       expect(report).toBeNull();
       expect(flash).toBe('Please select a month and year.');
@@ -239,7 +239,7 @@ describe('ReportController', () => {
         newUsers: 0,
       });
 
-      const [report, flash] = await ReportController.generateMonthlyReport(3, 2026);
+      const [report, flash] = await ReportsController.generateMonthlyReport(3, 2026);
 
       expect(report).not.toBeNull();
       expect(report?.newActivities).toBe(2);
