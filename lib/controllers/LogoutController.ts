@@ -1,19 +1,19 @@
 import { UserAccount } from '@/lib/entities/UserAccount';
 
 /**
- * BCE Controller: LogoutController (User Story #50, #31)
+ * BCE Controller: LogoutController
  *
- * - logout()            → US#50: delegates to UserAccount.clearSession()
- * - logout(sessionId)   → US#31: delegates to UserAccount.invalidateSession()
+ * - logout()            → US#24 (FR 등 `/dashboard`의 userLogoutAction), US#17/#50: clearSession()
+ * - logout(sessionId)   → US#31 (Donee): invalidateSession(sessionId)
  */
 export class LogoutController {
   /**
-   * US#50 — Admin/User logout.
+   * FR dashboard User Story #24, admin #17, generic #50 — session cookie teardown.
    * BCE: logout()
    */
   static async logout(): Promise<boolean>;
   /**
-   * US#31 — Donee logout.
+   * Donee dashboard User Story #31.
    * BCE: logout(sessionId)
    */
   static async logout(sessionId: string): Promise<boolean>;

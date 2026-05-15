@@ -16,10 +16,11 @@ describe('LogoutBoundary', () => {
   });
 
   // ===========================================================
-  // User Story #31 — Donee logout (Boundary-only sequence)
-  // LogoutBoundary.process_logout() → show_login_page()
+  // User Story #24 — FR (Fund Raiser) logout
+  // process_logout() → deleteSession → show_login_page() → redirect
+  // (대시보드에서는 userLogoutAction → LogoutController.logout() 경로도 사용; boundary 연산은 여기에 해당.)
   // ===========================================================
-  describe('User Story #31', () => {
+  describe('User Story #24: process_logout / show_login_page', () => {
     it('process_logout clears the session then redirects to login page', async () => {
       await LogoutBoundary.process_logout();
 
