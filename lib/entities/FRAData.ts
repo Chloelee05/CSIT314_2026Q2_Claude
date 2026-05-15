@@ -1,15 +1,56 @@
 import { createServerClient } from '@/lib/supabase/server';
 
 /**
- * BCE Entity: FRAData (User Story #28, #29, #32, #33)
+ * BCE Entity: FRAData (User Story #27, #28, #29, #32, #33)
  *
  * FRA: Fund Raising Activity.
+ * - save: donee saves a campaign as a favourite (User Story #27)
  * - fetchSavedFRAs: retrieve a donee's saved campaigns (User Story #28)
  * - delete: remove a saved campaign from favourites (User Story #29)
  * - fetchViewCount: view-count visibility statistics (User Story #32)
  * - fetchShortlistCount: shortlist count statistics (User Story #33)
  */
 export class FRAData {
+  id: string;
+  donee_id: string;
+  fra_id: string;
+  saved_at: string;
+
+  constructor(data: Record<string, unknown>) {
+    this.id = data.id as string;
+    this.donee_id = data.donee_id as string;
+    this.fra_id = data.fra_id as string;
+    this.saved_at = data.saved_at as string;
+  }
+
+  /**
+   * Donee saves a fundraising activity as a favourite.
+   * Signature matches BCE diagram: save(doneeId, fraId): tuple — User Story #27
+   */
+  static async save(doneeId: string, fraId: string): Promise<[boolean, string]> {
+    const supabase = createServerClient();
+
+    const { data: existing } = await supabase
+      .from('saved_fundraising_activities')
+      .select('id')
+      .eq('donee_id', doneeId)
+      .eq('fra_id', fraId)
+      .maybeSingle();
+
+    if (existing) {
+      return [false, 'Already saved'];
+    }
+
+    const { error } = await supabase
+      .from('saved_fundraising_activities')
+      .insert({ donee_id: doneeId, fra_id: fraId });
+
+    if (error) {
+      return [false, 'Failed to save activity. Please try again.'];
+    }
+
+    return [true, 'Activity saved successfully.'];
+  }
   /**
    * Retrieve all fundraising activities saved by the donee, with campaign details.
    * Signature matches BCE diagram: fetchSavedFRAs(doneeId): list
