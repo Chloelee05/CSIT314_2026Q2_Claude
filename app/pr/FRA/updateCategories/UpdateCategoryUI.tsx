@@ -28,6 +28,24 @@ export default function UpdateCategoryUI({ categoryId, currentName }: Props) {
     initialState,
   );
 
+  function displayResult() {
+    if (state.success && state.message) {
+      return (
+        <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
+          {state.message}
+        </div>
+      );
+    }
+    if (!state.success && state.message) {
+      return (
+        <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
+          {state.message}
+        </div>
+      );
+    }
+    return null;
+  }
+
   return (
     <div className="max-w-lg mx-auto">
       <div className="mb-6">
@@ -45,19 +63,7 @@ export default function UpdateCategoryUI({ categoryId, currentName }: Props) {
         </p>
       </div>
 
-      {/* displayResult — success (sequence diagram step 6) */}
-      {state.success && state.message && (
-        <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
-          {state.message}
-        </div>
-      )}
-
-      {/* displayResult — failure (sequence diagram step 7: alt [Category name already exists]) */}
-      {!state.success && state.message && (
-        <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
-          {state.message}
-        </div>
-      )}
+      {displayResult()}
 
       <form
         action={formAction}

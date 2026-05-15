@@ -11,6 +11,46 @@ interface Props {
  * - displayMessage('No FRA categories found.') — alt flow when list is empty (step 7)
  */
 export default function ViewCategoryUI({ categories }: Props) {
+  function displayCategoryList() {
+    return (
+      <ul className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+        {categories.map((cat) => (
+          <li
+            key={cat.id}
+            className="flex items-center justify-between px-5 py-4"
+          >
+            <span className="text-sm font-medium text-gray-900">{cat.name}</span>
+            <div className="flex items-center gap-4">
+              <span className="text-xs text-gray-400">
+                {new Date(cat.created_at).toLocaleDateString()}
+              </span>
+              <a
+                href={`/pr/FRA/updateCategories?id=${cat.id}`}
+                className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
+              >
+                Edit
+              </a>
+              <a
+                href={`/pr/FRA/deleteCategories?id=${cat.id}`}
+                className="text-xs font-medium text-red-600 hover:text-red-800"
+              >
+                Delete
+              </a>
+            </div>
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  function displayMessage(msg: string) {
+    return (
+      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center text-gray-500 text-sm">
+        {msg}
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto">
       <div className="mb-6 flex items-center justify-between">
@@ -36,41 +76,9 @@ export default function ViewCategoryUI({ categories }: Props) {
         </a>
       </div>
 
-      {/* displayMessage — alt flow 2a: no categories found (sequence step 7) */}
-      {categories.length === 0 ? (
-        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center text-gray-500 text-sm">
-          No FRA categories found.
-        </div>
-      ) : (
-        /* displayCategoryList — main flow (sequence step 6) */
-        <ul className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
-          {categories.map((cat) => (
-            <li
-              key={cat.id}
-              className="flex items-center justify-between px-5 py-4"
-            >
-              <span className="text-sm font-medium text-gray-900">{cat.name}</span>
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-gray-400">
-                  {new Date(cat.created_at).toLocaleDateString()}
-                </span>
-                <a
-                  href={`/pr/FRA/updateCategories?id=${cat.id}`}
-                  className="text-xs font-medium text-indigo-600 hover:text-indigo-800"
-                >
-                  Edit
-                </a>
-                <a
-                  href={`/pr/FRA/deleteCategories?id=${cat.id}`}
-                  className="text-xs font-medium text-red-600 hover:text-red-800"
-                >
-                  Delete
-                </a>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+      {categories.length === 0
+        ? displayMessage('No FRA categories found.')
+        : displayCategoryList()}
     </div>
   );
 }
