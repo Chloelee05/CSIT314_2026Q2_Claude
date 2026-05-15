@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import {
   deleteCategoryAction,
   type DeleteCategoryState,
-} from './actions';
+} from '@/app/pr/FRA/deleteCategories/actions';
 
 interface Props {
   categoryId: string;

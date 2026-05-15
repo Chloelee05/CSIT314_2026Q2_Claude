@@ -1,7 +1,7 @@
 'use client';
 
 import { useActionState } from 'react';
-import { pmLoginAction, LoginState } from './actions';
+import { pmLoginAction, LoginState } from '@/app/pr/account/login/actions';
 
 const initialState: LoginState = { success: false, message: '' };
 

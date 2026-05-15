@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { SearchCategoriesController } from '@/lib/controllers/SearchCategoriesController';
-import SearchCategoriesBoundary from './SearchCategoriesBoundary';
+import SearchCategoriesBoundary from '@/lib/boundaries/SearchCategoriesBoundary';
 
 /**
  * BCE Boundary: SearchCategoriesBoundary page (User Story #42)
