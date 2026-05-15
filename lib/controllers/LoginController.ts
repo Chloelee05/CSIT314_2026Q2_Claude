@@ -31,7 +31,7 @@ export class LoginController {
     );
 
     if (!success || !user) {
-      return [false, message];
+      return [false, 'Unsuccessful Login.'];
     }
 
     await createSession({
