@@ -31,7 +31,7 @@ export class FRAData {
     const supabase = createServerClient();
 
     const { data: existing } = await supabase
-      .from('saved_fundraising_activities')
+      .from('fra_data')
       .select('id')
       .eq('donee_id', doneeId)
       .eq('fra_id', fraId)
@@ -42,7 +42,7 @@ export class FRAData {
     }
 
     const { error } = await supabase
-      .from('saved_fundraising_activities')
+      .from('fra_data')
       .insert({ donee_id: doneeId, fra_id: fraId });
 
     if (error) {
@@ -63,7 +63,7 @@ export class FRAData {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('saved_fundraising_activities')
+      .from('fra_data')
       .select(`
         id,
         saved_at,
@@ -104,7 +104,7 @@ export class FRAData {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('saved_fundraising_activities')
+      .from('fra_data')
       .delete()
       .eq('donee_id', doneeId)
       .eq('fra_id', fraId);
@@ -128,7 +128,7 @@ export class FRAData {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('view_count')
       .eq('id', fraId)
       .single();
@@ -162,7 +162,7 @@ export class FRAData {
     const supabase = createServerClient();
 
     const { count, error } = await supabase
-      .from('saved_fundraising_activities')
+      .from('fra_data')
       .select('*', { count: 'exact', head: true })
       .eq('fra_id', fraId);
 

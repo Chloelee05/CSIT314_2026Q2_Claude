@@ -41,7 +41,7 @@ export async function createAccountAction(
   // Set additional account details from the form (name, role)
   const supabase = createServerClient();
   await supabase
-    .from('user_profiles')
+    .from('user_account')
     .update({ full_name: fullName, role })
     .eq('email', email);
 

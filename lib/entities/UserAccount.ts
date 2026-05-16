@@ -46,7 +46,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .eq('username', username)
       .eq('role', role)
@@ -80,7 +80,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .eq('email', email)
       .single();
@@ -100,7 +100,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -131,7 +131,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .eq('id', userId)
       .single();
@@ -150,7 +150,7 @@ export class UserAccount {
   static async save(account: UserAccount): Promise<boolean> {
     const supabase = createServerClient();
 
-    const { error } = await supabase.from('user_profiles').insert({
+    const { error } = await supabase.from('user_account').insert({
       username: account.username,
       password_hash: account.password_hash,
       email: account.email,
@@ -172,7 +172,7 @@ export class UserAccount {
   ): Promise<UserAccount[]> {
     const supabase = createServerClient();
 
-    let query = supabase.from('user_profiles').select('*');
+    let query = supabase.from('user_account').select('*');
 
     if (Keyword.trim()) {
       if (search_by === 'UserName') {
@@ -201,7 +201,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .update({ status: 'suspended', updated_at: new Date().toISOString() })
       .eq('id', UserAccount_id);
 
@@ -223,7 +223,7 @@ export class UserAccount {
 
     // Check username uniqueness, excluding the current user
     const { data: existing } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('id')
       .eq('username', NewUserName)
       .neq('id', UserAccount_id)
@@ -244,7 +244,7 @@ export class UserAccount {
     }
 
     const { error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .update(updateData)
       .eq('id', User_Profile_id);
 
@@ -259,7 +259,7 @@ export class UserAccount {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .eq('id', userAccount_id)
       .single();

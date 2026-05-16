@@ -18,13 +18,11 @@ export async function createUserProfileAction(
   formData: FormData,
 ): Promise<CreateUserProfileState> {
   const accountId = (formData.get('accountId') as string) ?? '';
-  const accountPassword = (formData.get('accountPassword') as string) ?? '';
   const dob = (formData.get('dob') as string) ?? '';
   const address = (formData.get('address') as string) ?? '';
   const phoneNumber = (formData.get('phoneNumber') as string) ?? '';
-  const role = (formData.get('role') as string) ?? '';
 
-  if (!accountId || !role) {
+  if (!accountId) {
     return { success: false, message: 'Profile already exists' };
   }
 
@@ -32,11 +30,9 @@ export async function createUserProfileAction(
   const success = await CreateUserProfileController.CreateUserProfile(
     '',
     accountId,
-    accountPassword,
     dob,
     address,
     phoneNumber,
-    role,
   );
 
   if (!success) {

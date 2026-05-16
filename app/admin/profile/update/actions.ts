@@ -14,17 +14,13 @@ export async function updateUserProfileAction(
 ): Promise<UpdateProfileState> {
   const accountId = formData.get('User_Account_id') as string;
   const profileId = formData.get('UserProfile_id') as string;
-  const username = formData.get('NewUserName') as string;
-  const password = formData.get('NewPassword') as string;
   const dob = formData.get('NewDOB') as string;
   const address = formData.get('NewAddress') as string;
   const phone = formData.get('NewPhoneNumber') as string;
 
   // BCE Sequence: Call UpdatedUserProfile(...)
   const isUpdated = await UpdateUserProfileController.UpdatedUserProfile(
-    profileId || accountId, 
-    username,
-    password,
+    profileId || accountId,
     dob,
     address,
     phone,

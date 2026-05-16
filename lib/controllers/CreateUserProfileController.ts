@@ -9,29 +9,25 @@ export class CreateUserProfileController {
   /**
    * Create a user profile linked to an existing account.
    * Signature matches BCE diagram:
-   * CreateUserProfile(UserProfile_id, Account_id, Account_Password, DOB, Address, PhoneNumber, Role): bool
+   * CreateUserProfile(UserProfile_id, Account_id, DOB, Address, PhoneNumber, Role): bool
    */
   static async CreateUserProfile(
     UserProfile_id: string,
     Account_id: string,
-    Account_Password: string,
     DOB: string,
     Address: string,
     PhoneNumber: string,
-    Role: string,
   ): Promise<boolean> {
-    if (!Account_id || !Role) {
+    if (!Account_id) {
       return false;
     }
 
     return UserProfile.CreateUserProfile(
       UserProfile_id,
       Account_id,
-      Account_Password,
       DOB,
       Address,
       PhoneNumber,
-      Role,
     );
   }
 }
