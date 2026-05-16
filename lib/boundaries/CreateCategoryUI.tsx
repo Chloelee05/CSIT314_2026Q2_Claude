@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import {
   createCategoryAction,
   type CreateCategoryState,
-} from './actions';
+} from '@/app/pr/FRA/createCategories/actions';
 
 const initialState: CreateCategoryState = {
   success: false,

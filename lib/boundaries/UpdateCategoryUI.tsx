@@ -4,7 +4,7 @@ import { useActionState } from 'react';
 import {
   updateCategoryAction,
   type UpdateCategoryState,
-} from './actions';
+} from '@/app/pr/FRA/updateCategories/actions';
 
 interface Props {
   categoryId: string;
@@ -19,8 +19,9 @@ const initialState: UpdateCategoryState = {
 /**
  * BCE Boundary: UpdateCategoryUI (User Story #40)
  *
- * - submitUpdate(categoryId, categoryName) — form submission to boundary action
- * - displayResult(message) — shows success or error (sequence diagram steps 6 & 7)
+ * - UpdateCategory()              — entry point; routing handled by Next.js
+ * - displayResult(message: String) — shows "Category updated successfully." or
+ *                                    "Category name already exists.." (alt flow)
  */
 export default function UpdateCategoryUI({ categoryId, currentName }: Props) {
   const [state, formAction, isPending] = useActionState(
@@ -28,26 +29,26 @@ export default function UpdateCategoryUI({ categoryId, currentName }: Props) {
     initialState,
   );
 
-  function displayResult() {
-    if (state.success && state.message) {
-      return (
-        <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
-          {state.message}
-        </div>
-      );
-    }
-    if (!state.success && state.message) {
-      return (
-        <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
-          {state.message}
-        </div>
-      );
-    }
+  function UpdateCategory() {
     return null;
+  }
+
+  function displayResult(message: string) {
+    if (!message) return null;
+    return state.success ? (
+      <div className="mb-6 p-3 rounded-lg bg-green-50 border border-green-200 text-green-800 text-sm">
+        {message}
+      </div>
+    ) : (
+      <div className="mb-6 p-3 rounded-lg bg-red-50 border border-red-200 text-red-800 text-sm">
+        {message}
+      </div>
+    );
   }
 
   return (
     <div className="max-w-lg mx-auto">
+      {UpdateCategory()}
       <div className="mb-6">
         <a
           href="/pr/FRA/viewCategories"
@@ -63,7 +64,7 @@ export default function UpdateCategoryUI({ categoryId, currentName }: Props) {
         </p>
       </div>
 
-      {displayResult()}
+      {displayResult(state.message)}
 
       <form
         action={formAction}
