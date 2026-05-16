@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect, notFound } from 'next/navigation';
 import { FRACategory } from '@/lib/entities/FRACategory';
-import ManageCategoriesBoundary from '@/lib/boundaries/ManageCategoriesBoundary';
+import DeleteCategoryBoundary from '@/lib/boundaries/DeleteCategoryBoundary';
 
 /**
  * BCE Boundary: ManageCategoriesBoundary page (User Story #41)
@@ -37,7 +37,7 @@ export default async function DeleteCategoriesPage({
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 sm:px-6 lg:px-8">
-      <ManageCategoriesBoundary
+      <DeleteCategoryBoundary
         categoryId={category.id}
         categoryName={category.name}
         isInUse={isInUse}
