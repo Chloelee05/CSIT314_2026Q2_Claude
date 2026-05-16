@@ -32,7 +32,7 @@ export default async function UpdateProfilePage({
     redirect('/admin/profile');
   }
 
-  const details = profileData.user_profile_details?.[0] ?? {};
+  const details = profileData.user_profile?.[0] ?? {};
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -72,7 +72,6 @@ export default async function UpdateProfilePage({
         <UpdateUserProfileBoundary
           userAccountId={profileData.id}
           userProfileId={details.id ?? ''}
-          currentUsername={profileData.username}
           currentDob={details.dob ?? ''}
           currentAddress={details.address ?? ''}
           currentPhone={details.phone_number ?? ''}

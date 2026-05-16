@@ -7,14 +7,26 @@ interface Props {
 /**
  * BCE Boundary: ViewCategoryUI (User Story #39)
  *
- * - displayCategoryList(categories) — renders the full list (sequence step 6)
- * - displayMessage('No FRA categories found.') — alt flow when list is empty (step 7)
+ * - ViewCategory()                        — entry point; routing handled by Next.js
+ * - displayCategoryList(categories: list) — renders list, or flashes
+ *                                           "No FRA categories found." if empty (alt flow)
  */
 export default function ViewCategoryUI({ categories }: Props) {
-  function displayCategoryList() {
+  function ViewCategory() {
+    return null;
+  }
+
+  function displayCategoryList(categoryList: FRACategory[]) {
+    if (categoryList.length === 0) {
+      return (
+        <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center text-gray-500 text-sm">
+          No FRA categories found.
+        </div>
+      );
+    }
     return (
       <ul className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
-        {categories.map((cat) => (
+        {categoryList.map((cat) => (
           <li
             key={cat.id}
             className="flex items-center justify-between px-5 py-4"
@@ -43,16 +55,9 @@ export default function ViewCategoryUI({ categories }: Props) {
     );
   }
 
-  function displayMessage(msg: string) {
-    return (
-      <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center text-gray-500 text-sm">
-        {msg}
-      </div>
-    );
-  }
-
   return (
     <div className="max-w-2xl mx-auto">
+      {ViewCategory()}
       <div className="mb-6 flex items-center justify-between">
         <div>
           <a
@@ -76,9 +81,7 @@ export default function ViewCategoryUI({ categories }: Props) {
         </a>
       </div>
 
-      {categories.length === 0
-        ? displayMessage('No FRA categories found.')
-        : displayCategoryList()}
+      {displayCategoryList(categories)}
     </div>
   );
 }

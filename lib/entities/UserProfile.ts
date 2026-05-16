@@ -32,23 +32,21 @@ export class UserProfile {
 
   /**
    * Create a new user profile with personal details.
-   * Signature matches BCE diagram: CreateUserProfile(UserProfile_id, Account_id, Account_Password, DOB, Address, PhoneNumber, Role): bool
+   * Signature matches BCE diagram: CreateUserProfile(UserProfile_id, Account_id, DOB, Address, PhoneNumber, Role): bool
    *
    * @returns false if the profile already exists or on DB error
    */
   static async CreateUserProfile(
     UserProfile_id: string,
     Account_id: string,
-    Account_Password: string,
     DOB: string,
     Address: string,
     PhoneNumber: string,
-    Role: string,
   ): Promise<boolean> {
     const supabase = createServerClient();
 
     const { data: existing } = await supabase
-      .from('user_profile_details')
+      .from('user_profile')
       .select('id')
       .eq('account_id', Account_id)
       .maybeSingle();
@@ -62,25 +60,16 @@ export class UserProfile {
       dob: DOB,
       address: Address,
       phone_number: PhoneNumber,
-      role: Role,
     };
 
     if (UserProfile_id) {
       insertData.id = UserProfile_id;
     }
 
-    const { error } = await supabase.from('user_profile_details').insert(insertData);
+    const { error } = await supabase.from('user_profile').insert(insertData);
 
     if (error) {
       return false;
-    }
-
-    if (Account_Password) {
-      const passwordHash = await bcrypt.hash(Account_Password, 10);
-      await supabase
-        .from('user_profiles')
-        .update({ password_hash: passwordHash, updated_at: new Date().toISOString() })
-        .eq('id', Account_id);
     }
 
     return true;
@@ -99,7 +88,7 @@ export class UserProfile {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('*')
       .eq('username', username)
       .eq('role', role)
@@ -132,7 +121,7 @@ export class UserProfile {
     const supabase = createServerClient();
     
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select('id, username, status')
       .order('username');
 
@@ -152,7 +141,7 @@ export class UserProfile {
     
     // Fetching the personal particulars based on the system sketch
     const { data, error } = await supabase
-      .from('user_profile_details')
+      .from('user_profile')
       .select('account_id, dob, address, phone_number')
       .eq('account_id', accountId)
       .single();
@@ -166,12 +155,10 @@ export class UserProfile {
 
   /**
    * BCE Method: UpdatedUserProfile
-   * Updates both the user_profiles (credentials) and user_profile_details (particulars).
+   * Updates both the user_profiles (credentials) and user_profile (particulars).
    */
   static async UpdatedUserProfile(
-    UserProfile_id: string,
-    NewUserName: string,
-    NewPassword: string,
+    _UserProfile_id: string,
     NewDOB: string,
     NewAddress: string,
     NewPhoneNumber: string,
@@ -179,52 +166,24 @@ export class UserProfile {
   ): Promise<boolean> {
     const supabase = createServerClient();
 
-    // Alternate Flow Check: Credentials cannot be empty
-    if (!NewUserName || NewUserName.trim() === '') {
-      return false;
-    }
-
     try {
-      // 1. Update Credentials in `user_profiles`
-      const credentialUpdates: Record<string, any> = {
-        username: NewUserName,
-        updated_at: new Date().toISOString(),
-      };
-
-      // Only hash and update the password if they actually typed a new one
-      if (NewPassword && NewPassword.trim() !== '') {
-        const bcrypt = await import('bcryptjs');
-        credentialUpdates.password_hash = await bcrypt.hash(NewPassword, 10);
-      }
-
-      const { error: credError } = await supabase
-        .from('user_profiles')
-        .update(credentialUpdates)
-        .eq('id', User_Account_id);
-
-      if (credError) {
-        return false;
-      }
-
-      // 2. Update Particulars in `user_profile_details` (Smart Update)
       const detailsUpdates: Record<string, any> = {
         updated_at: new Date().toISOString(),
       };
 
-      // ONLY add these to the update payload if they are NOT empty strings
       if (NewDOB && NewDOB.trim() !== '') detailsUpdates.dob = NewDOB;
       if (NewAddress && NewAddress.trim() !== '') detailsUpdates.address = NewAddress;
       if (NewPhoneNumber && NewPhoneNumber.trim() !== '') detailsUpdates.phone_number = NewPhoneNumber;
 
-      const { error: detailsError } = await supabase
-        .from('user_profile_details')
+      const { error } = await supabase
+        .from('user_profile')
         .update(detailsUpdates)
         .eq('account_id', User_Account_id);
 
-      if (detailsError) return false;
+      if (error) return false;
 
       return true;
-    } catch (error) {
+    } catch {
       return false;
     }
   }
@@ -238,11 +197,11 @@ export class UserProfile {
     
     // Fetching the joined data to populate the form
     const { data, error } = await supabase
-      .from('user_profiles')
+      .from('user_account')
       .select(`
         id, 
         username,
-        user_profile_details ( id, dob, address, phone_number )
+        user_profile ( id, dob, address, phone_number )
       `)
       .eq('id', UserProfile_id)
       .single();
@@ -260,7 +219,7 @@ export class UserProfile {
 
     try {
       const { error } = await supabase
-        .from('user_profiles')
+        .from('user_account')
         .update({ 
           status: 'suspended', 
           updated_at: new Date().toISOString() 
@@ -291,7 +250,7 @@ export class UserProfile {
     if (search_by === "Role") dbColumn = "role";
     if (search_by === "Username") dbColumn = "username";
 
-    let query = supabase.from('user_profiles').select('id, username, status');
+    let query = supabase.from('user_account').select('id, username, status');
 
     if (Keyword && Keyword.trim() !== '') {
       if (dbColumn === 'id') {

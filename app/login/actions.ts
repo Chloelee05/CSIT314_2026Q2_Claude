@@ -3,7 +3,7 @@
 import { LoginController } from '@/lib/controllers/LoginController';
 import { LogoutBoundary } from '@/lib/boundaries/LogoutBoundary';
 import { LogoutController } from '@/lib/controllers/LogoutController';
-import { deleteSession, getSession } from '@/lib/auth';
+import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export interface LoginState {
@@ -77,12 +77,7 @@ export async function loginAction(
  *   Logout() → DisplayMessage(msg) → redirectToLoginPage()
  */
 export async function adminLogoutAction(): Promise<void> {
-  await deleteSession();
-
-  redirect(
-    '/login?message=' +
-      encodeURIComponent('You have been logout successfully'),
-  );
+  await LogoutBoundary.Logout();
 }
 
 /**

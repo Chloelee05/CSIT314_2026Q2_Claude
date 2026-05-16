@@ -55,7 +55,7 @@ export class FundraisingActivity {
   static async save(activity: FundraisingActivity): Promise<boolean> {
     const supabase = createServerClient();
 
-    const { error } = await supabase.from('fundraising_activities').insert({
+    const { error } = await supabase.from('fundraising_activity').insert({
       user_id: activity.user_id,
       title: activity.title,
       description: activity.description,
@@ -76,7 +76,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('*')
       .eq('id', id)
       .single();
@@ -95,7 +95,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
@@ -138,7 +138,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     let query = supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('*')
       .eq('status', 'active')
       .order('created_at', { ascending: false });
@@ -172,7 +172,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('*')
       .eq('id', activity_id)
       .single();
@@ -260,7 +260,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .delete()
       .eq('id', activity_id)
       .select('id');
@@ -289,7 +289,7 @@ export class FundraisingActivity {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .update({
         title,
         description,

@@ -1,6 +1,6 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import CreateCategoryUI from './CreateCategoryUI';
+import CreateCategoryUI from '@/lib/boundaries/CreateCategoryUI';
 
 /**
  * BCE Boundary: CreateCategoryUI page (User Story #38)

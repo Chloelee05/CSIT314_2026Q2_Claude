@@ -2,9 +2,11 @@ import { deleteSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 /**
- * BCE Boundary: LogoutBoundary (User Story #24, #44)
+ * BCE Boundary: LogoutBoundary (User Story #17, #24, #31, #44)
  *
- * US#24 — Fund Raiser logout: process_logout() → show_login_page()
+ * US#17 — Admin logout:            Logout() → DisplayMessage(msg) → redirectToLoginPage()
+ * US#24 — Fund Raiser logout:      process_logout() → show_login_page()
+ * US#31 — Donee logout:            Logout() → DisplayMessage(msg) → redirectToLoginPage()
  * US#44 — Platform Manager logout: Logout() → DisplayMessage(msg) → redirectToLoginPage()
  *
  * Exception: If the session is already expired, the user is still sent

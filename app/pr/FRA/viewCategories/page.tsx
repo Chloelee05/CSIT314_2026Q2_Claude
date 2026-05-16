@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ViewCategoryController } from '@/lib/controllers/ViewCategoryController';
-import ViewCategoryUI from './ViewCategoryUI';
+import ViewCategoryUI from '@/lib/boundaries/ViewCategoryUI';
 
 /**
  * BCE Boundary: ViewCategoryUI page (User Story #39)

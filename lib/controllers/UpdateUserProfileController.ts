@@ -7,8 +7,6 @@ export class UpdateUserProfileController {
   
   static async UpdatedUserProfile(
     UserProfile_id: string,
-    NewUserName: string,
-    NewPassword: string,
     NewDOB: string,
     NewAddress: string,
     NewPhoneNumber: string,
@@ -16,8 +14,6 @@ export class UpdateUserProfileController {
   ): Promise<boolean> {
     return UserProfile.UpdatedUserProfile(
       UserProfile_id,
-      NewUserName,
-      NewPassword,
       NewDOB,
       NewAddress,
       NewPhoneNumber,

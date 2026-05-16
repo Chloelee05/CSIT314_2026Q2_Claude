@@ -1,7 +1,7 @@
 import { getSession } from '@/lib/auth';
 import { redirect, notFound } from 'next/navigation';
 import { FRACategory } from '@/lib/entities/FRACategory';
-import UpdateCategoryUI from './UpdateCategoryUI';
+import UpdateCategoryUI from '@/lib/boundaries/UpdateCategoryUI';
 
 /**
  * BCE Boundary: UpdateCategoryUI page (User Story #40)

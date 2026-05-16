@@ -41,7 +41,7 @@ export class ActivityData {
 
     const [activitiesRes, donationsRes, usersRes] = await Promise.all([
       supabase
-        .from('fundraising_activities')
+        .from('fundraising_activity')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', dayStart)
         .lte('created_at', dayEnd),
@@ -53,7 +53,7 @@ export class ActivityData {
         .lte('donated_at', dayEnd),
 
       supabase
-        .from('user_profiles')
+        .from('user_account')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', dayStart)
         .lte('created_at', dayEnd),
@@ -86,7 +86,7 @@ export class ActivityData {
 
     const [activitiesRes, donationsRes, usersRes] = await Promise.all([
       supabase
-        .from('fundraising_activities')
+        .from('fundraising_activity')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', rangeStart)
         .lte('created_at', rangeEnd),
@@ -98,7 +98,7 @@ export class ActivityData {
         .lte('donated_at', rangeEnd),
 
       supabase
-        .from('user_profiles')
+        .from('user_account')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', rangeStart)
         .lte('created_at', rangeEnd),
@@ -135,7 +135,7 @@ export class ActivityData {
 
     const [activitiesRes, donationsRes, usersRes] = await Promise.all([
       supabase
-        .from('fundraising_activities')
+        .from('fundraising_activity')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', rangeStart)
         .lte('created_at', rangeEnd),
@@ -147,7 +147,7 @@ export class ActivityData {
         .lte('donated_at', rangeEnd),
 
       supabase
-        .from('user_profiles')
+        .from('user_account')
         .select('*', { count: 'exact', head: true })
         .gte('created_at', rangeStart)
         .lte('created_at', rangeEnd),

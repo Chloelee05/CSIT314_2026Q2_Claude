@@ -1,10 +1,10 @@
 /**
- * User Story #22 — search an FR’s own (non–completed-focused) activities, and Donee browse helpers.
- *
- * For User Story #34 (search *completed* fundraising activities as FR), see
- * SearchCompleteActivityController.test.ts — diagram uses SearchCompleteActivityController, not SearchActivityController.
+ * User Story #22 — search an FR's own (non-completed-focused) activities, and Donee browse helpers.
+ * User Story #25 — Donee searches for active fundraising activities.
+ * User Story #34 — FR searches completed fundraising activities (SearchCompleteActivityController).
  */
 import { SearchActivityController } from '@/lib/controllers/SearchActivityController';
+import { SearchCompleteActivityController } from '@/lib/controllers/SearchCompleteActivityController';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 
 describe('SearchActivityController', () => {
@@ -150,6 +150,69 @@ describe('SearchActivityController', () => {
       expect(success).toBe(false);
       expect(message).toBe('Failed to fetch activities.');
       expect(activities).toEqual([]);
+    });
+  });
+
+  // ===========================================================
+  // User Story #34 — FR searches completed fundraising activities
+  // SearchCompleteActivityController.SearchCompleteActivity(keyword, userId)
+  //   → FundraisingActivity.getCompletedByKeyword(keyword, userId)
+  // ===========================================================
+  describe('User Story #34: SearchCompleteActivity', () => {
+    let getCompletedByKeywordSpy: jest.SpyInstance;
+
+    beforeAll(() => {
+      getCompletedByKeywordSpy = jest.spyOn(
+        FundraisingActivity,
+        'getCompletedByKeyword',
+      );
+    });
+
+    afterAll(() => {
+      getCompletedByKeywordSpy.mockRestore();
+    });
+
+    it('returns list and null message when completed matches exist (main flow)', async () => {
+      const list = [mockActivity('Past summer')];
+      getCompletedByKeywordSpy.mockResolvedValue(list);
+
+      const [activities, msg] =
+        await SearchCompleteActivityController.SearchCompleteActivity('summer', 'u1');
+
+      expect(activities).toEqual(list);
+      expect(msg).toBeNull();
+      expect(getCompletedByKeywordSpy).toHaveBeenCalledWith('summer', 'u1');
+    });
+
+    it('returns all completed activities and null message when keyword is empty', async () => {
+      const list = [mockActivity('Past A'), mockActivity('Past B')];
+      getCompletedByKeywordSpy.mockResolvedValue(list);
+
+      const [activities, msg] =
+        await SearchCompleteActivityController.SearchCompleteActivity('', 'u1');
+
+      expect(activities).toEqual(list);
+      expect(msg).toBeNull();
+    });
+
+    it('returns empty list and flash message when keyword has no matches (alternate flow)', async () => {
+      getCompletedByKeywordSpy.mockResolvedValue([]);
+
+      const [activities, msg] =
+        await SearchCompleteActivityController.SearchCompleteActivity('nope', 'u1');
+
+      expect(activities).toEqual([]);
+      expect(msg).toBe('No completed fundraising activities found.');
+    });
+
+    it('returns empty list and null message when keyword is empty and no completed activities exist', async () => {
+      getCompletedByKeywordSpy.mockResolvedValue([]);
+
+      const [activities, msg] =
+        await SearchCompleteActivityController.SearchCompleteActivity('', 'u1');
+
+      expect(activities).toEqual([]);
+      expect(msg).toBeNull();
     });
   });
 });

@@ -6,7 +6,6 @@ import { updateUserProfileAction, UpdateProfileState } from '@/app/admin/profile
 interface Props {
   userAccountId: string;
   userProfileId: string;
-  currentUsername: string;
   currentDob: string;
   currentAddress: string;
   currentPhone: string;
@@ -23,7 +22,6 @@ const initialState: UpdateProfileState = { success: null, message: '' };
 export default function UpdateUserProfileBoundary({
   userAccountId,
   userProfileId,
-  currentUsername,
   currentDob,
   currentAddress,
   currentPhone,
@@ -50,31 +48,6 @@ export default function UpdateUserProfileBoundary({
       <form action={formAction} className="bg-white shadow-sm rounded-xl border border-gray-200 p-8 space-y-6">
         <input type="hidden" name="User_Account_id" value={userAccountId} />
         <input type="hidden" name="UserProfile_id" value={userProfileId} />
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Username</label>
-          <input
-            name="NewUserName"
-            type="text"
-            defaultValue={currentUsername}
-            required
-            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition"
-          />
-        </div>
-
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            New Password <span className="text-gray-400 font-normal">(leave blank to keep existing)</span>
-          </label>
-          <input
-            name="NewPassword"
-            type="password"
-            placeholder="Enter new password"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 outline-none transition"
-          />
-        </div>
-
-        <hr className="border-gray-200" />
 
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">Date of Birth</label>

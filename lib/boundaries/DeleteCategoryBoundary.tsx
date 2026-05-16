@@ -18,15 +18,13 @@ const initialState: DeleteCategoryState = {
 };
 
 /**
- * BCE Boundary: ManageCategoriesBoundary (User Story #41)
+ * BCE Boundary: DeleteCategoryBoundary (User Story #41)
  *
- * - displayCategories() — shows the category details and confirmation prompt
- * - showDeleteResult() — displays success or error after the action (sequence diagram)
- *
- * Exception flow 5a/5b: when isInUse is true, shows the block message and
- * disables the Confirm Delete button.
+ * - displayCategories()  — shows the category details and confirmation prompt
+ * - showDeleteResult()   — "Category deleted successfully." or
+ *                          "Cannot delete category. It is currently in use by active FRA" (alt flow)
  */
-export default function ManageCategoriesBoundary({
+export default function DeleteCategoryBoundary({
   categoryId,
   categoryName,
   isInUse,

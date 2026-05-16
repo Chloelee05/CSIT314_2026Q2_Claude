@@ -12,27 +12,11 @@ describe('CreateUserProfileController', () => {
   // User Story #11 — Admin Creates User Profile
   // ============================================================
   describe('User Story #11: CreateUserProfile', () => {
-    const validArgs = ['profile-1', 'account-1', 'password123', '2000-01-01', '123 Main St', '91234567', 'donor'] as const;
+    const validArgs = ['profile-1', 'account-1', '2000-01-01', '123 Main St', '91234567'] as const;
 
     it('should return false when Account_id is empty', async () => {
       const result = await CreateUserProfileController.CreateUserProfile(
-        'profile-1', '', 'password123', '2000-01-01', '123 Main St', '91234567', 'donor',
-      );
-      expect(result).toBe(false);
-      expect(UserProfile.CreateUserProfile).not.toHaveBeenCalled();
-    });
-
-    it('should return false when Role is empty', async () => {
-      const result = await CreateUserProfileController.CreateUserProfile(
-        'profile-1', 'account-1', 'password123', '2000-01-01', '123 Main St', '91234567', '',
-      );
-      expect(result).toBe(false);
-      expect(UserProfile.CreateUserProfile).not.toHaveBeenCalled();
-    });
-
-    it('should return false when both Account_id and Role are empty', async () => {
-      const result = await CreateUserProfileController.CreateUserProfile(
-        'profile-1', '', 'password123', '2000-01-01', '123 Main St', '91234567', '',
+        'profile-1', '', '2000-01-01', '123 Main St', '91234567',
       );
       expect(result).toBe(false);
       expect(UserProfile.CreateUserProfile).not.toHaveBeenCalled();

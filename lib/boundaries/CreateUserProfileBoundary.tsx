@@ -3,13 +3,6 @@
 import { useActionState } from 'react';
 import { createUserProfileAction, CreateUserProfileState } from '@/app/admin/profile/create/actions';
 
-const ROLES = [
-  { value: 'fund_raiser', label: 'Fund Raiser' },
-  { value: 'donee', label: 'Donee' },
-  { value: 'platform_management', label: 'Platform Management' },
-  { value: 'admin', label: 'Admin' },
-];
-
 interface AccountOption {
   id: string;
   label: string;
@@ -68,20 +61,6 @@ export default function CreateUserProfileBoundary({ accounts }: Props) {
         </div>
 
         <div>
-          <label htmlFor="accountPassword" className="block text-sm font-medium text-gray-700 mb-1">
-            Account Password{' '}
-            <span className="text-gray-400 font-normal">(leave blank to keep existing)</span>
-          </label>
-          <input
-            id="accountPassword"
-            name="accountPassword"
-            type="password"
-            placeholder="Set account password"
-            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-          />
-        </div>
-
-        <div>
           <label htmlFor="dob" className="block text-sm font-medium text-gray-700 mb-1">
             Date of Birth
           </label>
@@ -117,25 +96,6 @@ export default function CreateUserProfileBoundary({ accounts }: Props) {
             placeholder="Enter phone number"
             className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
           />
-        </div>
-
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-1">
-            Role
-          </label>
-          <select
-            id="role"
-            name="role"
-            required
-            className="w-full rounded-lg border border-gray-300 px-3 py-2.5 text-gray-900 text-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-          >
-            <option value="">Select a role…</option>
-            {ROLES.map((r) => (
-              <option key={r.value} value={r.value}>
-                {r.label}
-              </option>
-            ))}
-          </select>
         </div>
 
         <div className="pt-2">

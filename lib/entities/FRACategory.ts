@@ -24,7 +24,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .insert({ name: categoryName.trim() });
 
     return !error;
@@ -38,7 +38,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .select('*')
       .order('name', { ascending: true });
 
@@ -53,7 +53,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { data, error } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .select('*')
       .eq('id', categoryId)
       .maybeSingle();
@@ -70,7 +70,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .update({ name: categoryName.trim() })
       .eq('id', categoryId);
 
@@ -86,7 +86,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     let query = supabase
-      .from('fra_categories')
+      .from('fra_category')
       .select('*')
       .order('name', { ascending: true });
 
@@ -107,7 +107,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { error } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .delete()
       .eq('id', categoryId);
 
@@ -122,7 +122,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { data } = await supabase
-      .from('fundraising_activities')
+      .from('fundraising_activity')
       .select('id')
       .eq('category', categoryName)
       .eq('status', 'active')
@@ -139,7 +139,7 @@ export class FRACategory {
     const supabase = createServerClient();
 
     const { data } = await supabase
-      .from('fra_categories')
+      .from('fra_category')
       .select('id')
       .ilike('name', categoryName.trim())
       .maybeSingle();
