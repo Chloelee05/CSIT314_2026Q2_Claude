@@ -57,8 +57,8 @@ export default function SearchUserAccountBoundary({
   }
 
   return (
-    <>
-      <form onSubmit={SearchUserAccount} className="flex gap-2 flex-1 max-w-xl">
+    <div className="flex flex-col gap-4 w-full">
+      <form onSubmit={SearchUserAccount} className="flex gap-2 justify-end">
         <select
           name="search_by"
           defaultValue={currentSearchBy}
@@ -75,7 +75,7 @@ export default function SearchUserAccountBoundary({
           type="text"
           defaultValue={currentKeyword}
           placeholder="Enter keyword…"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+          className="w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
         />
         <button
           type="submit"
@@ -154,6 +154,6 @@ export default function SearchUserAccountBoundary({
           </table>
         </div>
       )}
-    </>
+    </div>
   );
 }

@@ -19,7 +19,7 @@ async function getSessionFromRequest(request: NextRequest) {
 function dashboardUrl(role: string, baseUrl: string) {
   if (role === 'admin') return new URL('/admin/dashboard', baseUrl);
   if (role === 'donee') return new URL('/donee/activity/search', baseUrl);
-  if (role === 'platform_management') return new URL('/pr/dashboard', baseUrl);
+  if (role === 'platform_management') return new URL('/dashboard', baseUrl);
   return new URL('/dashboard', baseUrl);
 }
 
