@@ -2,9 +2,12 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { adminLogoutAction } from '@/app/login/actions';
 import { SearchUserAccountController } from '@/lib/controllers/SearchUserAccountController';
+import type { ComponentProps } from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import SearchUserAccountBoundary from '@/lib/boundaries/SearchUserAccountBoundary';
+
+type AccountsProp = ComponentProps<typeof SearchUserAccountBoundary>['accounts'];
 
 /**
  * BCE page: SearchUserAccountBoundary — User Story #10
@@ -26,6 +29,19 @@ export default async function SearchUserAccountPage({
     keyword,
     search_by,
   );
+
+  // RSC → Client: pass plain objects only (UserAccount class instances are not serializable).
+  const clientAccounts = accounts.map((account) => ({
+    id: account.id,
+    username: account.username,
+    email: account.email ?? '',
+    role: account.role,
+    status: account.status,
+    full_name: account.full_name,
+    created_at: account.created_at,
+    updated_at: account.updated_at,
+    password_hash: '',
+  })) as AccountsProp;
 
   const hasSearched = keyword.trim().length > 0;
 
@@ -67,7 +83,7 @@ export default async function SearchUserAccountPage({
           <h2 className="text-xl font-semibold text-gray-900">Search User Accounts</h2>
           <Suspense>
             <SearchUserAccountBoundary
-              accounts={accounts}
+              accounts={clientAccounts}
               hasSearched={hasSearched}
               keyword={keyword}
             />
