@@ -24,7 +24,7 @@ export default function ViewCategoryUI({ categories }: Props) {
     return null;
   }
 
-  function displayCategoryList(categoryList: FRACategory[]) {
+  function displayCategoryList(categoryList: CategoryRow[]) {
     if (categoryList.length === 0) {
       return (
         <div className="bg-white rounded-xl border border-gray-200 shadow-sm p-8 text-center text-gray-500 text-sm">
