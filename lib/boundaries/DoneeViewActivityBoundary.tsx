@@ -1,5 +1,8 @@
+'use client';
+
 import Link from 'next/link';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
+import { PageTransition, AnimatedCard } from '@/lib/components/motion';
 
 export type DoneeViewActivityBoundaryProps = {
   username: string;
@@ -79,7 +82,7 @@ export default function DoneeViewActivityBoundary({
         : 0;
 
     return (
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col gap-6">
+      <AnimatedCard className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 flex flex-col gap-6">
         <div className="flex items-start justify-between gap-4">
           <h3 className="text-2xl font-bold text-gray-900">{activity.title}</h3>
           <span
@@ -140,17 +143,17 @@ export default function DoneeViewActivityBoundary({
             </Link>
           </div>
         )}
-      </div>
+      </AnimatedCard>
     );
   }
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header username={username} />
-      <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <PageTransition className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         {process_view()}
         {show_activity_details()}
-      </main>
+      </PageTransition>
     </div>
   );
 }

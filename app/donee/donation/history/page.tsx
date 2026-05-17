@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { SearchDonationHistoryController } from '@/lib/controllers/SearchDonationHistoryController';
 import { SearchDonationHistoryBoundary } from '@/lib/boundaries/SearchDonationHistoryBoundary';
+import Link from 'next/link';
 
 /**
  * BCE page: SearchDonationHistoryBoundary — User Story #36
@@ -40,6 +41,14 @@ export default async function SearchDonationHistoryPage({
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        <div className="mb-4">
+          <Link
+            href="/dashboard"
+            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
+          >
+            &larr; Back to Dashboard
+          </Link>
+        </div>
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-semibold text-gray-900">Donation History</h2>
         </div>

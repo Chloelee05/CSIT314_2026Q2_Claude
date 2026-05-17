@@ -2,6 +2,7 @@
 
 import { useState, useActionState } from 'react';
 import { loginAction, type LoginState } from '@/app/login/actions';
+import { motion } from 'framer-motion';
 
 const initialState: LoginState = {
   success: false,
@@ -36,7 +37,12 @@ export default function LoginBoundary({ logoutMessage }: LoginFormProps) {
   function process_login() {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-        <div className="w-full max-w-md">
+        <motion.div
+          className="w-full max-w-md"
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.35, ease: 'easeOut' }}
+        >
           <div className="bg-white rounded-2xl shadow-lg p-8">
             <div className="text-center mb-8">
               <h1 className="text-2xl font-bold text-gray-900">FundRaise</h1>
@@ -166,16 +172,17 @@ export default function LoginBoundary({ logoutMessage }: LoginFormProps) {
                 />
               </div>
 
-              <button
+              <motion.button
                 type="submit"
                 disabled={isPending}
+                whileTap={{ scale: 0.97 }}
                 className="w-full bg-indigo-600 text-white py-2.5 px-4 rounded-lg text-sm font-semibold hover:bg-indigo-700 focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed transition cursor-pointer"
               >
                 {isPending ? 'Signing in...' : 'Login'}
-              </button>
+              </motion.button>
             </form>
           </div>
-        </div>
+        </motion.div>
       </div>
     );
   }

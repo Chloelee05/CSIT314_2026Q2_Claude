@@ -7,6 +7,7 @@ import {
 } from '@/app/dashboard/activities/actions';
 import DeleteActivityBoundary from '@/lib/boundaries/DeleteActivityBoundary';
 import { SearchActivityBoundary } from '@/lib/boundaries/SearchActivityBoundary';
+import { StaggerList, StaggerItem, PageTransition } from '@/lib/components/motion';
 
 type ActivityRow = {
   id: string;
@@ -97,9 +98,9 @@ export default function ViewActivityBoundary({
             Try a different keyword or clear the search.
           </p>
         ) : (
-          <ul className="space-y-3">
+          <StaggerList className="space-y-3">
             {activityList.map((a) => (
-              <li
+              <StaggerItem
                 key={a.id}
                 className="bg-white rounded-xl border border-gray-200 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
               >
@@ -128,9 +129,9 @@ export default function ViewActivityBoundary({
                     isPending={isDeletePending}
                   />
                 </div>
-              </li>
+              </StaggerItem>
             ))}
-          </ul>
+          </StaggerList>
         )}
       </SearchActivityBoundary>
     );

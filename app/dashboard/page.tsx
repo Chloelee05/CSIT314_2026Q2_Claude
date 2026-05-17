@@ -4,6 +4,7 @@ import { userLogoutAction } from '@/app/login/actions';
 import { clickLogout } from '@/app/dashboard/DashboardPageBoundary';
 import { pmLogoutAction } from '@/app/pr/account/logout/actions';
 import Link from 'next/link';
+import DashboardGrid from '@/app/dashboard/DashboardGrid';
 
 const ROLE_LABELS: Record<string, string> = {
   fund_raiser: 'Fund Raiser',
@@ -88,93 +89,23 @@ export default async function UserDashboard() {
         </div>
 
         {session.role === 'donee' && (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/donee/activity/search"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Search Campaigns</h3>
-              <p className="text-sm text-gray-500">Browse and search for active fundraising campaigns.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/donee/activity/viewSaved"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">My Favourites</h3>
-              <p className="text-sm text-gray-500">View fundraising campaigns you have saved.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/donee/donation/history"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Search Donations</h3>
-              <p className="text-sm text-gray-500">Search your past donations by campaign name.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/donee/donation/viewHistory"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">View Donation History</h3>
-              <p className="text-sm text-gray-500">View all your past donation transactions.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-          </div>
+          <DashboardGrid cards={[
+            { href: '/donee/activity/search', title: 'Search Campaigns', description: 'Browse and search for active fundraising campaigns.' },
+            { href: '/donee/activity/viewSaved', title: 'My Favourites', description: 'View fundraising campaigns you have saved.' },
+            { href: '/donee/donation/history', title: 'Search Donations', description: 'Search your past donations by campaign name.' },
+            { href: '/donee/donation/viewHistory', title: 'View Donation History', description: 'View all your past donation transactions.' },
+          ]} />
         )}
 
         {session.role === 'platform_management' && (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            <Link
-              href="/pr/FRA/createCategories"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Create Category</h3>
-              <p className="text-sm text-gray-500">Add a new category to organise fundraising campaigns.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/pr/FRA/viewCategories"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">View Categories</h3>
-              <p className="text-sm text-gray-500">Browse and manage all FRA categories.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/pr/FRA/searchCategories"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Search Categories</h3>
-              <p className="text-sm text-gray-500">Search FRA categories by keyword.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/pr/dailyReport/create"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Daily Report</h3>
-              <p className="text-sm text-gray-500">Generate a daily activity report for any date.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/pr/weeklyReport/create"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Weekly Report</h3>
-              <p className="text-sm text-gray-500">Generate a 7-day activity report to track trends.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-            <Link
-              href="/pr/monthlyReport/create"
-              className="bg-white rounded-xl shadow-sm border border-gray-200 p-5 hover:shadow-md hover:border-indigo-200 transition flex flex-col gap-2"
-            >
-              <h3 className="font-semibold text-gray-900">Monthly Report</h3>
-              <p className="text-sm text-gray-500">Analyse long-term performance for any month.</p>
-              <span className="text-indigo-600 text-sm font-medium mt-auto">Go →</span>
-            </Link>
-          </div>
+          <DashboardGrid cards={[
+            { href: '/pr/FRA/createCategories', title: 'Create Category', description: 'Add a new category to organise fundraising campaigns.' },
+            { href: '/pr/FRA/viewCategories', title: 'View Categories', description: 'Browse and manage all FRA categories.' },
+            { href: '/pr/FRA/searchCategories', title: 'Search Categories', description: 'Search FRA categories by keyword.' },
+            { href: '/pr/dailyReport/create', title: 'Daily Report', description: 'Generate a daily activity report for any date.' },
+            { href: '/pr/weeklyReport/create', title: 'Weekly Report', description: 'Generate a 7-day activity report to track trends.' },
+            { href: '/pr/monthlyReport/create', title: 'Monthly Report', description: 'Analyse long-term performance for any month.' },
+          ]} />
         )}
       </main>
     </div>
