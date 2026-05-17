@@ -1,4 +1,7 @@
+'use client';
+
 import { FRACategory } from '@/lib/entities/FRACategory';
+import { PageTransition, StaggerList, StaggerItem } from '@/lib/components/motion';
 
 interface Props {
   categories: FRACategory[];
@@ -25,9 +28,9 @@ export default function ViewCategoryUI({ categories }: Props) {
       );
     }
     return (
-      <ul className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+      <StaggerList className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
         {categoryList.map((cat) => (
-          <li
+          <StaggerItem
             key={cat.id}
             className="flex items-center justify-between px-5 py-4"
           >
@@ -49,14 +52,14 @@ export default function ViewCategoryUI({ categories }: Props) {
                 Delete
               </a>
             </div>
-          </li>
+          </StaggerItem>
         ))}
-      </ul>
+      </StaggerList>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto">
+    <PageTransition className="max-w-2xl mx-auto">
       {ViewCategory()}
       <div className="mb-6 flex items-center justify-between">
         <div>
@@ -82,6 +85,6 @@ export default function ViewCategoryUI({ categories }: Props) {
       </div>
 
       {displayCategoryList(categories)}
-    </div>
+    </PageTransition>
   );
 }
