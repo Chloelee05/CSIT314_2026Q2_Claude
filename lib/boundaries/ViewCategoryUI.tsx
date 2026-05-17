@@ -1,5 +1,3 @@
-'use client';
-
 import { PageTransition, StaggerList, StaggerItem } from '@/lib/components/motion';
 
 interface CategoryRow {
