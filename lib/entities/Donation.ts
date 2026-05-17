@@ -42,12 +42,12 @@ export class Donation {
 
     let query = supabase
       .from('donations')
-      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activities(title, status)')
+      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activity(title, status)')
       .eq('donee_id', doneeId)
       .order('donated_at', { ascending: false });
 
     if (keyword && keyword.trim() !== '') {
-      query = query.ilike('fundraising_activities.title', `%${keyword.trim()}%`);
+      query = query.ilike('fundraising_activity.title', `%${keyword.trim()}%`);
     }
 
     const { data, error } = await query;
@@ -59,13 +59,13 @@ export class Donation {
     const donations: DonationWithActivity[] = (data ?? [])
       .filter((row) => {
         if (!keyword || keyword.trim() === '') return true;
-        const fra = row.fundraising_activities as unknown as Record<string, unknown> | null;
+        const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
         if (!fra) return false;
         const title = (fra.title as string) ?? '';
         return title.toLowerCase().includes(keyword.trim().toLowerCase());
       })
       .map((row) => {
-        const fra = row.fundraising_activities as unknown as Record<string, unknown> | null;
+        const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
         return {
           id: row.id as string,
           donee_id: row.donee_id as string,
@@ -106,7 +106,7 @@ export class Donation {
 
     const { data, error } = await supabase
       .from('donations')
-      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activities(title, status)')
+      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activity(title, status)')
       .eq('donee_id', userId)
       .order('donated_at', { ascending: false });
 
@@ -115,7 +115,7 @@ export class Donation {
     }
 
     const donations: DonationWithActivity[] = (data ?? []).map((row) => {
-      const fra = row.fundraising_activities as unknown as Record<string, unknown> | null;
+      const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
       return {
         id: row.id as string,
         donee_id: row.donee_id as string,
