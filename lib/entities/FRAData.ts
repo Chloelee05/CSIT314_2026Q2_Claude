@@ -67,7 +67,7 @@ export class FRAData {
       .select(`
         id,
         saved_at,
-        fundraising_activities (
+        fundraising_activity (
           id, title, description, goal_amount, raised_amount, status, end_date
         )
       `)
@@ -79,9 +79,9 @@ export class FRAData {
     }
 
     const saved = (data ?? [])
-      .filter((row) => row.fundraising_activities !== null)
+      .filter((row) => row.fundraising_activity !== null)
       .map((row) => {
-        const fra = row.fundraising_activities as unknown as Record<string, unknown>;
+        const fra = row.fundraising_activity as unknown as Record<string, unknown>;
         return {
           savedId: row.id as string,
           savedAt: row.saved_at as string,
