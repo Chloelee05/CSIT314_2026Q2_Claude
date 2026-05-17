@@ -1,10 +1,15 @@
 'use client';
 
-import { FRACategory } from '@/lib/entities/FRACategory';
 import { PageTransition, StaggerList, StaggerItem } from '@/lib/components/motion';
 
+interface CategoryRow {
+  id: string;
+  name: string;
+  created_at: string;
+}
+
 interface Props {
-  categories: FRACategory[];
+  categories: CategoryRow[];
 }
 
 /**
