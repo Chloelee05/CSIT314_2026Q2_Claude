@@ -41,16 +41,14 @@ export default async function SearchDonationHistoryPage({
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <div className="mb-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">Search Donations</h2>
           <Link
             href="/dashboard"
-            className="text-sm text-indigo-600 hover:text-indigo-800 font-medium transition"
+            className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 transition"
           >
-            &larr; Back to Dashboard
+            Back to Dashboard
           </Link>
-        </div>
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">Donation History</h2>
         </div>
 
         <SearchDonationHistoryBoundary
