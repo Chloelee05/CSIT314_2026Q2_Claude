@@ -10,6 +10,14 @@ export interface DonationWithActivity {
   campaign_status: string;
 }
 
+type DonationRow = {
+  id: string;
+  donee_id: string;
+  fra_id: string;
+  amount: number;
+  donated_at: string;
+};
+
 /**
  * BCE Entity: Donation (User Story #36)
  * Maps to the `donations` table.
@@ -29,6 +37,70 @@ export class Donation {
     this.donated_at = data.donated_at as string;
   }
 
+  private static async donationRowsForDonee(
+    doneeId: string,
+  ): Promise<[DonationRow[] | null, string | null]> {
+    const supabase = createServerClient();
+
+    const { data, error } = await supabase
+      .from('donations')
+      .select('id, donee_id, fra_id, amount, donated_at')
+      .eq('donee_id', doneeId)
+      .order('donated_at', { ascending: false });
+
+    if (error) {
+      return [null, error.message ?? 'fetch failed'];
+    }
+
+    return [data as DonationRow[], null];
+  }
+
+  private static async activityTitleStatusByIds(
+    fraIds: string[],
+  ): Promise<[Map<string, { title: string; status: string }> | null, string | null]> {
+    if (fraIds.length === 0) {
+      return [new Map(), null];
+    }
+
+    const supabase = createServerClient();
+    const { data, error } = await supabase
+      .from('fundraising_activity')
+      .select('id, title, status')
+      .in('id', fraIds);
+
+    if (error) {
+      return [null, error.message ?? 'activity fetch failed'];
+    }
+
+    const map = new Map<string, { title: string; status: string }>();
+    for (const row of data ?? []) {
+      const r = row as { id: string; title?: string | null; status?: string | null };
+      map.set(r.id, {
+        title: (r.title as string) ?? '',
+        status: (r.status as string) ?? 'unknown',
+      });
+    }
+    return [map, null];
+  }
+
+  private static rowsToDonationWithActivity(
+    rows: DonationRow[],
+    activityMap: Map<string, { title: string; status: string }>,
+  ): DonationWithActivity[] {
+    return rows.map((row) => {
+      const fra = activityMap.get(row.fra_id);
+      return {
+        id: row.id,
+        donee_id: row.donee_id,
+        fra_id: row.fra_id,
+        amount: row.amount,
+        donated_at: row.donated_at,
+        campaign_title: fra?.title ?? 'Unknown Campaign',
+        campaign_status: fra?.status ?? 'unknown',
+      };
+    });
+  }
+
   /**
    * BCE Method: getByKeyword
    * Searches a donee's donation history by campaign title keyword.
@@ -38,50 +110,31 @@ export class Donation {
     keyword: string,
     doneeId: string,
   ): Promise<[boolean, string, DonationWithActivity[]]> {
-    const supabase = createServerClient();
-
-    let query = supabase
-      .from('donations')
-      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activity(title, status)')
-      .eq('donee_id', doneeId)
-      .order('donated_at', { ascending: false });
-
-    if (keyword && keyword.trim() !== '') {
-      query = query.ilike('fundraising_activity.title', `%${keyword.trim()}%`);
-    }
-
-    const { data, error } = await query;
-
-    if (error) {
+    const [rows, fetchErr] = await Donation.donationRowsForDonee(doneeId);
+    if (fetchErr !== null || rows === null) {
       return [false, 'Failed to fetch donation history.', []];
     }
 
-    const donations: DonationWithActivity[] = (data ?? [])
-      .filter((row) => {
-        if (!keyword || keyword.trim() === '') return true;
-        const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
-        if (!fra) return false;
-        const title = (fra.title as string) ?? '';
-        return title.toLowerCase().includes(keyword.trim().toLowerCase());
-      })
-      .map((row) => {
-        const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
-        return {
-          id: row.id as string,
-          donee_id: row.donee_id as string,
-          fra_id: row.fra_id as string,
-          amount: row.amount as number,
-          donated_at: row.donated_at as string,
-          campaign_title: fra ? (fra.title as string) : 'Unknown Campaign',
-          campaign_status: fra ? (fra.status as string) : 'unknown',
-        };
-      });
+    const fraIds = [...new Set(rows.map((r) => r.fra_id).filter(Boolean))];
+    const [activityMap, activityErr] = await Donation.activityTitleStatusByIds(fraIds);
+    if (activityErr !== null || activityMap === null) {
+      return [false, 'Failed to fetch donation history.', []];
+    }
 
-    if (donations.length === 0) {
+    const kw = keyword.trim().toLowerCase();
+    let withActivity = Donation.rowsToDonationWithActivity(rows, activityMap);
+
+    if (kw !== '') {
+      withActivity = withActivity.filter((d) =>
+        d.campaign_title.toLowerCase().includes(kw),
+      );
+    }
+
+    if (withActivity.length === 0) {
       return [false, 'No matching donations found.', []];
     }
 
-    return [true, 'Donations found.', donations];
+    return [true, 'Donations found.', withActivity];
   }
 
   /**
@@ -102,34 +155,22 @@ export class Donation {
   static async getByUserId(
     userId: string,
   ): Promise<[boolean, string, DonationWithActivity[]]> {
-    const supabase = createServerClient();
-
-    const { data, error } = await supabase
-      .from('donations')
-      .select('id, donee_id, fra_id, amount, donated_at, fundraising_activity(title, status)')
-      .eq('donee_id', userId)
-      .order('donated_at', { ascending: false });
-
-    if (error) {
+    const [rows, fetchErr] = await Donation.donationRowsForDonee(userId);
+    if (fetchErr !== null || rows === null) {
       return [false, 'Failed to fetch donation history.', []];
     }
 
-    const donations: DonationWithActivity[] = (data ?? []).map((row) => {
-      const fra = row.fundraising_activity as unknown as Record<string, unknown> | null;
-      return {
-        id: row.id as string,
-        donee_id: row.donee_id as string,
-        fra_id: row.fra_id as string,
-        amount: row.amount as number,
-        donated_at: row.donated_at as string,
-        campaign_title: fra ? (fra.title as string) : 'Unknown Campaign',
-        campaign_status: fra ? (fra.status as string) : 'unknown',
-      };
-    });
-
-    if (donations.length === 0) {
+    if (rows.length === 0) {
       return [false, 'No donation history found.', []];
     }
+
+    const fraIds = [...new Set(rows.map((r) => r.fra_id).filter(Boolean))];
+    const [activityMap, activityErr] = await Donation.activityTitleStatusByIds(fraIds);
+    if (activityErr !== null || activityMap === null) {
+      return [false, 'Failed to fetch donation history.', []];
+    }
+
+    const donations = Donation.rowsToDonationWithActivity(rows, activityMap);
 
     return [true, 'Donation history found.', donations];
   }
