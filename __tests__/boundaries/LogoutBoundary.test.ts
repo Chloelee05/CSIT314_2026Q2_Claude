@@ -40,6 +40,36 @@ describe('LogoutBoundary', () => {
   });
 
   // ===========================================================
+  // User Story #17 — Admin logout (Boundary-only sequence)
+  // Logout() → DisplayMessage(msg) → redirectToLoginPage()
+  // ===========================================================
+  describe('User Story #17: Admin Logout', () => {
+    it('Logout clears the session and redirects to login', async () => {
+      await LogoutBoundary.Logout();
+
+      expect(auth.deleteSession).toHaveBeenCalledTimes(1);
+      expect(redirect).toHaveBeenCalledWith(
+        '/login?message=' + encodeURIComponent('You have been logged out successfully.'),
+      );
+    });
+  });
+
+  // ===========================================================
+  // User Story #31 — Donee logout (Boundary-only sequence)
+  // Logout() → DisplayMessage(msg) → redirectToLoginPage()
+  // ===========================================================
+  describe('User Story #31: Donee Logout', () => {
+    it('Logout clears the session and redirects to login', async () => {
+      await LogoutBoundary.Logout();
+
+      expect(auth.deleteSession).toHaveBeenCalledTimes(1);
+      expect(redirect).toHaveBeenCalledWith(
+        '/login?message=' + encodeURIComponent('You have been logged out successfully.'),
+      );
+    });
+  });
+
+  // ===========================================================
   // User Story #44 — PM logout (Boundary-only sequence)
   // Logout() → DisplayMessage(msg) → redirectToLoginPage()
   // ===========================================================
