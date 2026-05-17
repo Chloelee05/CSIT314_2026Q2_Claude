@@ -57,34 +57,37 @@ export default function SearchUserAccountBoundary({
   }
 
   return (
-    <>
-      <form onSubmit={SearchUserAccount} className="flex gap-2 flex-1 max-w-xl">
-        <select
-          name="search_by"
-          defaultValue={currentSearchBy}
-          className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-        >
-          {SEARCH_BY_OPTIONS.map((opt) => (
-            <option key={opt.value} value={opt.value}>
-              {opt.label}
-            </option>
-          ))}
-        </select>
-        <input
-          name="keyword"
-          type="text"
-          defaultValue={currentKeyword}
-          placeholder="Enter keyword…"
-          className="flex-1 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
-        />
-        <button
-          type="submit"
-          disabled={isPending}
-          className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition cursor-pointer"
-        >
-          {isPending ? 'Searching…' : 'Search'}
-        </button>
-      </form>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-between gap-4">
+        <h2 className="text-xl font-semibold text-gray-900">Search User Accounts</h2>
+        <form onSubmit={SearchUserAccount} className="flex gap-2">
+          <select
+            name="search_by"
+            defaultValue={currentSearchBy}
+            className="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+          >
+            {SEARCH_BY_OPTIONS.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
+          <input
+            name="keyword"
+            type="text"
+            defaultValue={currentKeyword}
+            placeholder="Enter keyword…"
+            className="w-64 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-900 placeholder:text-gray-400 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition"
+          />
+          <button
+            type="submit"
+            disabled={isPending}
+            className="bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white text-sm font-medium px-4 py-2 rounded-lg transition cursor-pointer"
+          >
+            {isPending ? 'Searching…' : 'Search'}
+          </button>
+        </form>
+      </div>
 
       {/* return list — results display */}
       {!hasSearched ? (
@@ -154,6 +157,6 @@ export default function SearchUserAccountBoundary({
           </table>
         </div>
       )}
-    </>
+    </div>
   );
 }
