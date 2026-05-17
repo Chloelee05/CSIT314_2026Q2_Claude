@@ -1,12 +1,26 @@
 import Link from 'next/link';
-import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 import { PageTransition, AnimatedCard } from '@/lib/components/motion';
+
+type ActivityRow = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  goal_amount: number;
+  raised_amount: number;
+  category: string;
+  status: string;
+  end_date: string | null;
+  view_count: number;
+  created_at: string;
+  updated_at: string;
+};
 
 export type DoneeViewActivityBoundaryProps = {
   username: string;
   success: boolean;
   message: string;
-  activity: FundraisingActivity | null;
+  activity: ActivityRow | null;
 };
 
 /**

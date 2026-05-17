@@ -28,12 +28,27 @@ export default async function ViewActivityPage({
   const [success, message, activity] =
     await ViewActivityController.ViewActivity(activity_id);
 
+  const plainActivity = activity ? {
+    id: activity.id,
+    user_id: activity.user_id,
+    title: activity.title,
+    description: activity.description,
+    goal_amount: activity.goal_amount,
+    raised_amount: activity.raised_amount,
+    category: activity.category,
+    status: activity.status,
+    end_date: activity.end_date,
+    view_count: activity.view_count,
+    created_at: activity.created_at,
+    updated_at: activity.updated_at,
+  } : null;
+
   return (
     <DoneeViewActivityBoundary
       username={session.username}
       success={success}
       message={message}
-      activity={activity}
+      activity={plainActivity}
     />
   );
 }
