@@ -106,7 +106,6 @@ export function ViewAccountUI({
 
   return (
     <>
-      {navigateToUsers()}
       {!success ? displayResult(message) : displayAccountDetails(accounts)}
     </>
   );
