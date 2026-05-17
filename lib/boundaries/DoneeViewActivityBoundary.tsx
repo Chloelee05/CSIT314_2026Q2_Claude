@@ -1,5 +1,3 @@
-'use client';
-
 import Link from 'next/link';
 import { FundraisingActivity } from '@/lib/entities/FundraisingActivity';
 import { PageTransition, AnimatedCard } from '@/lib/components/motion';

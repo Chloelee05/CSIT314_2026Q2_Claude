@@ -1,5 +1,3 @@
-'use client';
-
 import { FRACategory } from '@/lib/entities/FRACategory';
 import { PageTransition, StaggerList, StaggerItem } from '@/lib/components/motion';
 
