@@ -2,6 +2,7 @@ import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import { ViewDonationHistoryController } from '@/lib/controllers/ViewDonationHistoryController';
 import { ViewDonationHistoryBoundary } from '@/lib/boundaries/ViewDonationHistoryBoundary';
+import Link from 'next/link';
 
 /**
  * BCE page: ViewDonationHistoryBoundary — User Story #37
@@ -30,7 +31,15 @@ export default async function ViewDonationHistoryPage() {
       </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6">Donation History</h2>
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900">Donation History</h2>
+          <Link
+            href="/dashboard"
+            className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1.5 rounded-lg border border-gray-300 hover:border-gray-400 transition"
+          >
+            Back to Dashboard
+          </Link>
+        </div>
 
         <ViewDonationHistoryBoundary
           success={success}
