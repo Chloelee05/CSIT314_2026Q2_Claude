@@ -79,16 +79,16 @@ export default async function SearchUserAccountPage({
           </Link>
         </div>
 
-        <div className="flex items-center justify-between mb-4 gap-4">
+        <div className="flex items-center justify-between mb-6 gap-4 flex-wrap">
           <h2 className="text-xl font-semibold text-gray-900">Search User Accounts</h2>
+          <Suspense>
+            <SearchUserAccountBoundary
+              accounts={clientAccounts}
+              hasSearched={hasSearched}
+              keyword={keyword}
+            />
+          </Suspense>
         </div>
-        <Suspense>
-          <SearchUserAccountBoundary
-            accounts={clientAccounts}
-            hasSearched={hasSearched}
-            keyword={keyword}
-          />
-        </Suspense>
       </main>
     </div>
   );
