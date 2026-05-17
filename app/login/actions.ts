@@ -2,8 +2,6 @@
 
 import { LoginController } from '@/lib/controllers/LoginController';
 import { LogoutBoundary } from '@/lib/boundaries/LogoutBoundary';
-import { LogoutController } from '@/lib/controllers/LogoutController';
-import { getSession } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
 export interface LoginState {
@@ -81,23 +79,9 @@ export async function adminLogoutAction(): Promise<void> {
 }
 
 /**
- * User Story #24 — FR 등: `/dashboard`에서 Donee/PM이 아닌 역할이 쓰는 로그아웃 액션.
- * `LogoutController.logout()` 후 역할에 따라 리다이렉트.
- *
- * Donee 로그아웃(User Story #31)은 `DashboardPageBoundary.clickLogout` 경로를 사용.
+ * User Story #24 — Fund Raiser Logout (BCE: Boundary only, no Controller)
+ * process_logout() → deleteSession() → show_login_page()
  */
 export async function userLogoutAction(): Promise<void> {
-  const session = await getSession();
-  const role = session?.role;
-
-  await LogoutController.logout();
-
-  if (role === 'donee') {
-    redirect('/donee/account/login');
-  }
-
-  redirect(
-    '/login?message=' +
-      encodeURIComponent('Logged out successfully.'),
-  );
+  await LogoutBoundary.process_logout();
 }
